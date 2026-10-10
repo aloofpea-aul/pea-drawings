@@ -1,0 +1,394 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>3103 เหล็กประกับไม้คอนแบบท้าวแขน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting sheet — title strip, variant switch, 2D elevation, details + 3D, tables, title block */
+:root{
+  --paper:#eef1f4; --sheet:#ffffff; --ink:#18212b; --muted:#5a6573; --line:#cdd4dc; --soft:#f5f7f9;
+  --accent:#7a1e6b; --accent-bg:#f6e9f3; --dim:#245f93; --weld:#c2620f; --steel:#9aa5b1; --hole:#ffffff;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:1080px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--ink);display:flex;flex-direction:column}
+.blk{padding:20px 24px;border-top:1px solid var(--line);min-width:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-family:var(--f-body);font-weight:400;font-size:13px;color:var(--muted)}
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;padding:20px 24px;align-items:start}
+.eyebrow{font-size:13px;color:var(--muted)}
+.head h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,4vw,34px);line-height:1.2;margin:4px 0 2px;text-wrap:balance}
+.head .en{font-family:var(--f-mono);font-size:16px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.asm{border:1.5px solid var(--ink);padding:8px 14px;text-align:right}
+.asm .n{font-family:var(--f-display);font-size:34px;font-weight:600;line-height:1;color:var(--accent)}
+.asm .l{font-size:12px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--soft);border-top:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+.seg button{font:500 14px var(--f-body);background:transparent;color:var(--ink);border:0;padding:7px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.seg button:focus-visible,.btn:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+.spec{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto}
+.scroll svg{display:block;min-width:720px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--ink)}
+svg .th{font-family:var(--f-body)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+.two>.blk{border-top:0}
+.two>.blk+.blk{border-left:1px solid var(--line)}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}.two>.blk+.blk{border-left:0;border-top:1px solid var(--line)}.head{grid-template-columns:1fr}.asm{justify-self:start;text-align:left}}
+#v3d{height:360px;border:1px solid var(--line);background:var(--soft);touch-action:none;cursor:grab;position:relative;border-radius:4px;overflow:hidden}
+#v3d canvas{display:block}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.btn{font:13px var(--f-body);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:center;vertical-align:middle}
+th{font-weight:500;background:var(--soft);font-size:13px}
+td.l,th.l{text-align:left}
+tr.on td{background:var(--accent-bg)}
+td.mono{font-family:var(--f-mono)}
+tfoot td{font-weight:600}
+.notes{margin:0;padding-left:1.3em;max-width:72ch;display:grid;gap:6px}
+.e{display:block;font-family:var(--f-mono);font-size:.78em;font-weight:400;color:var(--muted);letter-spacing:.02em;line-height:1.35}
+h2 .e{display:inline;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.notes li .e{margin-top:1px}
+.btn .e{font-size:10px}
+.tag{display:inline-block;font-size:11px;font-family:var(--f-mono);padding:1px 6px;border-radius:3px;background:var(--accent-bg);color:var(--accent);vertical-align:1px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px}
+.tb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1.5px solid var(--ink);font-size:13px}
+.tb>div{padding:8px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.tb .k{display:block;font-size:11px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+.tb .w2{grid-column:span 2}.tb .w3{grid-column:span 3}.tb .w6{grid-column:span 6;text-align:center;font-family:var(--f-display);font-weight:600;letter-spacing:.06em}
+@media (max-width:640px){.tb{grid-template-columns:repeat(2,minmax(0,1fr))}.tb .w2,.tb .w3,.tb .w6{grid-column:span 2}}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.links .btn{text-decoration:none;display:inline-flex;flex-direction:column;line-height:1.25;font-weight:500;border-color:var(--ink)}
+.links .btn.pri{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.links .btn.pri .e{color:inherit;opacity:.8}
+</style>
+
+<div class="sheet">
+  <header class="head">
+    <div>
+      <div class="eyebrow" id="grp"></div>
+      <h1 id="nameTh"></h1>
+      <div class="en" id="nameEn"></div>
+    </div>
+    <div class="asm"><div class="l">การประกอบเลขที่ · ASSEMBLY NO.</div><div class="n" id="asmNo"></div></div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="varSeg" role="group" aria-label="เลือกรหัสวัสดุ / Select material number"></div>
+    <div class="spec" id="varSpec"></div>
+    <div class="links">
+      <a class="btn pri" href="../pdf/3103.pdf" target="_blank" rel="noopener">เปิดแบบต้นฉบับ PDF<span class="e">Original drawing</span></a>
+      <a class="btn" href="../index.html" target="_blank" rel="noopener">คลังแบบทั้งหมด<span class="e">Drawing library</span></a>
+    </div>
+  </div>
+
+  <section class="blk">
+    <h2>แบบด้านข้าง <span class="e">Elevation</span></h2><div class="hint" style="margin:-6px 0 10px">ไม่ตามมาตราส่วนตามยาว มีเส้นตัดย่อ<span class="e">Not to scale lengthwise, shown with break lines</span></div>
+    <div class="scroll"><svg id="elev" viewBox="0 0 1000 430" role="img" aria-label="แบบด้านข้างพร้อมระยะ"></svg></div>
+    <div class="legend"><span><i style="background:var(--ink)"></i>ผิวเหล็ก / Steel outline</span><span><i style="background:var(--dim)"></i>เส้นบอกระยะ / Dimension</span><span><i style="background:var(--weld)"></i>แนวเชื่อม / Weld</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>รายละเอียดหน้าตัด <span class="e">Section details · enlarged</span></h2>
+      <div class="scroll"><svg id="detail" viewBox="0 0 520 360" role="img" aria-label="หน้าตัดเหล็กฉากและที่รองเท้า" style="min-width:420px"></svg></div>
+    </section>
+    <section class="blk">
+      <h2>โมเดล 3 มิติ <span class="e">3D model</span></h2>
+      <div id="v3d" aria-label="โมเดล 3 มิติ หมุนได้"></div>
+      <div class="tools">
+        <button class="btn" data-v="iso">มุมเอียง<span class="e">Isometric</span></button>
+        <button class="btn" data-v="side">ด้านข้าง<span class="e">Side</span></button>
+        <button class="btn" data-v="top">ด้านบน<span class="e">Top</span></button>
+        <button class="btn" data-v="end">ปลายพับ 45°<span class="e">45° end</span></button>
+        <button class="btn" data-v="step">ที่รองเท้า<span class="e">Foot step</span></button>
+        <button class="btn" data-v="hole">ปลายรู D1<span class="e">D1 end</span></button>
+      </div>
+      <div class="hint">ลากเพื่อหมุน เลื่อนลูกกลิ้งเพื่อซูม · สีส้มคือแนวเชื่อม<span class="e">Drag to rotate, scroll to zoom · orange = weld</span></div>
+    </section>
+  </div>
+
+  <section class="blk">
+    <h2>ตารางมิติ <span class="e">Dimensions · mm</span></h2>
+    <div class="scroll"><table id="dimTbl"></table></div>
+  </section>
+
+  <section class="blk">
+    <h2>รายการวัสดุ <span class="e">Bill of materials · per set</span></h2>
+    <div class="scroll"><table id="bomTbl"></table></div>
+    <div class="hint">น้ำหนักคำนวณจากความยาวคลี่ × น้ำหนักต่อเมตรของเหล็ก ยังไม่รวมสังกะสี (ชุบจุ่มร้อนเพิ่มราว 3–5%)<span class="e">Weight = developed length × steel kg/m, before galvanizing (hot-dip adds about 3–5%)</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>ข้อกำหนดการผลิต <span class="e">Fabrication</span></h2>
+      <ol class="notes" id="fab"></ol>
+    </section>
+    <section class="blk">
+      <h2>ค่าที่ต้องยืนยัน <span class="e">To be verified</span></h2><div class="hint" style="margin:-6px 0 10px">แบบต้นฉบับไม่ได้ระบุ<span class="e">Not stated on the original drawing</span></div>
+      <ol class="notes" id="assume"></ol>
+    </section>
+  </div>
+
+  <footer class="tb" id="tb"></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ===== ข้อมูลอุปกรณ์ — แก้ส่วนนี้เมื่อทำอุปกรณ์ตัวถัดไป ===== */
+const PART = {
+  assembly: "3103",
+  nameTh: "เหล็กประกับไม้คอนแบบท้าวแขน",
+  nameEn: "BRACE, ALLEY ARM",
+  group: "01 คอนสาย ที่รับคอนสาย สมอบก วัสดุที่ใช้ในการยึดโยง ลวดเหล็ก",
+  groupEn: "01 CROSSARMS, BRACES, ANCHORS, GUYING MATERIAL, STEEL WIRE",
+  titleBlock: { org: "GERMAN ADVISORY TEAM — PROVINCIAL ELECTRICITY AUTHORITY", scale: "1 : 5", date: "20/9/66", ref1: "K 31", ref2: "09064", sheet: "SHEET NO. 1 · FO 1" },
+  step: { w: 30, t: 6, leg: 90, foot: 25, angle: 50 },
+  variants: [
+    { code: "01200004", old: "0124", s: 40, t: 5, A: 2120, B: 1000, C: 50, D1: 18, D2: 18, E: 100, F: 50, kgm: 2.97 },
+    { code: "01200005", old: "0125", s: 50, t: 5, A: 2350, B: 1000, C: 50, D1: 18, D2: 18, E: 100, F: 50, kgm: 3.77 }
+  ],
+  flatKgm: 1.413,
+  fabrication: [
+    ["เหล็กฉากและที่รองเท้าเป็นเหล็กอ่อน St 37", "Angle iron and foot step: mild steel St 37."],
+    ["ตัดปลายเหล็กฉากเฉียง แล้วพับลงทำมุม 45° กับแนวตัวท้าวแขน เชื่อมเต็มแนวรอยต่อทั้งปีกตั้งและปีกนอน", "Mitre-cut the angle end, bend down 45° to the brace axis, and weld the full joint on both legs."],
+    ["ดัดที่รองเท้าจากเหล็กแบน 30 × 6 มม. ขายาวข้างละ 90 มม. วางบนปีกนอนให้ยอดอยู่ห่างปลายด้านรู D1 เท่ากับระยะ B แล้วเชื่อมขาทั้งสองข้าง", "Bend the foot step from 30 × 6 mm flat iron, legs 90 mm each. Set the apex at distance B from the D1 end on the horizontal leg and weld both feet."],
+    ["เจาะรู Ø18 มม. บนปีกตั้ง 2 ตำแหน่ง คือห่างปลายตรงระยะ C และห่างปลายพับระยะ F", "Drill two Ø18 mm holes in the vertical leg: C from the straight end and F from the bent end."],
+    ["ลบคมตัด ขัดสะเก็ดเชื่อม และทำความสะอาดผิวก่อนชุบ", "Deburr cut edges, remove weld spatter and clean before galvanizing."],
+    ["ชุบสังกะสีแบบจุ่มร้อนหลังเชื่อมประกอบเสร็จ ตามมาตรฐาน VDE 0210", "Hot-dip galvanize after all welding, to VDE 0210."]
+  ],
+  assumptions: [
+    ["ระยะ A วัดจากปลายตรงถึงมุมพับด้านบน และระยะ E วัดตามขอบนอกของส่วนพับ (อ่านจากตำแหน่งหัวลูกศรในแบบ)", "A is measured from the straight end to the top bend corner; E along the outer edge of the bent part (read from the arrowheads)."],
+    ["ระยะ B วัดถึงยอดที่รองเท้า", "B is measured to the apex of the foot step."],
+    ["ระยะ F วัดจากปลายส่วนพับถึงศูนย์กลางรู D2", "F is measured from the bent end to the centre of hole D2."],
+    ["ขาที่รองเท้าทำมุมราว 50° และมีฐานเชื่อมยาวข้างละ 25 มม. (แบบไม่ได้ระบุ)", "Foot step legs at about 50°, with 25 mm welded feet each side."],
+    ["รูยึดกลางปีกตั้ง (ไม่รวมความหนาปีกนอน) และรู Ø18 ใช้กับสลักเกลียว M16", "Holes centred on the vertical leg clear of the flange; Ø18 holes suit M16 bolts."],
+    ["มุมล่างของปลายตรงลบมุมเล็กน้อยตามภาพในแบบ ขนาดไม่ระบุ", "Bottom corner of the straight end is chamfered as drawn; size not given."]
+  ]
+};
+/* ======================================================== */
+
+let cur = 0;
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("en-US");
+const C45 = Math.SQRT1_2;
+
+function header(){
+  $("grp").innerHTML = PART.group + `<span class="e" style="text-transform:none">${PART.groupEn}</span>`;
+  $("nameTh").textContent = PART.nameTh;
+  $("nameEn").textContent = PART.nameEn;
+  $("asmNo").textContent = PART.assembly;
+  $("varSeg").innerHTML = PART.variants.map((v,i)=>`<button type="button" id="var${i}" data-i="${i}">${v.code} · L${v.s}</button>`).join("");
+  $("varSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setVariant(+b.dataset.i); });
+  const tb = PART.titleBlock;
+  $("tb").innerHTML = `<div class="w6">${tb.org}</div>
+    <div><span class="k">มาตราส่วน · SCALE</span>${tb.scale}</div>
+    <div><span class="k">วันที่ · DATE</span>${tb.date}</div>
+    <div class="w2"><span class="k">ชื่อแบบ · TITLE</span>${PART.nameTh}<span class="e">${PART.nameEn}</span></div>
+    <div><span class="k">REF</span>${tb.ref1} · ${tb.ref2}</div>
+    <div><span class="k">SHEET</span>${tb.sheet}</div>`;
+  $("fab").innerHTML = PART.fabrication.map(([th,en])=>`<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = PART.assumptions.map(([th,en])=>`<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join("");
+}
+
+function dimLine(x1,y1,x2,y2,label,lx,ly,anchor){
+  return `<g stroke="var(--dim)" stroke-width="1" fill="none">
+    <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" marker-start="url(#ar)" marker-end="url(#ar)"/></g>
+    <text x="${lx}" y="${ly}" font-size="13" text-anchor="${anchor||"middle"}" style="fill:var(--dim)">${label}</text>`;
+}
+function ext(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width=".6" stroke-dasharray="3 3"/>`; }
+function brk(x,top,bot){
+  const h = bot-top;
+  return `<path d="M${x} ${top-7} L${x} ${top+h*.32} L${x-6} ${top+h*.44} L${x+6} ${top+h*.56} L${x} ${top+h*.68} L${x} ${bot+7}" fill="none" stroke="var(--ink)" stroke-width=".9"/>`;
+}
+
+function drawElev(){
+  const p = PART.variants[cur], st = PART.step;
+  const k = 1.3, h = p.s*k, t = p.t*k, top = 200, bot = top+h, x0 = 40, xb = 800;
+  const E = p.E*k, F = p.F*k, C = p.C*k, r1 = p.D1*k/2, r2 = p.D2*k/2;
+  const oe = [xb+E*C45, top+E*C45];
+  const n = [-C45, C45];
+  const ie = [oe[0]+n[0]*h, oe[1]+n[1]*h];
+  const mx = xb + h*(1-2*C45), mt = xb + t*(1-2*C45);
+  const fe = [oe[0]+n[0]*t, oe[1]+n[1]*t];
+  const midDepth = (t+h)/2;
+  const h1 = [x0+C, top+midDepth];
+  const dF = E-F;
+  const h2 = [xb+dF*C45+n[0]*midDepth, top+dF*C45+n[1]*midDepth];
+  const xa = 420, L = st.leg*k, rad = st.angle*Math.PI/180, run = L*Math.cos(rad), rise = L*Math.sin(rad), ft = st.foot*k, sy = top-3.5;
+  const ink = 'stroke="var(--ink)" stroke-width="1.6" fill="none" stroke-linejoin="round"';
+  const thin = 'stroke="var(--ink)" stroke-width=".9" fill="none"';
+  let s = `<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="var(--dim)"/></marker></defs>`;
+  s += `<path d="M${x0} ${top} H250 M${x0+9} ${bot} H250 M${x0} ${top} V${bot-9} L${x0+9} ${bot}" ${ink}/>`;
+  s += `<path d="M${x0} ${top+t} H250" ${thin}/>` + brk(250,top,bot);
+  s += `<path d="M280 ${top} H560 M280 ${bot} H560" ${ink}/><path d="M280 ${top+t} H560" ${thin}/>` + brk(280,top,bot) + brk(560,top,bot);
+  s += `<path d="M590 ${top} H${xb} L${oe[0]} ${oe[1]} L${ie[0]} ${ie[1]} L${mx} ${bot} H590" ${ink}/>`;
+  s += `<path d="M590 ${top+t} H${mt} L${fe[0]} ${fe[1]}" ${thin}/>` + brk(590,top,bot);
+  s += `<line x1="${xb}" y1="${top}" x2="${mx}" y2="${bot}" stroke="var(--weld)" stroke-width="4" stroke-dasharray="3 2"/>`;
+  s += `<circle cx="${h1[0]}" cy="${h1[1]}" r="${r1}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1.4"/><path d="M${h1[0]-r1-5} ${h1[1]} h${2*r1+10} M${h1[0]} ${h1[1]-r1-5} v${2*r1+10}" stroke="var(--ink)" stroke-width=".5" stroke-dasharray="4 2"/>`;
+  s += `<circle cx="${h2[0]}" cy="${h2[1]}" r="${r2}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1.4"/>`;
+  const sp = [[xa-run-ft,sy],[xa-run,sy],[xa,sy-rise],[xa+run,sy],[xa+run+ft,sy]];
+  s += `<polyline points="${sp.map(q=>q.join(",")).join(" ")}" stroke="var(--ink)" stroke-width="${st.t*k}" fill="none" stroke-linejoin="round" stroke-linecap="square"/>`;
+  s += `<path d="M${sp[0][0]-3} ${top} h${ft+3} M${sp[3][0]} ${top} h${ft+3}" stroke="var(--weld)" stroke-width="4" stroke-dasharray="3 2"/>`;
+  s += ext(x0,30,x0,top-10) + ext(xb,30,xb,top-10) + ext(xa,64,xa,sy-rise-6);
+  s += dimLine(x0,42,xb,42,"",0,0) + `<rect x="340" y="30" width="170" height="22" fill="var(--sheet)"/><text x="425" y="47" text-anchor="middle" font-size="14" font-weight="500" style="fill:var(--dim)">A = ${fmt(p.A)}</text>`;
+  s += dimLine(x0,76,xa,76,"",0,0) + `<rect x="190" y="64" width="100" height="22" fill="var(--sheet)"/><text x="240" y="81" text-anchor="middle" font-size="14" font-weight="500" style="fill:var(--dim)">B = ${fmt(p.B)}</text>`;
+  const lu = [Math.cos(rad), -Math.sin(rad)], ln = [-Math.sin(rad), -Math.cos(rad)], o = 20;
+  const la = [sp[1][0]+ln[0]*o, sp[1][1]+ln[1]*o], lb = [sp[2][0]+ln[0]*o, sp[2][1]+ln[1]*o];
+  s += dimLine(la[0],la[1],lb[0],lb[1],"",0,0) + `<text x="${(la[0]+lb[0])/2-22}" y="${(la[1]+lb[1])/2-6}" font-size="13" text-anchor="end" style="fill:var(--dim)">${st.leg}</text>`;
+  s += ext(x0,bot+4,x0,bot+40) + ext(h1[0],h1[1]+r1+2,h1[0],bot+40);
+  s += dimLine(x0,bot+32,h1[0],bot+32,"",0,0) + `<text x="${x0}" y="${bot+54}" font-size="13" style="fill:var(--dim)">C = ${p.C}</text>`;
+  s += `<line x1="${h1[0]+r1*.7}" y1="${h1[1]+r1*.7}" x2="${h1[0]+60}" y2="${bot+48}" stroke="var(--muted)" stroke-width=".8"/><text x="${h1[0]+64}" y="${bot+52}" font-size="13">D1 Ø${p.D1}</text>`;
+  const on = [C45,-C45], eo = 26;
+  const ea = [xb+on[0]*eo, top+on[1]*eo], eb = [oe[0]+on[0]*eo, oe[1]+on[1]*eo];
+  s += ext(xb,top,ea[0]+on[0]*8,ea[1]+on[1]*8) + ext(oe[0],oe[1],eb[0]+on[0]*8,eb[1]+on[1]*8);
+  s += dimLine(ea[0],ea[1],eb[0],eb[1],"",0,0) + `<text x="${(ea[0]+eb[0])/2+30}" y="${(ea[1]+eb[1])/2-14}" font-size="13" style="fill:var(--dim)">E = ${p.E}</text>`;
+  const fo = h+24, hp = [xb+dF*C45, top+dF*C45];
+  const fa = [hp[0]+n[0]*fo, hp[1]+n[1]*fo], fb = [oe[0]+n[0]*fo, oe[1]+n[1]*fo];
+  s += ext(h2[0],h2[1],fa[0]+n[0]*8,fa[1]+n[1]*8) + ext(ie[0],ie[1],fb[0]+n[0]*8,fb[1]+n[1]*8);
+  s += dimLine(fa[0],fa[1],fb[0],fb[1],"",0,0) + `<text x="${(fa[0]+fb[0])/2-14}" y="${(fa[1]+fb[1])/2+22}" font-size="13" text-anchor="end" style="fill:var(--dim)">F = ${p.F}</text>`;
+  s += `<line x1="${h2[0]+r2*.7}" y1="${h2[1]-r2*.7}" x2="${oe[0]+40}" y2="${h2[1]-28}" stroke="var(--muted)" stroke-width=".8"/><text x="${oe[0]+44}" y="${h2[1]-24}" font-size="13">D2 Ø${p.D2}</text>`;
+  s += ext(xb,top,xb+70,top) + `<path d="M${xb+48} ${top} A48 48 0 0 1 ${xb+48*C45} ${top+48*C45}" fill="none" stroke="var(--dim)" stroke-width="1"/><text x="${xb+56}" y="${top+26}" font-size="13" style="fill:var(--dim)">45°</text>`;
+  s += `<line x1="${(xb+mx)/2-4}" y1="${(top+bot)/2}" x2="680" y2="${bot+50}" stroke="var(--muted)" stroke-width=".8"/><text class="th" x="676" y="${bot+66}" font-size="13" text-anchor="end">เชื่อมรอยต่อปลายพับ</text><text x="676" y="${bot+82}" font-size="11" text-anchor="end" style="fill:var(--muted)">MITRE JOINT, WELDED</text>`;
+  s += `<line x1="${sp[3][0]+ft/2}" y1="${top-2}" x2="${sp[3][0]+90}" y2="${top-58}" stroke="var(--muted)" stroke-width=".8"/><text class="th" x="${sp[3][0]+94}" y="${top-54}" font-size="13">เชื่อมฐานที่รองเท้า ${st.w}×${st.t}</text><text x="${sp[3][0]+94}" y="${top-39}" font-size="11" style="fill:var(--muted)">FOOT STEP, WELDED</text>`;
+  s += `<text class="th" x="40" y="${415}" font-size="12" style="fill:var(--muted)">แสดงเหล็กฉาก ${p.s}×${p.s}×${p.t} มม. มองด้านปีกตั้ง  ·  Angle ${p.s}×${p.s}×${p.t} mm, viewed on the vertical leg</text>`;
+  $("elev").innerHTML = s;
+}
+
+function drawDetail(){
+  const p = PART.variants[cur], st = PART.step;
+  const k = 3, x = 70, y = 92, S = p.s*k, T = p.t*k;
+  let s = `<defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="var(--dim)"/></marker>
+    <pattern id="hat" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--ink)" stroke-width="1"/></pattern></defs>`;
+  const dl = (x1,y1,x2,y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width="1" marker-start="url(#ar2)" marker-end="url(#ar2)"/>`;
+  s += `<text class="th" x="20" y="24" font-size="14" font-weight="600">หน้าตัดเหล็กฉาก</text><text x="20" y="46" font-size="11" style="fill:var(--muted)">ANGLE IRON SECTION</text>`;
+  s += `<path d="M${x} ${y} H${x+S} V${y+T} H${x+T} V${y+S} H${x} Z" fill="url(#hat)" stroke="var(--ink)" stroke-width="1.6"/>`;
+  s += dl(x,y-16,x+S,y-16) + `<text x="${x+S/2}" y="${y-22}" text-anchor="middle" font-size="13" style="fill:var(--dim)">${p.s}</text>`;
+  s += dl(x-16,y,x-16,y+S) + `<text x="${x-22}" y="${y+S/2+4}" text-anchor="end" font-size="13" style="fill:var(--dim)">${p.s}</text>`;
+  s += `<line x1="${x+S+6}" y1="${y}" x2="${x+S+30}" y2="${y}" stroke="var(--dim)" stroke-width=".6"/><line x1="${x+S+6}" y1="${y+T}" x2="${x+S+30}" y2="${y+T}" stroke="var(--dim)" stroke-width=".6"/><text x="${x+S+34}" y="${y+T}" font-size="13" style="fill:var(--dim)">t = ${p.t}</text>`;
+  s += `<text class="th" x="${x+T+10}" y="${y+S-8}" font-size="12" style="fill:var(--muted)">ปีกตั้ง (เจาะรู)</text><text x="${x+T+10}" y="${y+S+8}" font-size="10" style="fill:var(--muted)">VERTICAL LEG, DRILLED</text>`;
+  s += `<text class="th" x="20" y="${y+S+40}" font-size="12" style="fill:var(--muted)">L ${p.s}×${p.s}×${p.t} · St 37 · ${p.kgm} กก./ม.</text><text x="20" y="${y+S+56}" font-size="11" style="fill:var(--muted)">Mild steel · ${p.kgm} kg/m</text>`;
+  const bx = 300, by = 70, k2 = 1.5, L = st.leg*k2, rad = st.angle*Math.PI/180, run = L*Math.cos(rad), rise = L*Math.sin(rad), ft = st.foot*k2, base = by+rise+20;
+  const ax = bx+ft+run;
+  s += `<text class="th" x="${bx-20}" y="24" font-size="14" font-weight="600">ที่รองเท้า (เหล็กแบน)</text><text x="${bx-20}" y="46" font-size="11" style="fill:var(--muted)">FOOT STEP, FLAT IRON</text>`;
+  const pts = [[bx,base],[bx+ft,base],[ax,base-rise],[ax+run,base],[ax+run+ft,base]];
+  s += `<polyline points="${pts.map(q=>q.join(",")).join(" ")}" fill="none" stroke="var(--ink)" stroke-width="${st.t*k2}" stroke-linejoin="round"/>`;
+  s += `<line x1="${bx-6}" y1="${base+st.t*k2/2+2}" x2="${ax+run+ft+6}" y2="${base+st.t*k2/2+2}" stroke="var(--steel)" stroke-width="3"/>`;
+  s += dl(bx,base+22,bx+ft,base+22) + `<text x="${bx+ft/2}" y="${base+40}" text-anchor="middle" font-size="12" style="fill:var(--dim)">${st.foot}*</text>`;
+  s += `<text x="${bx+ft+run/2-14}" y="${base-rise/2}" text-anchor="end" font-size="13" style="fill:var(--dim)">${st.leg}</text>`;
+  s += `<path d="M${ax+run-30} ${base} A30 30 0 0 0 ${ax+run-30*Math.cos(rad)} ${base-30*Math.sin(rad)}" fill="none" stroke="var(--dim)"/><text x="${ax+run-46}" y="${base-8}" font-size="12" text-anchor="end" style="fill:var(--dim)">${st.angle}°*</text>`;
+  s += `<text class="th" x="${bx-20}" y="${base+66}" font-size="12" style="fill:var(--muted)">เหล็กแบน ${st.w}×${st.t} มม. · ยาวคลี่ ≈ ${2*st.leg+2*st.foot} มม.</text><text x="${bx-20}" y="${base+82}" font-size="11" style="fill:var(--muted)">Flat ${st.w}×${st.t} mm · developed ≈ ${2*st.leg+2*st.foot} mm</text>`;
+  s += `<text class="th" x="${bx-20}" y="${base+104}" font-size="12" style="fill:var(--muted)">* ค่าสันนิษฐาน / assumed value</text>`;
+  $("detail").innerHTML = s;
+}
+
+function tables(){
+  const keys = ["A","B","C","D1","D2","E","F"];
+  let h = `<thead><tr><th rowspan="2">รหัสวัสดุ<span class="e">Mat. no.</span></th><th colspan="7">มิติ (มม.)<span class="e">Dimensions (mm)</span></th><th rowspan="2" class="l">วัสดุ ผิว และหมายเหตุ<span class="e">Material, finishing, remarks</span></th></tr><tr>${keys.map(k=>`<th>${k.length>1?k+" Ø":k}</th>`).join("")}</tr></thead><tbody>`;
+  PART.variants.forEach((v,i)=>{
+    h += `<tr class="${i===cur?"on":""}"><td class="mono">${v.code}<br><small>(${v.old})</small></td>${keys.map(k=>`<td class="mono">${fmt(v[k])}</td>`).join("")}
+      <td class="l">เหล็กฉาก ${v.s}×${v.s}×${v.t} มม. ที่รองรับเท้า ${PART.step.w}×${PART.step.t} มม. เหล็กอ่อน St 37 ชุบสังกะสีตามมาตรฐาน VDE 0210<span class="e">Brace: angle iron ${v.s}×${v.s}×${v.t} mm. Foot step: flat iron ${PART.step.w}×${PART.step.t} mm. Mild steel St 37, hot-dip galv. to VDE 0210.</span></td></tr>`;
+  });
+  $("dimTbl").innerHTML = h + "</tbody>";
+  const p = PART.variants[cur], st = PART.step;
+  const la = p.A + p.E, wa = la/1000*p.kgm, lf = 2*st.leg+2*st.foot, wf = lf/1000*PART.flatKgm;
+  $("bomTbl").innerHTML = `<thead><tr><th>ลำดับ<span class="e">No.</span></th><th class="l">รายการ<span class="e">Description</span></th><th>ขนาด (มม.)<span class="e">Size (mm)</span></th><th>จำนวน<span class="e">Qty</span></th><th>ยาวคลี่ (มม.)<span class="e">Dev. length (mm)</span></th><th>กก./ม.<span class="e">kg/m</span></th><th>น้ำหนัก (กก.)<span class="e">Weight (kg)</span></th></tr></thead><tbody>
+    <tr><td>1</td><td class="l">ตัวท้าวแขน เหล็กฉาก พร้อมปลายพับ 45°<span class="e">Brace, angle iron with 45° bent end</span></td><td class="mono">L ${p.s}×${p.s}×${p.t}</td><td>1</td><td class="mono">${fmt(la)}</td><td class="mono">${p.kgm.toFixed(2)}</td><td class="mono">${wa.toFixed(2)}</td></tr>
+    <tr><td>2</td><td class="l">ที่รองเท้า เหล็กแบนดัดรูปสามเหลี่ยม<span class="e">Foot step, bent flat iron</span></td><td class="mono">FB ${st.w}×${st.t}</td><td>1</td><td class="mono">≈ ${lf}</td><td class="mono">${PART.flatKgm.toFixed(3)}</td><td class="mono">${wf.toFixed(2)}</td></tr>
+    <tr><td>3</td><td class="l">รูเจาะสำหรับสลักเกลียว<span class="e">Bolt holes, drilled</span></td><td class="mono">Ø${p.D1}</td><td>2</td><td>–</td><td>–</td><td>–</td></tr>
+    <tr><td>4</td><td class="l">งานเชื่อม: รอยต่อปลายพับ 1 แนว, ฐานที่รองเท้า 2 จุด<span class="e">Welds: 1 mitre joint, 2 foot step feet</span></td><td>–</td><td>3</td><td>–</td><td>–</td><td>–</td></tr>
+    <tr><td>5</td><td class="l">ชุบสังกะสีแบบจุ่มร้อน VDE 0210<span class="e">Hot-dip galvanizing to VDE 0210</span></td><td>–</td><td>1</td><td>–</td><td>–</td><td>–</td></tr></tbody>
+    <tfoot><tr><td colspan="6" class="l">น้ำหนักเหล็กรวมโดยประมาณ (ก่อนชุบ)<span class="e">Approx. total steel weight (before galvanizing)</span></td><td class="mono">${(wa+wf).toFixed(2)}</td></tr></tfoot>`;
+  $("varSpec").textContent = `${p.code} · L ${p.s}×${p.s}×${p.t} · A ${fmt(p.A)} mm · ≈ ${(wa+wf).toFixed(1)} kg`;
+}
+
+/* ===== 3D ===== */
+const box3 = $("v3d");
+let R, scene, cam, pivot, model, rx = .5, ry = -.55, dist = 3000, target = [0,0,0];
+function init3d(){
+  if (!window.THREE){ box3.innerHTML = '<p style="padding:16px;color:var(--muted)">โหลดโมเดล 3 มิติไม่สำเร็จ / 3D model could not load</p>'; return; }
+  R = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  R.setClearColor(0x000000,0); R.setPixelRatio(Math.min(devicePixelRatio,2));
+  box3.appendChild(R.domElement);
+  scene = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(32,1,1,40000);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x667080,.75));
+  const d1 = new THREE.DirectionalLight(0xffffff,.8); d1.position.set(900,1600,1400); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xffffff,.3); d2.position.set(-1200,-400,-900); scene.add(d2);
+  pivot = new THREE.Group(); scene.add(pivot);
+  let drag=false,px=0,py=0;
+  box3.addEventListener("pointerdown",e=>{drag=true;px=e.clientX;py=e.clientY;box3.setPointerCapture(e.pointerId);box3.style.cursor="grabbing"});
+  box3.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.008;rx+=(e.clientY-py)*.008;px=e.clientX;py=e.clientY;render()});
+  box3.addEventListener("pointerup",()=>{drag=false;box3.style.cursor="grab"});
+  box3.addEventListener("wheel",e=>{e.preventDefault();dist=Math.max(150,Math.min(9000,dist*(1+e.deltaY*.0012)));render()},{passive:false});
+  new ResizeObserver(size).observe(box3);
+  document.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>view(b.dataset.v)));
+}
+function size(){ if(!R)return; const w=box3.clientWidth,h=box3.clientHeight; R.setSize(w,h); cam.aspect=w/h; cam.updateProjectionMatrix(); render(); }
+function build3d(){
+  if (!R) return;
+  const p = PART.variants[cur], st = PART.step, s = p.s, t = p.t, A = p.A, E = p.E;
+  if (model) pivot.remove(model);
+  model = new THREE.Group();
+  const steel = new THREE.MeshStandardMaterial({color:0xb4bcc4, metalness:.55, roughness:.42});
+  const weld = new THREE.MeshStandardMaterial({color:0xd27a22, metalness:.25, roughness:.7});
+  const oe = [A+E*C45, -E*C45], ie = [oe[0]-s*C45, oe[1]-s*C45], mx = A - s*(2*C45-1)*-1;
+  const mxx = A + s*(1-2*C45);
+  const sh = new THREE.Shape();
+  sh.moveTo(0,-10); sh.lineTo(0,0); sh.lineTo(A,0); sh.lineTo(oe[0],oe[1]); sh.lineTo(ie[0],ie[1]); sh.lineTo(mxx,-s); sh.lineTo(10,-s); sh.lineTo(0,-s+10);
+  const md = (t+s)/2;
+  const hp1 = new THREE.Path(); hp1.absarc(p.C,-md,p.D1/2,0,Math.PI*2,true); sh.holes.push(hp1);
+  const dF = E-p.F, c2 = [A+dF*C45 - C45*md, -dF*C45 - C45*md];
+  const hp2 = new THREE.Path(); hp2.absarc(c2[0],c2[1],p.D2/2,0,Math.PI*2,true); sh.holes.push(hp2);
+  const web = new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:t,bevelEnabled:false,curveSegments:28}),steel);
+  model.add(web);
+  const fl = new THREE.Mesh(new THREE.BoxGeometry(A,t,s),steel); fl.position.set(A/2,-t/2,s/2); model.add(fl);
+  const g2 = new THREE.BoxGeometry(E,t,s); g2.translate(E/2,-t/2,s/2);
+  const fl2 = new THREE.Mesh(g2,steel); fl2.position.set(A,0,0); fl2.rotation.z=-Math.PI/4; model.add(fl2);
+  const wl = Math.hypot(A-mxx, s), wb = new THREE.Mesh(new THREE.BoxGeometry(5,wl,4),weld);
+  wb.position.set((A+mxx)/2,-s/2,-1.2); wb.rotation.z = Math.atan2(A-mxx, s); model.add(wb);
+  const wt = new THREE.Mesh(new THREE.BoxGeometry(6,4,s),weld); wt.position.set(A+1,1,s/2); wt.rotation.z=-Math.PI/8; model.add(wt);
+  const rad = st.angle*Math.PI/180, run = st.leg*Math.cos(rad), rise = st.leg*Math.sin(rad), zc = s/2, B = p.B;
+  const seg = (len,x,y,rot)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(len,st.t,st.w),steel);m.position.set(x,y,zc);m.rotation.z=rot;model.add(m)};
+  seg(st.foot, B-run-st.foot/2, st.t/2, 0);
+  seg(st.foot, B+run+st.foot/2, st.t/2, 0);
+  seg(st.leg+st.t*.6, B-run/2, rise/2+st.t/2, rad);
+  seg(st.leg+st.t*.6, B+run/2, rise/2+st.t/2, -rad);
+  [[B-run-st.foot-1],[B+run+st.foot+1]].forEach(([x])=>{const w=new THREE.Mesh(new THREE.BoxGeometry(4,4,st.w+4),weld);w.position.set(x,1.5,zc);model.add(w)});
+  pivot.add(model);
+  view(lastView);
+}
+let lastView = "iso";
+function view(v){
+  lastView = v;
+  if (!R || !model) return;
+  const p = PART.variants[cur], L = p.A + p.E*C45;
+  const T = { iso:[L/2,-p.s/2,p.s/2,.5,-.55,L*2.1], side:[L/2,-p.s/2,0,0,0,L*1.9], top:[L/2,0,p.s/2,Math.PI/2,0,L*1.9],
+    end:[p.A+30,-50,p.s/2,.35,-.9,420], step:[p.B,40,p.s/2,.35,-.7,380], hole:[60,-p.s/2,p.s/2,.25,-.35,320] }[v];
+  model.position.set(-T[0],-T[1],-T[2]); rx=T[3]; ry=T[4]; dist=T[5]; render();
+}
+function render(){ if(!R||!model)return; pivot.rotation.set(rx,ry,0); cam.position.set(0,0,dist); cam.lookAt(0,0,0); R.render(scene,cam); }
+
+function setVariant(i){
+  cur = i;
+  PART.variants.forEach((_,j)=>$("var"+j).setAttribute("aria-pressed", j===i));
+  drawElev(); drawDetail(); tables(); build3d();
+}
+header(); init3d(); setVariant(0); size();
+</script>
+
+</body></html>

@@ -1,0 +1,1639 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>3237 การประกอบคอน 33 kV 3–4 วงจร</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting sheet — title strip, variant switch, 2D elevation, details + 3D, tables, title block */
+:root{
+  --paper:#eef1f4; --sheet:#ffffff; --ink:#18212b; --muted:#5a6573; --line:#cdd4dc; --soft:#f5f7f9;
+  --accent:#7a1e6b; --accent-bg:#f6e9f3; --dim:#245f93; --weld:#c2620f; --steel:#9aa5b1; --hole:#ffffff;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:1080px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--ink);display:flex;flex-direction:column}
+.blk{padding:20px 24px;border-top:1px solid var(--line);min-width:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-family:var(--f-body);font-weight:400;font-size:13px;color:var(--muted)}
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;padding:20px 24px;align-items:start}
+.eyebrow{font-size:13px;color:var(--muted)}
+.head h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,4vw,34px);line-height:1.2;margin:4px 0 2px;text-wrap:balance}
+.head .en{font-family:var(--f-mono);font-size:16px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.asm{border:1.5px solid var(--ink);padding:8px 14px;text-align:right}
+.asm .n{font-family:var(--f-display);font-size:34px;font-weight:600;line-height:1;color:var(--accent)}
+.asm .l{font-size:12px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--soft);border-top:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+.seg button{font:500 14px var(--f-body);background:transparent;color:var(--ink);border:0;padding:7px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.seg button:focus-visible,.btn:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+.spec{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto}
+.scroll svg{display:block;min-width:720px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--ink)}
+svg .th{font-family:var(--f-body)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+.two>.blk{border-top:0}
+.two>.blk+.blk{border-left:1px solid var(--line)}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}.two>.blk+.blk{border-left:0;border-top:1px solid var(--line)}.head{grid-template-columns:1fr}.asm{justify-self:start;text-align:left}}
+#v3d{height:360px;border:1px solid var(--line);background:var(--soft);touch-action:none;cursor:grab;position:relative;border-radius:4px;overflow:hidden}
+#v3d canvas{display:block}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.btn{font:13px var(--f-body);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:center;vertical-align:middle}
+th{font-weight:500;background:var(--soft);font-size:13px}
+td.l,th.l{text-align:left}
+tr.on td{background:var(--accent-bg)}
+td.mono{font-family:var(--f-mono)}
+tfoot td{font-weight:600}
+.notes{margin:0;padding-left:1.3em;max-width:72ch;display:grid;gap:6px}
+.e{display:block;font-family:var(--f-mono);font-size:.78em;font-weight:400;color:var(--muted);letter-spacing:.02em;line-height:1.35}
+h2 .e{display:inline;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.notes li .e{margin-top:1px}
+.btn .e{font-size:10px}
+.tag{display:inline-block;font-size:11px;font-family:var(--f-mono);padding:1px 6px;border-radius:3px;background:var(--accent-bg);color:var(--accent);vertical-align:1px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px}
+.tb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1.5px solid var(--ink);font-size:13px}
+.tb>div{padding:8px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.tb .k{display:block;font-size:11px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+.tb .w2{grid-column:span 2}.tb .w3{grid-column:span 3}.tb .w6{grid-column:span 6;text-align:center;font-family:var(--f-display);font-weight:600;letter-spacing:.06em}
+@media (max-width:640px){.tb{grid-template-columns:repeat(2,minmax(0,1fr))}.tb .w2,.tb .w3,.tb .w6{grid-column:span 2}}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.links .btn{text-decoration:none;display:inline-flex;flex-direction:column;line-height:1.25;font-weight:500;border-color:var(--ink)}
+.links .btn.pri{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.links .btn.pri .e{color:inherit;opacity:.8}
+</style>
+
+<div class="sheet">
+  <header class="head">
+    <div>
+      <div class="eyebrow" id="grp"></div>
+      <h1 id="nameTh"></h1>
+      <div class="en" id="nameEn"></div>
+    </div>
+    <div class="asm"><div class="l">การประกอบเลขที่ · ASSEMBLY NO.</div><div class="n" id="asmNo"></div><div class="l" id="asmOld"></div></div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="varSeg" role="group" aria-label="เลือกรุ่น / Select variant"></div>
+    <div class="spec" id="varSpec"></div>
+    <div class="links">
+      <a class="btn pri" href="../pdf/781e173941d5.pdf" target="_blank" rel="noopener">เปิดแบบต้นฉบับ PDF<span class="e">Original drawing</span></a>
+      <a class="btn" href="../index.html" target="_blank" rel="noopener">คลังแบบทั้งหมด<span class="e">Drawing library</span></a>
+    </div>
+  </div>
+
+  <section class="blk">
+    <h2>รูปรวม รูปด้านหน้า และรูปด้านข้างหัวเสา <span class="e">Overall elevation, front view (along the main line) and side view (across the line) of the head</span></h2><div class="hint" style="margin:-6px 0 10px">รูปรวม (ซ้าย) และหัวเสา (กลาง ขวา) ใช้มาตราส่วนต่างกัน · เลือกแบบ I–VI ที่ปุ่มด้านบน · เลขในวงกลม = ลำดับในบัญชีวัสดุ (㉛–㊿ ตีความ เพราะแผ่นบัญชีวัสดุ 10–11 ไม่มีใน PDF) · เส้นประยาว = สายยึดโยง · เส้นจาง = โครงสร้างเดิม (แบบ VI) · * ค่าที่ไม่ได้ระบุในแบบ<span class="e">Overall (left) and head views (centre, right) are at different scales · pick type I–VI above · circled numbers = BOM items (31–50 inferred: BOM sheets 10–11 are missing from the PDF) · long-dash = guys · faded = existing structure (type VI) · * not printed on the drawing</span></div>
+    <div class="scroll"><svg id="elev" viewBox="0 0 1010 920" role="img" aria-label="รูปรวม รูปด้านหน้า และรูปด้านข้างหัวเสา"></svg></div>
+    <div class="legend"><span><i style="background:var(--ink)"></i>เสา คอน ลูกถ้วย อุปกรณ์ · Pole, arms, insulators, hardware</span><span><i style="background:var(--dim)"></i>เส้นบอกระยะ / Dimension</span><span><i style="background:var(--accent)"></i>ส่วนที่ขยาย / การประกอบย่อย · Enlarged part / sub-assembly</span><span><i style="background:var(--muted)"></i>เส้นประ = ฝังดิน / ซ่อน / ของเดิม · Dashed = buried / hidden / existing</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>รูปตัด / แปลน รายละเอียด และการใช้งาน <span class="e">Section / plan, detail A + earthing (I, II), items 35 / 34 (IV, VI), application with guys (III–V)</span></h2>
+      <div class="scroll"><svg id="detail" viewBox="0 0 560 1000" role="img" aria-label="รูปตัด / แปลน รายละเอียด และการใช้งาน" style="min-width:420px"></svg></div>
+    </section>
+    <section class="blk">
+      <h2>โมเดล 3 มิติ <span class="e">3D model</span></h2>
+      <div id="v3d" aria-label="โมเดล 3 มิติ หมุนได้"></div>
+      <div class="tools"><button class="btn" data-v="iso">มุมเอียง<span class="e">Isometric</span></button><button class="btn" data-v="full">ทั้งต้น<span class="e">Whole pole</span></button><button class="btn" data-v="head">หัวเสา<span class="e">Head</span></button><button class="btn" data-v="front">ด้านหน้า<span class="e">Front (along line)</span></button><button class="btn" data-v="side">ด้านข้าง<span class="e">Side (across line)</span></button></div>
+      <div class="hint">ลากเพื่อหมุน เลื่อนลูกกลิ้งเพื่อซูม<span class="e">Drag to rotate, scroll to zoom</span></div>
+    </section>
+  </div>
+
+  <section class="blk">
+    <h2>ตารางมิติ <span class="e">Dimensions · mm</span></h2>
+    <div class="scroll"><table id="dimTbl"></table></div>
+  </section>
+
+  <section class="blk">
+    <h2>รายการวัสดุ <span class="e">Bill of materials · per set</span></h2>
+    <div class="scroll"><table id="bomTbl"></table></div>
+    <div class="hint">รายการ ①–㉚ และจำนวนตามบัญชีวัสดุในแบบ แผ่นที่ 8–9 (ช่อง I–VI) · รายการ ㉛–㊿ อยู่ในแผ่นที่ 10–11 ซึ่งไม่มีใน PDF จึงตีความจากรูป (*) หรือไม่ทราบ (?) · วัสดุเลขที่ใหม่ (เลขเดิมในวงเล็บ) · น้ำหนักเฉพาะเหล็กรูปพรรณ (ค่าทั่วไป *)<span class="e">Items 1–30 and quantities as the drawing's BOM on sheets 8–9 (columns I–VI) · items 31–50 are on sheets 10–11, missing from the PDF: inferred from the views (*) or unknown (?) · new mat. no. (old in brackets) · weight for structural steel only (typical kg/m *)</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>หมายเหตุ และขั้นตอนการประกอบ <span class="e">Notes and assembly sequence</span></h2>
+      <ol class="notes" id="fab"></ol>
+    </section>
+    <section class="blk">
+      <h2>ค่าที่ต้องยืนยัน <span class="e">To be verified</span></h2><div class="hint" style="margin:-6px 0 10px">แบบต้นฉบับไม่ได้ระบุ หรืออ่านจากภาพ<span class="e">Not stated on the original, or read from the picture</span></div>
+      <ol class="notes" id="assume"></ol>
+    </section>
+  </div>
+
+  <footer class="tb" id="tb"></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =====================================================================
+   tl115/lib.js — คลังฟังก์ชันร่วม โครงสร้างเสาระบบ 115 kV (ชุด A5200 / A5250)
+   Shared library for PEA 115 kV pole-structure assembly pages.
+   build.sh concatenates:  lib.js + <NAME>.part.js  →  parts/<NAME>.js
+
+   UNITS  mm everywhere.  "z" in data = level above ground line (GL = 0, negative = buried).
+   3D     x = across the line (arms point +x unless dir = -1), y = up (0 = GL), z = along the line.
+   SVG    helpers take a view context V = tlView(...) : V.X(mm offset from pole axis) → px,
+          V.Y(level mm) → px, V.k = px per mm.  Helpers return SVG strings.
+   Uses _body.html globals at call time: dl, ext, cl, lead, fmt, MK, MAT, AR, THREE.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   0. DATA CONVENTIONS (see BRIEF_TL.md)
+   POLE  P = { top, bot, wTop, wBot, dTop, dBot, sides:'rect'|'round'|'octagon' }
+         top/bot = levels of pole top / butt; w = width across the line (x), d = depth along the line (z)
+   STRING S = { discs, pitch, D, hwTop, hwBot }   (suspension / dead-end insulator string)
+   ARM   A = { z, dir:+1|-1, root, len, h, b, t, brace:{rise, x}, eye, holes }
+         z = arm centre-line level; root = arm length behind the pole axis (bolt hole at axis);
+         brace.rise = brace-to-pole bolt above arm; brace.x = brace-to-arm bolt from pole axis;
+         eye = eye-bolt / string point measured from pole axis.
+   ------------------------------------------------------------------- */
+const TL_STRING = { discs: 7, pitch: 146, D: 254, hwTop: 150, hwBot: 180 };
+const tlStrLen = S => S.hwTop + S.discs * S.pitch + S.hwBot;
+const tlR = v => Math.round(v * 10) / 10;
+
+/* ---------- 1. SVG basics ---------- */
+/* View context: px0 = px of pole axis, py0 = px of level zTop, k = px/mm */
+function tlView(px0, py0, zTop, k){ return { X: v => tlR(px0 + v * k), Y: z => tlR(py0 + (zTop - z) * k), k, px0, py0, zTop }; }
+/* Panel title: Thai (bold) with English below */
+function tlTitle(x, y, th, en, anchor){ const a = anchor || "start";
+  return `<text class="th" x="${x}" y="${y}" font-size="13" font-weight="600" text-anchor="${a}">${th}</text>` + (en ? `<text x="${x}" y="${y + 15}" font-size="10.5" text-anchor="${a}" style="fill:var(--muted)">${en}</text>` : ""); }
+/* Two-line label (Thai + English) */
+function tlText(x, y, th, en, anchor, fs){ const a = anchor || "start", f = fs || 12;
+  return `<text class="th" x="${x}" y="${y}" font-size="${f}" text-anchor="${a}">${th}</text>` + (en ? `<text x="${x}" y="${y + f + 2}" font-size="${f - 2}" text-anchor="${a}" style="fill:var(--muted)">${en}</text>` : ""); }
+/* Item balloon ① … (BOM item number) */
+function tlBalloon(x, y, n, r){ r = r || 10;
+  return `<circle cx="${x}" cy="${y}" r="${r}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1"/><text x="${x}" y="${y + 4}" font-size="${String(n).length > 1 ? 10 : 11}" text-anchor="middle">${n}</text>`; }
+/* Row of touching balloons, e.g. ⑤⑨ — dir +1 to the right, -1 to the left; returns svg */
+function tlBalloons(x, y, ns, dir, r){ r = r || 10; dir = dir || 1; const st = 2 * r + 1, m = ns.length - 1;
+  return ns.map((n, i) => tlBalloon(dir > 0 ? x + i * st : x - (m - i) * st, y, n, r)).join(""); }   /* dir −1: row ends at x, still reads left → right */
+/* Leader from a point (px,py) on the part to a balloon row whose first balloon is centred at (x,y) */
+function tlCallout(px, py, x, y, ns, r){ r = r || 10; const dir = x >= px ? 1 : -1;
+  return `<line x1="${px}" y1="${py}" x2="${x - dir * r}" y2="${y}" stroke="var(--ink)" stroke-width=".7"/><circle cx="${px}" cy="${py}" r="1.8" fill="var(--ink)"/>` + tlBalloons(x, y, [].concat(ns), dir, r); }
+/* Reference tag box for a sub-assembly drawing (D-11C …): box with code, Thai/English name under it */
+function tlTag(x, y, code, th, en, anchor){ const a = anchor || "start", w = code.length * 7.6 + 14, x0 = a === "end" ? x - w : x;
+  const tx = a === "end" ? x : x0;
+  return `<rect x="${x0}" y="${y - 13}" width="${w}" height="19" rx="2" fill="var(--sheet)" stroke="var(--accent)" stroke-width="1.2"/><text x="${x0 + w / 2}" y="${y + 1}" font-size="12" font-weight="600" text-anchor="middle" style="fill:var(--accent)">${code}</text>` +
+    (th ? `<text class="th" x="${tx}" y="${y + 21}" font-size="11" text-anchor="${a}" style="fill:var(--muted)">${th}</text>` : "") +
+    (en ? `<text x="${tx}" y="${y + 34}" font-size="9.5" text-anchor="${a}" style="fill:var(--muted)">${en}</text>` : ""); }
+/* Tag with a leader from point (px,py) */
+function tlTagLead(px, py, x, y, code, th, en, anchor){ const a = anchor || (x >= px ? "start" : "end");
+  return `<line x1="${px}" y1="${py}" x2="${x}" y2="${y - 3.5}" stroke="var(--accent)" stroke-width=".8"/><circle cx="${px}" cy="${py}" r="1.8" fill="var(--accent)"/>` + tlTag(x, y, code, th, en, a); }
+/* Ground line with hatching; skip = [x1,x2] px gap (e.g. where the pole passes) */
+function tlGround(x1, x2, y, skip){
+  let s = skip ? `<line x1="${x1}" y1="${y}" x2="${skip[0]}" y2="${y}" stroke="var(--ink)" stroke-width="1.2"/><line x1="${skip[1]}" y1="${y}" x2="${x2}" y2="${y}" stroke="var(--ink)" stroke-width="1.2"/>`
+               : `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="var(--ink)" stroke-width="1.2"/>`;
+  for (let x = x1 + 6; x < x2; x += 8){ if (skip && x > skip[0] - 1 && x < skip[1] + 7) continue; s += `<line x1="${x}" y1="${y + 1}" x2="${x - 5}" y2="${y + 6}" stroke="var(--muted)" stroke-width=".7"/>`; }
+  return s; }
+/* Wavy cut line across a member (x1..x2 px) — the drawing's "broken" pole end */
+function tlCutH(x1, x2, y){ const n = Math.max(2, Math.round((x2 - x1) / 6)), d = (x2 - x1) / n; let p = `M${x1} ${y}`;
+  for (let i = 0; i < n; i++) p += ` q${d / 2} ${i % 2 ? 4 : -4} ${d} 0`;
+  return `<path d="${p}" fill="none" stroke="var(--ink)" stroke-width="1"/>`; }
+/* Vertical dimension chain at px x through levels zs (top → bottom). o.side -1: text left (default), +1 right;
+   o.extTo: px x to draw dashed extension lines to; o.star: append * ; o.labels: override texts */
+function tlChainV(x, zs, Y, o){ o = o || {}; const sd = o.side || -1; let s = "";
+  if (o.extTo != null) zs.forEach(z => { s += ext(Math.min(x, o.extTo) + (o.extTo < x ? 0 : 4), Y(z), Math.max(x, o.extTo) - (o.extTo < x ? 4 : 0), Y(z)); });
+  for (let i = 0; i < zs.length - 1; i++){ const a = Y(zs[i]), b = Y(zs[i + 1]), h = Math.abs(b - a);
+    s += dl(x, a, x, b, "", 0, 0);
+    const L = o.labels ? o.labels[i] : fmt(Math.abs(zs[i] - zs[i + 1])) + (o.star ? "*" : "");
+    const ty = h < 15 ? (i === 0 ? Math.min(a, b) - 4 : Math.max(a, b) + 12) : (a + b) / 2 + 4;
+    if (L) s += `<text x="${x + sd * 5}" y="${ty}" font-size="12" text-anchor="${sd < 0 ? "end" : "start"}" style="fill:var(--dim)">${L}</text>`; }
+  zs.forEach(z => { s += `<line x1="${x - 6}" y1="${Y(z)}" x2="${x + 6}" y2="${Y(z)}" stroke="var(--dim)" stroke-width=".9"/>`; });
+  return s; }
+/* Horizontal chain at px y through positions xs (mm, left → right) mapped with X; text above (o.below to put under) */
+function tlChainH(xs, y, X, o){ o = o || {}; let s = "";
+  if (o.extFrom != null) xs.forEach(v => { s += ext(X(v), o.extFrom, X(v), y + 5); });
+  for (let i = 0; i < xs.length - 1; i++){ const a = X(xs[i]), b = X(xs[i + 1]), w = b - a;
+    s += dl(a, y, b, y, "", 0, 0);
+    const L = o.labels ? o.labels[i] : fmt(xs[i + 1] - xs[i]) + (o.star ? "*" : "");
+    const tx = w < 26 ? (i === 0 ? a - 4 : b + 4) : (a + b) / 2, an = w < 26 ? (i === 0 ? "end" : "start") : "middle";
+    if (L) s += `<text x="${tx}" y="${o.below ? y + 15 : y - 5}" font-size="12" text-anchor="${an}" style="fill:var(--dim)">${L}</text>`; }
+  return s; }
+/* Vertical overall dimension with the value written horizontally on a sheet-coloured patch */
+function tlTotalV(x, y1, y2, label){ const m = (y1 + y2) / 2, w = String(label).length * 7.6 + 8;
+  return dl(x, y1, x, y2, "", 0, 0) + `<rect x="${x - w / 2}" y="${m - 10}" width="${w}" height="18" fill="var(--sheet)"/><text x="${x}" y="${m + 4}" font-size="13" font-weight="500" text-anchor="middle" style="fill:var(--dim)">${label}</text>`; }
+
+/* ---------- 2. SVG members ---------- */
+/* Pole half-width at level z.  axis 'w' = across line (side view), 'd' = along line (front view) */
+function tlPoleHalf(P, z, axis){ const f = (P.top - z) / (P.top - P.bot), a = axis === "d" ? [P.dTop, P.dBot] : [P.wTop, P.wBot]; return (a[0] + (a[1] - a[0]) * f) / 2; }
+/* Tapered pole outline between levels from..to (from > to). o.axis 'w'|'d'; o.cut: wavy cut at bottom; o.hidden: [[z1,z2]…] dashed ranges (buried) */
+function tlPoleSVG(V, P, o){ o = o || {}; const ax = o.axis || "w", z1 = o.from ?? P.top, z0 = o.to ?? P.bot;
+  const hw = z => tlPoleHalf(P, z, ax) * V.k;
+  const xl = z => tlR(V.px0 - hw(z)), xr = z => tlR(V.px0 + hw(z));
+  let s = `<path d="M${xl(z1)} ${V.Y(z1)} L${xr(z1)} ${V.Y(z1)} L${xr(z0)} ${V.Y(z0)} L${xl(z0)} ${V.Y(z0)} Z" fill="var(--sheet)" stroke="none"/>`;
+  const gl = o.gl ?? -1e9;   /* below this level: dashed (buried) */
+  const seg = (za, zb, dash) => `<line x1="${xl(za)}" y1="${V.Y(za)}" x2="${xl(zb)}" y2="${V.Y(zb)}" stroke="var(--ink)" stroke-width="${dash ? .9 : 1.5}" ${dash ? 'stroke-dasharray="5 3"' : ""}/><line x1="${xr(za)}" y1="${V.Y(za)}" x2="${xr(zb)}" y2="${V.Y(zb)}" stroke="var(--ink)" stroke-width="${dash ? .9 : 1.5}" ${dash ? 'stroke-dasharray="5 3"' : ""}/>`;
+  if (z0 < gl && z1 > gl){ s += seg(z1, gl, false) + seg(gl, z0, true); } else s += seg(z1, z0, z1 <= gl);
+  if (z1 >= P.top - 1) s += `<line x1="${xl(z1)}" y1="${V.Y(z1)}" x2="${xr(z1)}" y2="${V.Y(z1)}" stroke="var(--ink)" stroke-width="1.5"/>`;
+  s += o.cut ? tlCutH(xl(z0), xr(z0), V.Y(z0)) : `<line x1="${xl(z0)}" y1="${V.Y(z0)}" x2="${xr(z0)}" y2="${V.Y(z0)}" stroke="var(--ink)" stroke-width="${z0 < gl ? .9 : 1.5}" ${z0 < gl ? 'stroke-dasharray="5 3"' : ""}/>`;
+  if (o.axisLine) s += cl(V.px0, V.Y(z1) - 10, V.px0, V.Y(z0) + 10);
+  return s; }
+/* Simplified foundation block (schematic for D-10A etc.) F = {w, top, bot} */
+function tlFoundationSVG(V, F){ return `<rect x="${V.X(-F.w / 2)}" y="${V.Y(F.top)}" width="${tlR(F.w * V.k)}" height="${tlR((F.top - F.bot) * V.k)}" fill="var(--soft)" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/>`; }
+
+/* Insulator string glyph hanging DOWN from (x,y) px at scale k (px/mm). Discs drawn as bells, clamp + conductor dot at the bottom */
+function tlInsString(x, y, S, k, o){ S = Object.assign({}, TL_STRING, S); o = o || {};
+  const R = Math.max(2.5, S.D / 2 * k), p = S.pitch * k, y0 = y + S.hwTop * k, L = tlStrLen(S) * k;
+  let s = `<line x1="${x}" y1="${y}" x2="${x}" y2="${y + L}" stroke="var(--ink)" stroke-width="${k > .06 ? 1.6 : 1.1}"/>`;
+  for (let i = 0; i < S.discs; i++){ const yd = tlR(y0 + i * p + p * .2), hh = Math.max(1.6, p * .5);
+    s += `<path d="M${tlR(x - R)} ${tlR(yd + hh)} L${tlR(x - R * .28)} ${yd} L${tlR(x + R * .28)} ${yd} L${tlR(x + R)} ${tlR(yd + hh)} Z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="${k > .06 ? 1 : .7}"/>`; }
+  const yb = tlR(y + L), c = Math.max(1.6, 14 * k);
+  if (o.clamp !== false) s += `<path d="M${tlR(x - c * 2.2)} ${tlR(yb - c * .4)} Q${x} ${tlR(yb + c * 1.8)} ${tlR(x + c * 2.2)} ${tlR(yb - c * .4)}" fill="none" stroke="var(--ink)" stroke-width="1.1"/><circle cx="${x}" cy="${yb}" r="${tlR(c)}" fill="var(--ink)"/>`;
+  return s; }
+/* Dead-end (strain) string glyph: same glyph rotated, running +x (dir 1) or -x (dir -1) from (x,y) */
+function tlDeadendString(x, y, S, k, dir){ return `<g transform="rotate(${(dir || 1) > 0 ? -90 : 90} ${x} ${y})">${tlInsString(x, y, S, k)}</g>`; }
+/* Conductor seen in front view (line runs left-right): heavy line with S-break ends */
+function tlConductorH(x1, x2, y, o){ o = o || {}; const w = o.w || 2.2, col = o.col || "var(--ink)";
+  const sb = e => `<path d="M${e} ${y - 6} C${e + 6} ${y - 6} ${e - 6} ${y + 6} ${e} ${y + 6}" fill="none" stroke="${col}" stroke-width="1"/>`;
+  return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="${w}"/>` + sb(x1) + sb(x2); }
+
+/* Crossarm in SIDE view (arm seen full length) + flat brace up to the pole. Returns svg.
+   o.holes: draw small hole marks at given mm-from-axis positions; o.thin: min px height */
+function tlArmSide(V, A, o){ o = o || {}; const d = A.dir || 1, k = V.k;
+  const xa = V.X(-d * A.root), xb = V.X(d * (A.len - A.root)), hp = Math.max(o.thin || 2.4, A.h * k), yc = V.Y(A.z);
+  let s = `<rect x="${Math.min(xa, xb)}" y="${tlR(yc - hp / 2)}" width="${tlR(Math.abs(xb - xa))}" height="${tlR(hp)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="${k > .06 ? 1.3 : 1}"/>`;
+  if (A.h * k > 5) s += `<line x1="${Math.min(xa, xb)}" y1="${tlR(yc - hp / 2 + 7.5 * k + 1)}" x2="${Math.max(xa, xb)}" y2="${tlR(yc - hp / 2 + 7.5 * k + 1)}" stroke="var(--ink)" stroke-width=".5"/>`;
+  if (A.brace) s += `<line x1="${V.X(0)}" y1="${V.Y(A.z + A.brace.rise)}" x2="${V.X(d * A.brace.x)}" y2="${tlR(yc - hp / 2)}" stroke="var(--ink)" stroke-width="${k > .06 ? 2.6 : 1.6}" stroke-linecap="round"/>`;
+  if (o.holes) [0, ...(A.brace ? [A.brace.x] : [])].forEach(v => { s += `<circle cx="${V.X(d * v)}" cy="${yc}" r="${Math.max(1.2, 9 * k)}" fill="var(--hole)" stroke="var(--ink)" stroke-width=".8"/>`; });
+  return s; }
+/* Crossarm in FRONT view (arm end-on, on pole face side fs = -1 left / +1 right): channel "C" end with web on the pole face */
+function tlArmFront(V, A, P, fs){ fs = fs || -1; const k = V.k, f = tlPoleHalf(P, A.z, "d") * k, yc = V.Y(A.z), h = A.h * k, b = A.b * k, t = Math.max(1, (A.t || 5) * k * 2);
+  const xw = V.px0 + fs * f, xf = xw + fs * b;
+  return `<path d="M${tlR(xf)} ${tlR(yc - h / 2)} H${tlR(xw)} V${tlR(yc + h / 2)} H${tlR(xf)} V${tlR(yc + h / 2 - t)} H${tlR(xw + fs * t)} V${tlR(yc - h / 2 + t)} H${tlR(xf)} Z" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>`; }
+/* x offset (mm from pole axis) of the string point in FRONT view: pole face + half flange */
+const tlArmFrontEye = (P, A) => tlPoleHalf(P, A.z, "d") + (A.b || 50) / 2;
+/* Through-bolt across the pole shown dashed (front/side view) at level z, from face to face, with nut ends */
+function tlBoltThru(V, P, z, axis, ext0){ const hw = tlPoleHalf(P, z, axis) * V.k, y = V.Y(z), e = ext0 || 4;
+  return `<line x1="${tlR(V.px0 - hw - e)}" y1="${y}" x2="${tlR(V.px0 + hw + e)}" y2="${y}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 2"/><rect x="${tlR(V.px0 - hw - e - 2)}" y="${y - 3}" width="3" height="6" fill="var(--ink)"/><rect x="${tlR(V.px0 + hw + e - 1)}" y="${y - 3}" width="3" height="6" fill="var(--ink)"/>`; }
+/* OHGW bayonet (angle) bolted on the pole face side fs (-1 left / +1 right) in SIDE view; B = {zBot, len, a}
+   In FRONT view pass fs = 0 to centre it on the pole axis. Returns svg; top point at V.Y(B.zBot+B.len) */
+function tlBayonet(V, P, B, fs){ const k = V.k, a = Math.max(2.6, B.a * k), zt = B.zBot + B.len;
+  const x = fs ? V.px0 + fs * tlPoleHalf(P, B.zBot, "w") * k : V.px0, x0 = fs ? (fs < 0 ? x - a : x) : x - a / 2;
+  return `<rect x="${tlR(x0)}" y="${V.Y(zt)}" width="${tlR(a)}" height="${tlR(B.len * k)}" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>`
+    + `<circle cx="${tlR(x0 + a / 2)}" cy="${tlR(V.Y(zt) + Math.max(3, 60 * k))}" r="${tlR(Math.max(2, 25 * k))}" fill="var(--ink)"/>`; }
+/* Distribution underbuild shown dashed on many 115 kV drawings (not in the BOM): arm + pins at z, optional secondary rack */
+function tlGhostUnderbuild(V, P, G){ const k = V.k, d = G.dir || 1, dash = 'stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3" fill="none"'; let s = "";
+  const y = V.Y(G.z), xa = V.X(-d * (G.root || 100)), xb = V.X(d * (G.len - (G.root || 100)));
+  s += `<rect x="${Math.min(xa, xb)}" y="${tlR(y - 2)}" width="${tlR(Math.abs(xb - xa))}" height="4" ${dash}/>`;
+  (G.pins || []).forEach(v => { const px = V.X(d * v); s += `<path d="M${px} ${y - 2} V${y - 9} M${px - 4} ${y - 9} H${px + 4} M${px - 3} ${y - 12} H${px + 3}" ${dash}/>`; });
+  if (G.brace) s += `<line x1="${V.X(0)}" y1="${V.Y(G.z - G.brace.drop)}" x2="${V.X(d * G.brace.x)}" y2="${y + 2}" ${dash}/>`;
+  if (G.rack) { const hw = tlPoleHalf(P, G.rack.top, "w") * k, rx = V.px0 - d * hw; s += `<rect x="${tlR(d > 0 ? rx - 5 : rx)}" y="${V.Y(G.rack.top)}" width="5" height="${tlR(G.rack.len * k)}" ${dash}/>`; }
+  return s; }
+
+/* ---------- 3. SVG item details ---------- */
+/* Channel item detail (e.g. crossarm): top view (flange holes), front view (web holes), hole chain, overall length, section.
+   o = {x0,y0, L,h,b,t, web:[{x,d}], flange:[{x,d}], k (along), kc (cross), sec:true}. Returns {svg, w, h} */
+function tlChannelItem(o){ const { x0, y0, L, h, b } = o, k = o.k, kc = o.kc || k, X = v => tlR(x0 + v * k);
+  let s = "", y = y0;
+  s += ext(X(0), y - 6, X(0), y + 8) + ext(X(L), y - 6, X(L), y + 8) + dl(X(0), y, X(L), y, "", 0, 0) + `<rect x="${X(L / 2) - 26}" y="${y - 9}" width="52" height="16" fill="var(--sheet)"/><text x="${X(L / 2)}" y="${y + 4}" font-size="12.5" font-weight="500" text-anchor="middle" style="fill:var(--dim)">${fmt(L)}</text>`;
+  y += 14; const bt = b * kc;
+  s += `<rect x="${X(0)}" y="${y}" width="${tlR(L * k)}" height="${tlR(bt)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.4"/><line x1="${X(0)}" y1="${tlR(y + (o.t || 5) * kc + 1)}" x2="${X(L)}" y2="${tlR(y + (o.t || 5) * kc + 1)}" stroke="var(--ink)" stroke-width=".7" stroke-dasharray="5 3"/>`;
+  (o.web || []).forEach(hh => { s += `<line x1="${X(hh.x)}" y1="${y - 3}" x2="${X(hh.x)}" y2="${tlR(y + bt * .5)}" stroke="var(--ink)" stroke-width=".7" stroke-dasharray="3 2"/>`; });
+  const yf = tlR(y + bt * .55);
+  (o.flange || []).forEach(hh => { s += `<circle cx="${X(hh.x)}" cy="${yf}" r="${tlR(Math.max(2.4, hh.d * kc / 2))}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1.2"/>`; });
+  const fl = o.flange || [];
+  if (fl.length){ const yl = tlR(y + bt + 16), d0 = fl[0].d; s += `<path d="M${X(fl[0].x)} ${yf + 3} V${yl} H${X(fl[fl.length - 1].x)} V${yf + 3}" fill="none" stroke="var(--muted)" stroke-width=".8"/><rect x="${tlR((X(fl[0].x) + X(fl[fl.length - 1].x)) / 2 - 22)}" y="${yl - 8}" width="44" height="15" fill="var(--sheet)"/><text x="${tlR((X(fl[0].x) + X(fl[fl.length - 1].x)) / 2)}" y="${yl + 4}" font-size="12" text-anchor="middle">Ø${d0}</text>`; }
+  y = tlR(y + bt + 34); const ht = h * kc;
+  s += `<rect x="${X(0)}" y="${y}" width="${tlR(L * k)}" height="${tlR(ht)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.4"/>`;
+  [7.5, h - 7.5].forEach(v => { s += `<line x1="${X(0)}" y1="${tlR(y + v * kc)}" x2="${X(L)}" y2="${tlR(y + v * kc)}" stroke="var(--ink)" stroke-width=".5"/>`; });
+  const yw = tlR(y + ht / 2);
+  (o.web || []).forEach((hh, i) => { s += `<circle cx="${X(hh.x)}" cy="${yw}" r="${tlR(Math.max(2.4, hh.d * kc / 2))}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1.2"/>`;
+    s += `<path d="M${X(hh.x)} ${yw - 5} V${y - 10} H${X(hh.x) + 18}" fill="none" stroke="var(--muted)" stroke-width=".8"/><text x="${X(hh.x) + 21}" y="${y - 6}" font-size="12">Ø${hh.d}</text>`; });
+  (o.flange || []).forEach(hh => { s += `<line x1="${X(hh.x)}" y1="${y - 3}" x2="${X(hh.x)}" y2="${tlR(y + ht + 3)}" stroke="var(--ink)" stroke-width=".7" stroke-dasharray="3 2"/>`; });
+  const yc = tlR(y + ht + 22), pts = [0, ...[...(o.web || []), ...(o.flange || [])].map(v => v.x).sort((a, b) => a - b), L];
+  s += tlChainH(pts, yc, X, { extFrom: y + ht + 3, below: false });
+  let w = L * k;
+  if (o.sec !== false){ const sx = X(L) + 52, sy = y - 4, sk = Math.min(ht / h * 1.0, .9), H = h * sk, B = b * sk, T = Math.max(1.6, (o.t || 5) * sk);
+    s += `<path d="M${tlR(sx + B)} ${sy} H${sx} V${tlR(sy + H)} H${tlR(sx + B)} V${tlR(sy + H - T)} H${tlR(sx + T)} V${tlR(sy + T)} H${tlR(sx + B)} Z" fill="url(#hat${AR})" stroke="var(--ink)" stroke-width="1.2"/>`;
+    s += dl(sx - 12, sy, sx - 12, tlR(sy + H), "", 0, 0) + `<text x="${sx - 16}" y="${tlR(sy + H / 2 + 4)}" font-size="12" text-anchor="end" style="fill:var(--dim)">${h}</text>`;
+    s += dl(sx, sy - 10, tlR(sx + B), sy - 10, "", 0, 0) + `<text x="${tlR(sx + B / 2)}" y="${sy - 15}" font-size="12" text-anchor="middle" style="fill:var(--dim)">${b}</text>`;
+    w = X(L) + 52 + B + 10 - x0; }
+  return { svg: s, w, h: yc + 20 - y0 }; }
+/* Circular enlarged-detail frame with an arrow from (fx,fy) to the circle edge */
+function tlCircleFrame(cx, cy, r, fx, fy){ let s = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--ink)" stroke-width="1"/>`;
+  if (fx != null){ const a = Math.atan2(fy - cy, fx - cx), ex = tlR(cx + r * Math.cos(a)), ey = tlR(cy + r * Math.sin(a)); s += `<line x1="${fx}" y1="${fy}" x2="${ex}" y2="${ey}" stroke="var(--ink)" stroke-width=".8" marker-end="url(#${AR})"/>`; }
+  return s; }
+/* Enlarged arm-end detail: channel end-on (C, web on side ws) with a vertical eye bolt through both flanges,
+   square washers, lock washer + nut on top and the string hook below. n = {chan, bolt, washer, lock} balloon numbers */
+function tlEyeBoltDetail(cx, cy, s, n, ws){ ws = ws || 1; const H = 100 * s, B = 50 * s, T = 7 * s, xw = cx + ws * B * .55, xf = xw - ws * B * 1.9, top = cy - H / 2, bot = cy + H / 2, bx = cx - ws * B * .25;
+  let o = `<path d="M${tlR(xf)} ${tlR(top)} H${tlR(xw)} V${tlR(bot)} H${tlR(xf)} V${tlR(bot - T)} H${tlR(xw - ws * T)} V${tlR(top + T)} H${tlR(xf)} Z" fill="var(--steel)" stroke="var(--ink)" stroke-width="1.3"/>`;
+  o += `<rect x="${tlR(bx - 3.5 * s / 2.2)}" y="${tlR(top - 22 * s)}" width="${tlR(7 * s / 2.2)}" height="${tlR(H + 55 * s)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.1"/>`;
+  o += `<rect x="${tlR(bx - 26 * s)}" y="${tlR(top - 5 * s)}" width="${tlR(52 * s)}" height="${tlR(5 * s)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1"/><rect x="${tlR(bx - 26 * s)}" y="${tlR(bot)}" width="${tlR(52 * s)}" height="${tlR(5 * s)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1"/>`;
+  o += `<rect x="${tlR(bx - 14 * s)}" y="${tlR(top - 9 * s)}" width="${tlR(28 * s)}" height="${tlR(4 * s)}" fill="var(--soft)" stroke="var(--ink)" stroke-width=".9"/><path d="M${tlR(bx - 12 * s)} ${tlR(top - 9 * s)} v${tlR(-10 * s)} h${tlR(24 * s)} v${tlR(10 * s)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1"/>`;
+  const ey = bot + 46 * s;
+  o += `<ellipse cx="${bx}" cy="${tlR(ey)}" rx="${tlR(10 * s)}" ry="${tlR(16 * s)}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+  o += `<path d="M${tlR(bx + 8 * s)} ${tlR(ey + 2 * s)} c${tlR(16 * s)} ${tlR(6 * s)} ${tlR(14 * s)} ${tlR(28 * s)} ${tlR(-2 * s)} ${tlR(40 * s)}" fill="none" stroke="var(--ink)" stroke-width="2.2"/>`;
+  if (n){ const r = 10;
+    if (n.lock) o += tlCallout(tlR(bx), tlR(top - 19 * s), tlR(bx - 46 * s), tlR(top - 40 * s), n.lock);
+    if (n.washer) o += tlCallout(tlR(bx + 22 * s), tlR(top - 3 * s), tlR(bx + 50 * s), tlR(top - 40 * s), n.washer) + tlCallout(tlR(bx - 22 * s), tlR(bot + 4 * s), tlR(bx - 58 * s), tlR(bot + 26 * s), n.washer);
+    if (n.bolt) o += tlCallout(tlR(bx - 2 * s), tlR(cy), tlR(bx - 60 * s), tlR(cy), n.bolt);
+    if (n.chan) o += tlCallout(tlR(xw), tlR(cy + 10 * s), tlR(xw + 34 * s), tlR(cy + 10 * s), n.chan); }
+  return o; }
+
+/* ---------- 4. 3D ---------- */
+let MATX = null;
+/* Shared materials (lazy, after init3d): pole = opaque concrete grey; porcelain = brown glaze; alu = conductor; galv = MAT.steel */
+function tlMats(){ if (MATX) return MATX;
+  MATX = { pole: new THREE.MeshStandardMaterial({ color: 0xa8a49b, metalness: 0, roughness: .92 }),
+    porcelain: new THREE.MeshStandardMaterial({ color: 0x8a5a3c, metalness: .05, roughness: .35 }),
+    alu: new THREE.MeshStandardMaterial({ color: 0xc0c4c8, metalness: .55, roughness: .4 }),
+    cap: new THREE.MeshStandardMaterial({ color: 0x8e979f, metalness: .5, roughness: .45 }),
+    galv: MAT.steel, edge: new THREE.LineBasicMaterial({ color: 0x5a5448 }) };
+  return MATX; }
+/* Box frustum: bottom w0×d0 at y=0, top w1×d1 at y=h (flat-shaded) */
+function tlFrustumGeom(w0, d0, w1, d1, h){ const b = [[-w0 / 2, 0, -d0 / 2], [w0 / 2, 0, -d0 / 2], [w0 / 2, 0, d0 / 2], [-w0 / 2, 0, d0 / 2]], t = [[-w1 / 2, h, -d1 / 2], [w1 / 2, h, -d1 / 2], [w1 / 2, h, d1 / 2], [-w1 / 2, h, d1 / 2]];
+  const q = (a, b2, c, d) => [a, b2, c, a, c, d], tris = [...q(b[0], b[1], t[1], t[0]).reverse(), ...q(b[1], b[2], t[2], t[1]).reverse(), ...q(b[2], b[3], t[3], t[2]).reverse(), ...q(b[3], b[0], t[0], t[3]).reverse(), ...q(t[0], t[1], t[2], t[3]).reverse(), ...q(b[3], b[2], b[1], b[0]).reverse()];
+  const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.Float32BufferAttribute(tris.flat(), 3)); g.computeVertexNormals(); return g; }
+/* Tapered pole from P.bot to P.top (sides 'rect' default | 'round' | 'octagon') */
+function tlPole3D(P){ const M = tlMats(), h = P.top - P.bot; let m;
+  if (P.sides === "round" || P.sides === "octagon"){ const n = P.sides === "round" ? 32 : 8; m = new THREE.Mesh(new THREE.CylinderGeometry(P.wTop / 2, P.wBot / 2, h, n), M.pole); m.position.y = P.bot + h / 2; if (n === 8) m.rotation.y = Math.PI / 8; }
+  else { m = new THREE.Mesh(tlFrustumGeom(P.wBot, P.dBot, P.wTop, P.dTop, h), M.pole); m.position.y = P.bot; }
+  return m; }
+/* C-channel with real holes. Local: x 0..len along the member, y −h/2..h/2, web z 0..t, flanges z 0..b (open towards +z).
+   C = {len,h,b,t,tf?, web:[{x,d,y?}], flange:[{x,d}]} (flange holes in both flanges) */
+function tlChannel3D(C){ const g = new THREE.Group(), tf = C.tf || 7.5, t = C.t || 5, M = MAT.steel, cs = { bevelEnabled: false, curveSegments: 20 };
+  const web = new THREE.Shape(); web.moveTo(0, -C.h / 2); web.lineTo(C.len, -C.h / 2); web.lineTo(C.len, C.h / 2); web.lineTo(0, C.h / 2); web.lineTo(0, -C.h / 2);
+  (C.web || []).forEach(o => { const p = new THREE.Path(); p.absarc(o.x, o.y || 0, o.d / 2, 0, Math.PI * 2, true); web.holes.push(p); });
+  g.add(new THREE.Mesh(new THREE.ExtrudeGeometry(web, Object.assign({ depth: t }, cs)), M));
+  const fl = () => { const s = new THREE.Shape(); s.moveTo(0, t); s.lineTo(C.len, t); s.lineTo(C.len, C.b); s.lineTo(0, C.b); s.lineTo(0, t);
+    (C.flange || []).forEach(o => { const p = new THREE.Path(); p.absarc(o.x, (t + C.b) / 2, o.d / 2, 0, Math.PI * 2, true); s.holes.push(p); }); return s; };
+  const ft = new THREE.Mesh(new THREE.ExtrudeGeometry(fl(), Object.assign({ depth: tf }, cs)), M); ft.rotation.x = Math.PI / 2; ft.position.y = C.h / 2; g.add(ft);
+  const fb = new THREE.Mesh(new THREE.ExtrudeGeometry(fl(), Object.assign({ depth: tf }, cs)), M); fb.rotation.x = Math.PI / 2; fb.position.y = -C.h / 2 + tf; g.add(fb);
+  return g; }
+/* Equal angle a×a×t, length len along +y from 0; legs along +x and +z from the heel at the origin */
+function tlAngle3D(len, a, t){ const s = new THREE.Shape(); [[0, 0], [a, 0], [a, -t], [t, -t], [t, -a], [0, -a]].forEach(([x, y], i) => i ? s.lineTo(x, y) : s.moveTo(x, y));
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: len, bevelEnabled: false }), MAT.steel); m.rotation.x = -Math.PI / 2;
+  const g = new THREE.Group(); g.add(m); return g; }   /* wrapped so callers can set rotation.y freely */
+/* Rectangular bar between two points (flat brace): w in the plane containing the bar and world y, t normal to it */
+function tlBar3D(p1, p2, w, t, mat){ const a = new THREE.Vector3(...p1), b = new THREE.Vector3(...p2), d = b.clone().sub(a), L = d.length();
+  const m = new THREE.Mesh(new THREE.BoxGeometry(L, w, t), mat || MAT.steel); m.position.copy(a.clone().add(b).multiplyScalar(.5)); m.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), d.normalize()); return m; }
+const tlBrace3D = (p1, p2, o) => tlBar3D(p1, p2, (o && o.w) || 40, (o && o.t) || 6);
+/* Round rod/bolt between two points, with hex nuts at both ends (o.nuts=false to omit) */
+function tlBolt3D(p1, p2, o){ o = o || {}; const d = o.d || 16, g = new THREE.Group(), a = new THREE.Vector3(...p1), b = new THREE.Vector3(...p2), v = b.clone().sub(a), L = v.length(), q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), v.clone().normalize());
+  const rod = new THREE.Mesh(new THREE.CylinderGeometry(d / 2, d / 2, L, 12), o.mat || MAT.steel); rod.position.copy(a.clone().add(b).multiplyScalar(.5)); rod.quaternion.copy(q); g.add(rod);
+  if (o.nuts !== false) [a, b].forEach(p => { const n = new THREE.Mesh(new THREE.CylinderGeometry(d * .95, d * .95, d * .8, 6), MAT.steel); n.position.copy(p); n.quaternion.copy(q); g.add(n); });
+  return g; }
+/* One cap-and-pin disc (LatheGeometry), top at y=0, hanging down */
+function tlDiscGeom(D, p){ const r = D / 2, pts = [[0, 0], [r * .2, 0], [r * .24, -p * .2], [r * .98, -p * .5], [r, -p * .56], [r * .62, -p * .55], [r * .4, -p * .62], [r * .22, -p * .58], [r * .1, -p * .68], [0, -p * .68]];
+  return new THREE.LatheGeometry(pts.map(([x, y]) => new THREE.Vector2(x, y)), 28); }
+/* Suspension string hanging from the origin down (−y): top hardware, S.discs discs, bottom clamp. group.userData.len = total length */
+function tlSuspString3D(S){ S = Object.assign({}, TL_STRING, S); const M = tlMats(), g = new THREE.Group(), L = tlStrLen(S), geo = tlDiscGeom(S.D, S.pitch);
+  g.add(tlBolt3D([0, 0, 0], [0, -S.hwTop - 10, 0], { d: 16, nuts: false, mat: M.cap }));
+  for (let i = 0; i < S.discs; i++){ const y = -S.hwTop - i * S.pitch; const dsk = new THREE.Mesh(geo, M.porcelain); dsk.position.y = y - S.pitch * .12; g.add(dsk);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(S.D * .11, S.D * .13, S.pitch * .22, 14), M.cap); cap.position.y = y - S.pitch * .05; g.add(cap); }
+  const yb = -S.hwTop - S.discs * S.pitch;
+  g.add(tlBolt3D([0, yb, 0], [0, -L + 20, 0], { d: 14, nuts: false, mat: M.cap }));
+  const cl3 = new THREE.Mesh(new THREE.BoxGeometry(46, 36, 200), M.cap); cl3.position.y = -L + 6; g.add(cl3);
+  g.userData.len = L; return g; }
+/* Dead-end string running +x (dir 1) or −x (dir −1) from the origin */
+function tlDeadend3D(S, dir){ const g = tlSuspString3D(S); g.rotation.z = (dir || 1) * Math.PI / 2; return g; }
+/* Conductor / earth wire through points [[x,y,z],…] (r = radius mm) */
+function tlConductor3D(pts, r, mat){ const v = pts.map(p => new THREE.Vector3(...p)), curve = v.length === 2 ? new THREE.LineCurve3(v[0], v[1]) : new THREE.CatmullRomCurve3(v);
+  return new THREE.Mesh(new THREE.TubeGeometry(curve, v.length === 2 ? 1 : 24, r || 13, 10, false), mat || tlMats().alu); }
+/* OHGW bayonet: angle a×a×t from level zBot, length len, heel on the pole face at x = fx (face normal −x if fx<0), plus D-5A clamp and earth-wire stub ±stub along z */
+function tlOhgw3D(B){ const g = new THREE.Group(), a = B.a || 65, t = B.t || 6, s = B.fs || -1, ang = tlAngle3D(B.len, a, t);
+  ang.position.set(B.fx, B.zBot, s < 0 ? a / 2 : -a / 2); ang.rotation.y = s < 0 ? Math.PI : 0; g.add(ang);   /* heel on the face, one leg flat on it */
+  const zt = B.zBot + B.len, cx = B.fx + s * a / 2;
+  g.add(box(60, 50, 70, cx + s * 20, zt - 70, 0));
+  const st = B.stub || 3000; g.add(tlConductor3D([[cx + s * 40, zt - 50, -st], [cx + s * 40, zt - 50, st]], 5, MAT.steel));
+  return g; }
+/* Simplified foundation block (schematic) — semi-transparent concrete with edges */
+function tlFoundation3D(F){ const m = new THREE.Mesh(new THREE.BoxGeometry(F.w, F.top - F.bot, F.d || F.w), MAT.concrete); m.position.y = (F.top + F.bot) / 2; m.renderOrder = 2;
+  const g = new THREE.Group(); g.add(m); const e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), tlMats().edge); e.position.copy(m.position); g.add(e); return g; }
+/* Ground plane at y = 0 */
+function tlGround3D(size){ const m = new THREE.Mesh(new THREE.PlaneGeometry(size, size), MAT.ground); m.rotation.x = -Math.PI / 2; m.position.y = 1; return m; }
+/* Crossarm assembly on a pole: channel, M20 pole bolt, flat brace + bolts, eye bolt; returns {group, eye:[x,y,z]} (string point).
+   Arm web sits on the pole face at z = +d/2 (along-line face), flanges open away from the pole. */
+function tlArmOnPole3D(P, A, o){ o = o || {}; const g = new THREE.Group(), d = A.dir || 1, fz = tlPoleHalf(P, A.z, "d"), t = A.t || 5;
+  const mir = h => (h || []).map(o => Object.assign({}, o, { x: d > 0 ? o.x : A.len - o.x }));   /* holes given from the root end */
+  const ch = tlChannel3D({ len: A.len, h: A.h, b: A.b, t, web: mir(A.web), flange: mir(A.flange) }); ch.position.set(d > 0 ? -A.root : -(A.len - A.root), A.z, fz); g.add(ch);
+  g.add(tlBolt3D([0, A.z, -fz - 30], [0, A.z, fz + t + 30], { d: o.poleBolt || 20 }));
+  if (A.brace){ const zb = A.z + A.brace.rise, zf = tlPoleHalf(P, zb, "d"), bz = fz + t + 3 + 3;
+    g.add(tlBrace3D([0, zb, zf + 3], [d * A.brace.x, A.z, bz]));
+    g.add(tlBolt3D([0, zb, -zf - 30], [0, zb, zf + 40], { d: 16 }));
+    g.add(tlBolt3D([d * A.brace.x, A.z, fz - 15], [d * A.brace.x, A.z, bz + 25], { d: 16 })); }
+  const ex = d * A.eye, ez = fz + (t + A.b) / 2;
+  g.add(tlBolt3D([ex, A.z + A.h / 2 + 30, ez], [ex, A.z - A.h / 2 - 20, ez], { d: 16 }));
+  const eye = new THREE.Mesh(new THREE.TorusGeometry(26, 7, 8, 18), MAT.steel); eye.position.set(ex, A.z - A.h / 2 - 52, ez); eye.rotation.y = Math.PI / 2; g.add(eye);
+  return { group: g, eye: [ex, A.z - A.h / 2 - 78, ez] }; }
+/* Standard camera set for a pole: full (whole pole), head (arm zone), iso, front (along-line view: arms end-on), side (arms full length).
+   o = {top, bot, headTop, headBot, reach (max |x| of arms), cx} */
+function tlViews(o){ const T = Math.tan(16 * Math.PI / 180) * 2, H = o.top - o.bot, hc = (o.headTop + o.headBot) / 2, hh = o.headTop - o.headBot, cx = o.cx || 0;
+  const full = H / T / .9, head = Math.max(hh, o.reach * 1.6) / T / .8;
+  return { iso: [cx * .6, hc - hh * .05, 0, .32, -.85, head * 1.12], full: [cx * .3, (o.top + o.bot) / 2, 0, .06, -.55, full], head: [cx, hc, 0, .12, -.5, head],
+    front: [0, hc, 0, 0, -Math.PI / 2, head], side: [cx, hc, 0, 0, 0, head] }; }
+
+/* ---------- 5. Tables ---------- */
+/* BOM table HTML for #bomTbl.
+   bom  = [{n, th, en, qty (number | array per variant), mat, old, kgm?, len? (m per piece), star?}]
+   refs = [{code, th, en, qty}] referenced sub-assemblies (own drawings)
+   o    = {variants:[labels] (per-variant qty columns), cur, refNoteTh, refNoteEn} */
+function tlBomTable(bom, refs, o){ o = o || {}; const V = o.variants, cur = o.cur || 0, qOf = it => Array.isArray(it.qty) ? it.qty[cur] : it.qty;
+  const qh = V ? V.map((l, i) => `<th class="${i === cur ? "on" : ""}">${l}</th>`).join("") : `<th>จำนวน<span class="e">Req'd</span></th>`;
+  let tot = 0, rows = bom.map(it => { const q = qOf(it), w = it.kgm && it.len ? it.kgm * it.len : null; if (w) tot += w * q;
+    const qc = V ? V.map((_, i) => `<td class="mono" style="${i === cur ? "background:var(--accent-bg)" : ""}">${Array.isArray(it.qty) ? it.qty[i] || "–" : it.qty}</td>`).join("") : `<td class="mono">${q}</td>`;
+    return `<tr><td>${it.n}</td><td class="l">${it.th}<span class="e">${it.en}</span></td>${qc}<td class="mono">${it.mat || "–"}${it.old ? `<span class="e">(${it.old})</span>` : ""}</td><td class="mono">${it.kgm ? it.kgm.toFixed(2) + (it.star ? "*" : "") : "–"}</td><td class="mono">${w ? (w * q).toFixed(1) : "–"}</td></tr>`; }).join("");
+  const nq = V ? V.length : 1;
+  if (refs && refs.length){ rows += `<tr><th colspan="${5 + nq}" class="l">การประกอบย่อยที่อ้างถึง — มีแบบของตัวเอง<span class="e">Referenced sub-assemblies — detailed on their own drawings, not itemised here</span></th></tr>`;
+    rows += refs.map(r => `<tr><td class="mono"><span class="tag">${r.code}</span></td><td class="l">${r.th}<span class="e">${r.en}</span></td>${V ? V.map((_, i) => `<td class="mono">${Array.isArray(r.qty) ? r.qty[i] : r.qty}</td>`).join("") : `<td class="mono">${Array.isArray(r.qty) ? r.qty[cur] : r.qty}</td>`}<td colspan="3" class="l" style="color:var(--muted)">${o.refNoteTh || "ดูแบบ"} ${r.code}<span class="e">${o.refNoteEn || "See drawing"} ${r.code}</span></td></tr>`).join(""); }
+  return `<thead><tr><th>ลำดับ<span class="e">Item</span></th><th class="l">รายละเอียด<span class="e">Description</span></th>${qh}<th>วัสดุเลขที่<span class="e">Mat. no. (old)</span></th><th>กก./ม.<span class="e">kg/m</span></th><th>น้ำหนัก (กก.)<span class="e">Weight (kg)</span></th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="${4 + nq}" class="l">น้ำหนักเหล็กรูปพรรณโดยประมาณ (ก่อนชุบสังกะสี ไม่รวมสลักเกลียว แหวน และการประกอบย่อย)<span class="e">Approx. structural steel weight (before galvanizing; bolts, washers and sub-assemblies excluded)</span></td><td class="mono">${tot.toFixed(1)}</td></tr></tfoot>`; }
+/* Level table rows from levels [{z, th, en, note?}] (top → bottom): level above GL and spacing to the next */
+function tlLevelRows(levels){ return levels.map((l, i) => { const nx = levels[i + 1];
+  return `<tr><td class="l">${l.th}<span class="e">${l.en}</span></td><td class="mono">${l.z > 0 ? "+" : ""}${fmt(l.z)}${l.star ? "*" : ""}</td><td class="mono">${nx ? fmt(l.z - nx.z) : "–"}</td><td class="l">${l.note ? l.note[0] + `<span class="e">${l.note[1]}</span>` : ""}</td></tr>`; }).join(""); }
+/* Dimension table HTML: level rows + key dimension rows [{th,en,v,note?:[th,en]}] */
+function tlDimTable(levels, keys){
+  return `<thead><tr><th class="l">ระดับ<span class="e">Level</span></th><th>เหนือระดับดิน (มม.)<span class="e">Above GL (mm)</span></th><th>ถึงระดับถัดไป<span class="e">To next level</span></th><th class="l">หมายเหตุ<span class="e">Note</span></th></tr></thead><tbody>${tlLevelRows(levels)}
+    <tr><th class="l" colspan="4">มิติหลัก<span class="e">Key dimensions</span></th></tr>
+    ${keys.map(r => `<tr><td class="l">${r.th}<span class="e">${r.en}</span></td><td class="mono">${r.v}</td><td>–</td><td class="l">${r.note ? r.note[0] + `<span class="e">${r.note[1]}</span>` : ""}</td></tr>`).join("")}</tbody>
+    <tfoot><tr><td class="l" colspan="4">ระดับวัดจากระดับดิน (+ เหนือดิน, − ใต้ดิน) · * อ่าน/คำนวณจากภาพ<span class="e">Levels from ground line (+ above, − below) · * scaled or derived from the picture</span></td></tr></tfoot>`; }
+/* Fill the fabrication / assumption lists (call from tables() if PART changes per variant) */
+function tlLists(){ $("fab").innerHTML = PART.fabrication.map(([th, en]) => `<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = PART.assumptions.map(([th, en]) => `<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join(""); }
+/* ===================== end of tl115/lib.js ===================== */
+/* ---- dist_common.js — shared x_ helpers for 22–33 kV / LV pole-structure pages (copy into your part file, do not edit lib.js) ----
+   Written by group Q25 (A3200). Conventions: see parts/BRIEF_DIST.md.  Units mm, z = level above GL, 3D x/y/z as lib.js. */
+
+/* Concrete pole sections (not printed on PEA drawings → always mark *). Square ('rect') unless a drawing shows otherwise.
+   x_pole(L, embed) → P for tlPoleSVG / tlPole3D. L in m. */
+const X_POLE_SEC = { 8: [150, 250], 9: [150, 260], 10: [160, 280], 12: [200, 320], 14: [200, 350], 16: [240, 400], 22: [250, 400] };   /* [top, butt] mm* */
+function x_pole(L, embed){ const s = X_POLE_SEC[L] || [200, 200 + L * 12], e = embed == null ? (L >= 12 ? 2000 : 1500) : embed;
+  return { top: L * 1000 - e, bot: -e, wTop: s[0], wBot: s[1], dTop: s[0], dBot: s[1], sides: "rect" }; }
+/* TIS 354 type D (class 52-4) disc Ø254 × 146; 33 kV dead-end = 3 discs (per A3200 BOMs: 18 discs / 6 strings) */
+const X_DISC3 = { discs: 3, pitch: 146, D: 254, hwTop: 110, hwBot: 170 };
+
+/* ---------- 2D ---------- */
+/* plain line helpers */
+const x_line = (x1, y1, x2, y2, w, col, dash) => `<line x1="${tlR(x1)}" y1="${tlR(y1)}" x2="${tlR(x2)}" y2="${tlR(y2)}" stroke="${col || "var(--ink)"}" stroke-width="${w || 1}"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
+/* guy wire (long dash) with optional S-break end at (x2,y2) */
+function x_guy2D(x1, y1, x2, y2, brk){ let s = x_line(x1, y1, x2, y2, .9, "var(--ink)", "8 3");
+  if (brk){ const a = Math.atan2(y2 - y1, x2 - x1), c = Math.cos(a), sn = Math.sin(a); s += `<path d="M${tlR(x2 - 6 * sn - 4 * c)} ${tlR(y2 + 6 * c - 4 * sn)} q${tlR(8 * c)} ${tlR(8 * sn)} ${tlR(12 * sn)} ${tlR(-12 * c)}" fill="none" stroke="var(--ink)" stroke-width=".9"/>`; }
+  return s; }
+/* horizontal dead-end string glyph from (x,y) running dir (+1 right / −1 left), then a conductor line of length cl px with S-break */
+function x_deRun2D(x, y, S, k, dir, cl, o){ o = o || {}; const L = tlStrLen(Object.assign({}, TL_STRING, S)) * k, xe = x + dir * L;
+  let s = tlDeadendString(x, y, S, k, dir);
+  if (cl) s += tlConductorH(Math.min(xe, xe + dir * cl), Math.max(xe, xe + dir * cl), y, { w: o.w || 1.8 });
+  return s; }
+/* round-eye bolt through a square pole seen in elevation: dashed shank, nut one side, eye on side dir */
+function x_eyeBoltH(V, P, z, dir, axis){ const hw = tlPoleHalf(P, z, axis || "w") * V.k, y = V.Y(z), xe = V.px0 + dir * (hw + 6), r = Math.max(2.4, 22 * V.k);
+  return `<line x1="${tlR(V.px0 - dir * (hw + 6))}" y1="${y}" x2="${tlR(xe)}" y2="${y}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 2"/><rect x="${tlR(V.px0 - dir * (hw + 6) - (dir > 0 ? 3 : 0))}" y="${tlR(y - 3)}" width="3" height="6" fill="var(--ink)"/><circle cx="${tlR(xe + dir * r)}" cy="${y}" r="${tlR(r)}" fill="none" stroke="var(--ink)" stroke-width="1.4"/>`; }
+/* concrete anchor block (guy anchor / ส่มอบก) in elevation: square w px at (x,y top) with rod line at angle */
+function x_anchor2D(x, yTop, w, h){ return `<rect x="${tlR(x - w / 2)}" y="${tlR(yTop)}" width="${tlR(w)}" height="${tlR(h)}" fill="var(--soft)" stroke="var(--muted)" stroke-width="1" stroke-dasharray="4 3"/>`; }
+/* PLAN view of a square pole (w px) at (x,y) */
+const x_polePlan = (x, y, w) => `<rect x="${tlR(x - w / 2)}" y="${tlR(y - w / 2)}" width="${tlR(w)}" height="${tlR(w)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.4"/>`;
+/* PLAN view: dead-end string + conductor leaving point (x,y) at angle a (rad, SVG coords) */
+function x_dePlan(x, y, a, S, k, cl){ const L = tlStrLen(Object.assign({}, TL_STRING, S)) * k, c = Math.cos(a), s = Math.sin(a);
+  return `<g transform="rotate(${tlR(a * 180 / Math.PI)} ${x} ${y})">${tlDeadendString(x, y, S, k, 1)}${cl ? `<line x1="${tlR(x + L)}" y1="${y}" x2="${tlR(x + L + cl)}" y2="${y}" stroke="var(--ink)" stroke-width="1.8"/>` : ""}</g>`; }
+
+/* ---------- 3D ---------- */
+/* dead-end string running horizontally from the origin at plan angle a (rad; 0 = +x, π/2 = +z). userData.len */
+function x_de3D(S, a){ const g = new THREE.Group(), st = tlDeadend3D(S, 1); g.add(st); g.rotation.y = -a; g.userData.len = st.userData.len; return g; }
+/* point at distance d from p along plan angle a */
+const x_at = (p, a, d) => [p[0] + d * Math.cos(a), p[1], p[2] + d * Math.sin(a)];
+/* round-eye bolt: shank p1→p2 with a torus eye just beyond p2 (eye plane vertical, containing the shank) */
+function x_eyeBolt3D(p1, p2, d){ const g = tlBolt3D(p1, p2, { d: d || 16 }), v = new THREE.Vector3(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]).normalize();
+  const e = new THREE.Mesh(new THREE.TorusGeometry(24, 7, 8, 18), MAT.steel); e.position.set(p2[0] + v.x * 30, p2[1] + v.y * 30, p2[2] + v.z * 30);
+  e.rotation.y = -Math.atan2(v.z, v.x); g.add(e); return g; }
+/* wire (guy / earth wire / jumper) through points, radius r */
+const x_wire3D = (pts, r, mat) => tlConductor3D(pts, r || 6, mat || MAT.steel);
+/* sagging jumper between two points (drop mm at midspan, extra sideways bulge b along unit plan vector) */
+function x_jumper3D(a, b, drop, bulge){ bulge = bulge || [0, 0]; const m = [(a[0] + b[0]) / 2 + bulge[0], (a[1] + b[1]) / 2 - drop, (a[2] + b[2]) / 2 + bulge[1]];
+  return tlConductor3D([a, [(a[0] + m[0]) / 2, (a[1] + m[1]) / 2 - drop * .25, (a[2] + m[2]) / 2], m, [(b[0] + m[0]) / 2, (b[1] + m[1]) / 2 - drop * .25, (b[2] + m[2]) / 2], b], 9); }
+/* concrete guy anchor block (size s, top at depth top<0) centred at x,z + anchor rod up to ground at (gx,gz) */
+function x_anchor3D(x, z, s, top, rodTo){ const g = new THREE.Group(); const f = tlFoundation3D({ w: s, d: s, top, bot: top - s }); f.position.set(x, 0, z); g.add(f);
+  if (rodTo) g.add(tlBolt3D([x, top - s / 2, z], rodTo, { d: 20, nuts: false })); return g; }
+/* square pole at (x,z) (tlPole3D is centred on the axis) */
+function x_pole3DAt(P, x, z){ const m = tlPole3D(P); m.position.x = x; m.position.z = z || 0; return m; }
+/* camera tuple helper: centre (cx,cy,cz), rx, ry, fit size H (mm) at ~80 % of a 32° frame */
+const x_cam = (c, rx, ry, H) => [c[0], c[1], c[2], rx, ry, H / (Math.tan(16 * Math.PI / 180) * 2) / .8];
+/* x_angleXY, x_chan3D (slots: {x,d,w}) copied from tl115/t5226/t5227 */
+/* Equal angle a×a×t between two points lying in an x-y plane (bolt to bolt), extended e beyond both ends.
+   Heel on the face plane z = p1[2]; legs along the member's local +x (flat in the face) and +z (away from the face); back = legs towards −z */
+function x_angleXY(p1, p2, a, t, e, back){ const dx = p2[0] - p1[0], dy = p2[1] - p1[1], L = Math.hypot(dx, dy), o = new THREE.Group(), i = tlAngle3D(L + 2 * e, a, t);
+  i.position.y = -e; if (back) i.rotation.y = Math.PI; o.add(i); o.position.set(...p1); o.rotation.z = Math.atan2(-dx, dy); return o; }
+/* C-channel like tlChannel3D but web holes may be slots: {x, d, w (slot length along x)} */
+function x_chan3D(C){ const g = new THREE.Group(), tf = C.tf || 7.5, t = C.t || 5, M = MAT.steel, cs = { bevelEnabled: false, curveSegments: 16 };
+  const web = new THREE.Shape(); web.moveTo(0, -C.h / 2); web.lineTo(C.len, -C.h / 2); web.lineTo(C.len, C.h / 2); web.lineTo(0, C.h / 2); web.lineTo(0, -C.h / 2);
+  (C.web || []).forEach(o => { const p = new THREE.Path(), r = o.d / 2, y = o.y || 0;
+    if (o.w){ const a = o.w / 2 - r; p.moveTo(o.x + a, y + r); p.lineTo(o.x - a, y + r); p.absarc(o.x - a, y, r, Math.PI / 2, Math.PI * 1.5, false); p.lineTo(o.x + a, y - r); p.absarc(o.x + a, y, r, -Math.PI / 2, Math.PI / 2, false); }
+    else p.absarc(o.x, y, r, 0, Math.PI * 2, true);
+    web.holes.push(p); });
+  g.add(new THREE.Mesh(new THREE.ExtrudeGeometry(web, Object.assign({ depth: t }, cs)), M));
+  const fl = () => { const s = new THREE.Shape(); s.moveTo(0, t); s.lineTo(C.len, t); s.lineTo(C.len, C.b); s.lineTo(0, C.b); s.lineTo(0, t);
+    (C.flange || []).forEach(o => { const p = new THREE.Path(); p.absarc(o.x, (t + C.b) / 2, o.d / 2, 0, Math.PI * 2, true); s.holes.push(p); }); return s; };
+  [C.h / 2, -C.h / 2 + tf].forEach(y => { const f = new THREE.Mesh(new THREE.ExtrudeGeometry(fl(), Object.assign({ depth: tf }, cs)), M); f.rotation.x = Math.PI / 2; f.position.y = y; g.add(f); });
+  return g; }
+/* 2D horizontal chain with small segments staggered upward (labels above) */
+/* x_chainH, x_brace2D, x_block, x_chanEndIn copied from tl115/t5227 */
+function x_chainH(xs, y, X, labels, o){ o = o || {}; let s = "", lvl = 0;
+  if (o.extFrom != null) xs.forEach(v => { s += ext(X(v), o.extFrom, X(v), y + 4); });
+  for (let i = 0; i < xs.length - 1; i++){ const a = X(xs[i]), b = X(xs[i + 1]), w = b - a, L = labels ? labels[i] : fmt(xs[i + 1] - xs[i]);
+    s += dl(a, y, b, y, "", 0, 0);
+    if (!L) continue;
+    const need = String(L).length * 6.6 + 4;
+    if (w >= need){ lvl = 0; s += `<text x="${tlR((a + b) / 2)}" y="${y - 4}" font-size="11" text-anchor="middle" style="fill:var(--dim)">${L}</text>`; }
+    else { lvl = lvl === 1 ? 2 : 1; const ty = y - 4 - lvl * 11, tx = i === 0 ? a - 2 : (i === xs.length - 2 ? b + 2 : (a + b) / 2), an = i === 0 ? "end" : (i === xs.length - 2 ? "start" : "middle");
+      if (an === "middle") s += `<line x1="${tlR((a + b) / 2)}" y1="${y - 2}" x2="${tlR((a + b) / 2)}" y2="${ty + 2}" stroke="var(--dim)" stroke-width=".5"/>`;
+      s += `<text x="${tlR(tx)}" y="${an === "middle" ? ty : y - 4}" font-size="11" text-anchor="${an}" style="fill:var(--dim)">${L}</text>`; } }
+  return s; }
+function x_brace2D(V, x1, z1, x2, z2, e, a){ const X1 = V.X(x1), Y1 = V.Y(z1), X2 = V.X(x2), Y2 = V.Y(z2), L = Math.hypot(X2 - X1, Y2 - Y1), ux = (X2 - X1) / L, uy = (Y2 - Y1) / L, ee = e * V.k, w = a * V.k / 2;
+  const p = [[X1 - ux * ee, Y1 - uy * ee], [X2 + ux * ee, Y2 + uy * ee]], nx = -uy * w, ny = ux * w;
+  return `<path d="M${tlR(p[0][0] + nx)} ${tlR(p[0][1] + ny)} L${tlR(p[1][0] + nx)} ${tlR(p[1][1] + ny)} L${tlR(p[1][0] - nx)} ${tlR(p[1][1] - ny)} L${tlR(p[0][0] - nx)} ${tlR(p[0][1] - ny)} Z" fill="var(--steel)" stroke="var(--ink)" stroke-width=".9"/>`
+    + `<circle cx="${X1}" cy="${Y1}" r="1.6" fill="var(--ink)"/><circle cx="${X2}" cy="${Y2}" r="1.6" fill="var(--ink)"/>`; }
+function x_block(x, y, w, h, n){ let s = `<rect x="${tlR(x)}" y="${tlR(y)}" width="${tlR(w)}" height="${tlR(h)}" fill="var(--soft)" stroke="var(--ink)" stroke-width="1"/>`;
+  for (let i = 0; i < (n || 0); i++){ const fr = v => v - Math.floor(v), a = fr(Math.sin(i * 12.9898 + x) * 43758.5453), b = fr(Math.sin(i * 78.233 + y) * 24634.6345); s += `<circle cx="${tlR(x + 3 + a * (w - 6))}" cy="${tlR(y + 3 + b * (h - 6))}" r=".8" fill="var(--muted)"/>`; }
+  return s; }
+
+function x_chanEndIn(V, A, wz, z, sd){ const k = V.k, yc = V.Y(z), h = A.h * k, b = A.b * k, t = Math.max(1.2, A.t * k * 1.6), xw = V.px0 + sd * wz * k, xf = xw - sd * b;
+  return `<path d="M${tlR(xf)} ${tlR(yc - h / 2)} H${tlR(xw)} V${tlR(yc + h / 2)} H${tlR(xf)} V${tlR(yc + h / 2 - t)} H${tlR(xw - sd * t)} V${tlR(yc - h / 2 + t)} H${tlR(xf)} Z" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>`; }
+/* Flat bar / angle leg item in elevation: L × w px-scaled, holes [{x, d, s (slot length, 0 = round)}] measured from the left end; chain under it + overall.
+   Returns svg. o = {x0, y0, L, w, k, holes, chain:true, total:true, kw (cross scale), labels (chain texts)} */
+function x_barItem(o){ const k = o.k, kw = o.kw || k, X = v => tlR(o.x0 + v * k), h = Math.max(6, o.w * kw), y = o.y0; let s = "";
+  s += `<rect x="${X(0)}" y="${y}" width="${tlR(o.L * k)}" height="${tlR(h)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`;
+  (o.holes || []).forEach(q => { const r = Math.max(2.4, (q.d || 18) * kw / 2), sl = (q.s || 0) * k;
+    s += sl ? `<rect x="${tlR(X(q.x) - sl / 2 - r)}" y="${tlR(y + h / 2 - r)}" width="${tlR(sl + 2 * r)}" height="${tlR(2 * r)}" rx="${tlR(r)}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1"/>`
+            : `<circle cx="${X(q.x)}" cy="${tlR(y + h / 2)}" r="${tlR(r)}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1"/>`; });
+  const xs = [0, ...(o.holes || []).map(q => q.x), o.L];
+  if (o.chain !== false) s += x_chainH(xs, tlR(y + h + 18), X, o.labels || null, { extFrom: tlR(y + h + 2) });
+  if (o.total !== false) s += x_chainH([0, o.L], tlR(y + h + 40), X, null, { extFrom: tlR(y + h + 20) });
+  return s; }
+/* ---- end dist_common.js ---- */
+
+
+/* ---- q27_common.js — helpers for A3200 multi-circuit crossarm assemblies on one concrete pole (3224, 3237) ----
+   Front view = looking ALONG the line (crossarms full length, X = across the line).
+   Side view  = looking ACROSS the line (crossarms end-on, X = along the line, line runs left–right).
+   3D: x across the line (arms), y up, z along the line. Arms on the pole face z = −d/2 (front), 2nd arm of a pair on z = +d/2.
+   OHGW bayonet / channel on the pole face x = −w/2. */
+const Q_PIN = { h: 330, D: 230, pin: 150 };      /* 33 kV pin insulator class 56-3 + pin: height above arm top / skirt Ø (typical*) */
+const Q_ARM = { 3000: { len: 3000, s: 120, pins: [-1400, 450, 1400], br: 720 },          /* holes per dwg. 3801 (S02-015/20043) */
+                2500: { len: 2500, s: 120, pins: [-1150, 650, 1150], da: [-1100, 0, 1100], br: 720 },   /* dwg. 3805 (SA1-015/24011) */
+                2501: { len: 2500, s: 100, pins: [-1150, 1150], br: 500 } };           /* 100 × 100 × 2,500 (3237 item 2)* */
+const q_hw = (P, z) => tlPoleHalf(P, z, "w"), q_hd = (P, z) => tlPoleHalf(P, z, "d");
+const q_txt = (x, y, t, o) => { o = o || {}; return `<text x="${tlR(x)}" y="${tlR(y)}" font-size="${o.fs || 10.5}" text-anchor="${o.a || "start"}"${o.mono ? ' class="mono"' : ""} style="fill:${o.c || "var(--muted)"}">${t}</text>`; };
+
+/* ---------- 2D glyphs ---------- */
+/* pin insulator standing on y (arm top) at x; k px/mm */
+function q_pin2D(x, y, k){ const H = Q_PIN.h * k, R = Q_PIN.D / 2 * k, pp = Q_PIN.pin * .45 * k, top = y - H; let s = "";
+  s += `<rect x="${tlR(x - 13 * k)}" y="${tlR(y - pp)}" width="${tlR(Math.max(2, 26 * k))}" height="${tlR(pp)}" fill="var(--steel)" stroke="var(--ink)" stroke-width=".8"/>`;
+  const b = y - pp, sk = (yy, r) => `M${tlR(x - r)} ${tlR(yy)} Q${tlR(x)} ${tlR(yy - r * .55)} ${tlR(x + r)} ${tlR(yy)} Z`;
+  s += `<path d="M${tlR(x - R * .35)} ${tlR(b)} L${tlR(x - R * .42)} ${tlR(top + H * .25)} L${tlR(x + R * .42)} ${tlR(top + H * .25)} L${tlR(x + R * .35)} ${tlR(b)} Z" fill="var(--sheet)" stroke="var(--ink)" stroke-width=".9"/>`;
+  [[top + H * .28, R], [top + H * .5, R * .8], [top + H * .7, R * .6]].forEach(([yy, r]) => { s += `<path d="${sk(yy, r)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width=".9"/>`; });
+  s += `<rect x="${tlR(x - R * .45)}" y="${tlR(top)}" width="${tlR(R * .9)}" height="${tlR(H * .12)}" rx="${tlR(R * .2)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width=".9"/>`;
+  s += `<line x1="${tlR(x - R * .3)}" y1="${tlR(top + H * .06)}" x2="${tlR(x + R * .3)}" y2="${tlR(top + H * .06)}" stroke="var(--ink)" stroke-width=".7"/>`;
+  return s; }
+/* arm full length (front view): rect centred on z, with hole dots at xs (mm) */
+function q_arm2D(V, A, z, o){ o = o || {}; const k = V.k, h = (A.s || A.h) * k, yc = V.Y(z), x1 = V.X(-A.len / 2 + (o.off || 0)), x2 = V.X(A.len / 2 + (o.off || 0));
+  let s = `<rect x="${x1}" y="${tlR(yc - h / 2)}" width="${tlR(x2 - x1)}" height="${tlR(h)}" fill="${o.fill || "var(--sheet)"}" stroke="var(--ink)" stroke-width="1.2"${o.dash ? ' stroke-dasharray="4 3"' : ""}/>`;
+  (o.dots || []).forEach(x => { s += `<rect x="${tlR(V.X(x) - 2)}" y="${tlR(yc - 2)}" width="4" height="4" fill="var(--ink)"/>`; });
+  return s; }
+/* spun concrete arm seen end-on: chamfered square with hollow core */
+function q_armEnd2D(cx, cy, k, s){ const h = s * k / 2, c = h * .28; return `<path d="M${tlR(cx - h + c)} ${tlR(cy - h)} H${tlR(cx + h - c)} L${tlR(cx + h)} ${tlR(cy - h + c)} V${tlR(cy + h - c)} L${tlR(cx + h - c)} ${tlR(cy + h)} H${tlR(cx - h + c)} L${tlR(cx - h)} ${tlR(cy + h - c)} V${tlR(cy - h + c)} Z" fill="var(--soft)" stroke="var(--ink)" stroke-width="1.1"/><circle cx="${tlR(cx)}" cy="${tlR(cy)}" r="${tlR(h * .42)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width=".7"/>`; }
+/* dead-end string seen end-on (disc Ø254 + eye) */
+function q_discEnd2D(cx, cy, k){ const R = Math.max(5, 127 * k); return `<circle cx="${tlR(cx)}" cy="${tlR(cy)}" r="${tlR(R)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/><circle cx="${tlR(cx)}" cy="${tlR(cy)}" r="${tlR(R * .45)}" fill="none" stroke="var(--ink)" stroke-width=".9"/><line x1="${tlR(cx - R * .25)}" y1="${tlR(cy)}" x2="${tlR(cx + R * .25)}" y2="${tlR(cy)}" stroke="var(--ink)" stroke-width="1.4"/>`; }
+/* through-bolt in front view (seen end-on): nut square */
+const q_nut2D = (x, y, r) => `<rect x="${tlR(x - (r || 3))}" y="${tlR(y - (r || 3))}" width="${tlR(2 * (r || 3))}" height="${tlR(2 * (r || 3))}" fill="var(--ink)"/>`;
+/* horizontal through-bolt seen from the side (dashed through pole, nuts both ends) between px xa..xb at y */
+const q_boltH = (xa, xb, y) => x_line(xa, y, xb, y, 1, "var(--ink)", "3 2") + `<rect x="${tlR(xa - 3)}" y="${tlR(y - 3.5)}" width="3" height="7" fill="var(--ink)"/><rect x="${tlR(xb)}" y="${tlR(y - 3.5)}" width="3" height="7" fill="var(--ink)"/>`;
+/* V brace pair (front view) from arm bottom at ±bx to apex */
+function q_braceV(V, A, z, drop, w, off){ off = off || 0; const zb = z - A.s / 2;
+  return x_brace2D(V, -A.br + off, zb, off * .0, z - drop, 30, w || 40) + x_brace2D(V, A.br + off, zb, off * .0, z - drop, 30, w || 40); }
+/* angle bayonet (front view, on pole face −x) from z0 to z1; corner = cranked (item 30 style) */
+function q_bay2D(V, P, z0, z1, a, o){ o = o || {}; const k = V.k, f = -q_hw(P, (z0 + z1) / 2), w = Math.max(2.6, a * k);
+  if (!o.corner) return `<rect x="${tlR(V.X(f) - w)}" y="${V.Y(z1)}" width="${tlR(w)}" height="${tlR((z1 - z0) * k)}" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"${o.dash ? ' stroke-dasharray="4 2"' : ""}/>`;
+  const zc = o.crank, dx = o.dx; const d = `M${tlR(V.X(f) - w / 2)} ${V.Y(z0)} V${V.Y(zc)} L${tlR(V.X(f - dx) - w / 2)} ${V.Y(zc + o.rise)} V${V.Y(z1)}`;
+  let s = `<path d="${d}" fill="none" stroke="var(--ink)" stroke-width="${tlR(w + 2)}"/><path d="${d}" fill="none" stroke="var(--steel)" stroke-width="${tlR(w)}"/>`;
+  return s; }
+/* guy (side view) from px (x1,y1) to ground point, S-break at the panel edge */
+function q_guySide(x1, y1, x2, y2, clipX){ if (x2 > clipX){ const t = (clipX - x1) / (x2 - x1); return x_guy2D(x1, y1, clipX, y1 + (y2 - y1) * t, true); } return x_guy2D(x1, y1, x2, y2, false); }
+
+/* ---------- 3D ---------- */
+function q_pin3D(){ const M = tlMats(), g = new THREE.Group(), R = Q_PIN.D / 2, H = Q_PIN.h;
+  const pin = new THREE.Mesh(new THREE.CylinderGeometry(13, 16, Q_PIN.pin, 12), M.cap); pin.position.y = Q_PIN.pin / 2; g.add(pin);
+  const pts = [[0, H], [R * .42, H], [R * .46, H * .93], [R * .38, H * .86], [R, H * .74], [R * .97, H * .7], [R * .36, H * .72], [R * .8, H * .54], [R * .76, H * .5], [R * .34, H * .52], [R * .6, H * .36], [R * .56, H * .32], [R * .3, H * .34], [R * .28, Q_PIN.pin * .45], [0, Q_PIN.pin * .45]];
+  const m = new THREE.Mesh(new THREE.LatheGeometry(pts.map(([x, y]) => new THREE.Vector2(x, y)), 28), M.porcelain); g.add(m); return g; }
+/* spun concrete arm along x, centred (cx, y, z), section s */
+function q_arm3D(len, s, cx, y, z){ const M = tlMats(), sh = new THREE.Shape(), h = s / 2, c = s * .14;
+  sh.moveTo(-h + c, -h); sh.lineTo(h - c, -h); sh.lineTo(h, -h + c); sh.lineTo(h, h - c); sh.lineTo(h - c, h); sh.lineTo(-h + c, h); sh.lineTo(-h, h - c); sh.lineTo(-h, -h + c); sh.lineTo(-h + c, -h);
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: len, bevelEnabled: false }), M.pole); m.rotation.y = Math.PI / 2; m.position.set(cx - len / 2, y, z); return m; }
+/* equal-angle / channel bayonet along y on pole face x = −hw */
+function q_bay3D(P, z0, z1, a, t, o){ o = o || {}; const g = new THREE.Group(), hw = q_hw(P, (z0 + z1) / 2);
+  if (o.chan){ const ch = x_chan3D({ len: z1 - z0, h: o.chan.h, b: o.chan.b, t: o.chan.t, tf: o.chan.t, web: (o.holes || []).map(x => ({ x: x - z0, d: 18 })) });
+    ch.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, -1), new THREE.Vector3(-1, 0, 0)));
+    ch.position.set(-hw, z0, 0); g.add(ch); return g; }
+  if (!o.corner){ const an = tlAngle3D(z1 - z0, a, t); an.rotation.y = Math.PI; an.position.set(-hw, z0, a / 2); g.add(an); return g; }
+  const an = tlAngle3D(o.crank - z0, a, t); an.rotation.y = Math.PI; an.position.set(-hw, z0, a / 2); g.add(an);
+  g.add(tlBar3D([-hw - 3, o.crank, 0], [-hw - o.dx - 3, o.crank + o.rise, 0], a, 8));
+  const up = tlAngle3D(z1 - o.crank - o.rise, a, t); up.rotation.y = Math.PI; up.position.set(-hw - o.dx, o.crank + o.rise, a / 2); g.add(up); return g; }
+/* ---- end q27_common.js ---- */
+
+/* ===== t3237 — แบบ 3237 · การประกอบคอนกับเสาคอนกรีต 33 kV 3–4 วงจร (SA1-015/34024, 11 แผ่น — PDF มี 9 แผ่น) ===== */
+const P14 = x_pole(14, 2000), T37 = P14.top;
+const ZA = T37 - 150, ZB = ZA - 2000, ZC = ZB - 1200, ZTA = ZA - 1000, ZTB = ZB - 1000;   /* chains 150 / 620+1,380 / 620+580 · VI 150/1,000×3/1,200 */
+const A3 = Q_ARM[3000], A25 = Q_ARM[2500], A2 = { len: 2500, s: 100, br: 500, hang: [-1150, 1150] };
+const C35 = { len: 4000, h: 150, b: 75, t: 6.5, de: [-1850, -1400, -950, 950, 1400, 1850], msg: [-500, 500], web: [-1850, -1400, -950, -500, 0, 500, 950, 1400, 1850], br: 900, drop: 500 };
+const BAY31 = { kind: "ang", z0: T37 - 500, z1: T37 + 1750, bolts: [T37 - 100, T37 - 400], a: 65, t: 6, n: 31 };
+const BAY32 = { kind: "ang", corner: true, crank: T37 + 250, rise: 450, dx: 260, z0: T37 - 500, z1: T37 + 1750, bolts: [T37 - 100, T37 - 400], a: 65, t: 6, n: 32 };
+const CH33 = { kind: "chan", z0: T37 - 700, z1: T37 + 1550, bolts: [T37 - 100, T37 - 400, T37 - 600], eye: T37 + 1450, h: 100, b: 50, t: 5, n: 33 };
+const CH34 = { kind: "chan34", z0: T37 - 500, z1: T37 + 1750, bolts: [T37 - 100, T37 - 400], eye: T37 + 1500, top: T37 + 1700, h: 100, b: 50, t: 5, n: 34 };
+const GUY_A = 8000, GUY_B = 6000;
+const LV = { z: { pin: [ZA, ZB], aer: ZC } };
+const mkL = (z, type, o) => Object.assign({ z, type }, o || {});
+const PART = {
+  assembly: "3237", assemblyOld: "",
+  nameTh: "การประกอบคอนกับเสาคอนกรีต 33 kV 3–4 วงจร",
+  nameEn: "33 kV CROSSARM ASSEMBLY ON CONCRETE POLE · 3–4 CIRCUITS",
+  group: "A3200 ระบบ 22–33 kV · การประกอบคอน",
+  groupEn: "A3200 22–33 kV DISTRIBUTION · CROSSARM ASSEMBLIES",
+  titleBlock: { org: "การไฟฟ้าส่วนภูมิภาค · กองวิศวกรรมไฟฟ้าและเครื่องกล ฝ่ายวิศวกรรม — PROVINCIAL ELECTRICITY AUTHORITY",
+    scale: "1 : 50 (แผ่น 1–5) · 1 : 125 (แผ่น 6, เมตร) · 1 : 100, 1 : 20 (แผ่น 7) · 1 : 30 (แผ่น 8) · มิติเป็นมิลลิเมตร",
+    date: "เขียนเสร็จ 2 ก.ย. 34 · ผู้ว่าการลงนาม 16 ต.ค. 34 · ตราประทับ 11 ต.ค. 2534", dwg: "SA1-015/34024", sheet: "แผ่นที่ 1–9 / 11 (ไม่มีแผ่น 10–11 ใน PDF)" },
+  variants: [
+    { key: "I", label: "I · ทางตรง ≤ 5°", en: "TANGENT / ANGLE ≤ 5°", bay: BAY31, levels: [mkL(ZA, "pin"), mkL(ZB, "pin"), mkL(ZC, "aer")], guys: [] },
+    { key: "II", label: "II · ทางโค้ง ≤ 30°", en: "ANGLE ≤ 30°", bay: BAY32, levels: [mkL(ZA, "pin"), mkL(ZB, "pin"), mkL(ZC, "aer")], guys: [] },
+    { key: "III", label: "III · ปลายสาย 2+1", en: "DEADEND · 2 BARE + 1 AERIAL CABLE", bay: CH33, levels: [mkL(ZA, "de"), mkL(ZB, "de"), mkL(ZC, "aerde")],
+      guys: [[CH33.eye, GUY_A, 46], [ZA - 250, GUY_A, 46], [ZB - 250, GUY_B, 45], [ZC - 650, GUY_B, 45]] },
+    { key: "IV", label: "IV · ปลายสาย 2+2", en: "DEADEND · 2 BARE + 2 AERIAL CABLE", bay: CH33, levels: [mkL(ZA, "de"), mkL(ZB, "de"), mkL(ZC, "aerde2")],
+      guys: [[CH33.eye, GUY_A, 46], [ZA - 250, GUY_A, 46], [ZB - 250, GUY_B, 45], [ZC - 650, GUY_B, 45]] },
+    { key: "V", label: "V · ปลายสายสองข้าง", en: "DOUBLE DEADEND (REDUCED TENSION SPAN LATERAL)", bay: CH33, both: true, levels: [mkL(ZA, "dde"), mkL(ZB, "dde"), mkL(ZC, "aerdde")],
+      guys: [[ZA - 250, GUY_A, 45], [ZB - 250, GUY_B, 45]] },
+    { key: "VI", label: "VI · ต่อแยกสาย", en: "TAP LINE (BARE CONDUCTOR)", bay: CH34, tap: true,
+      levels: [mkL(ZA, "pin", { ghost: true }), mkL(ZB, "pin", { ghost: true }), mkL(ZC, "aer", { ghost: true }), mkL(ZTA, "tap"), mkL(ZTB, "tap")], guys: [] } ],
+  bom: [
+    { n: 1, th: "เสาคอนกรีต ขนาด 14 ม.", en: "Pole, concrete, 14 m long", qty: [1, 1, 1, 1, 1, "–"], mat: "00010006", old: "0036" },
+    { n: 2, th: "คอน คอร. สปัน ขนาด 100 × 100 × 2,500 มม.", en: "Crossarm, spun, prestressed concrete, 100 × 100 × 2,500 mm", qty: [1, 1, "–", "–", "–", "–"], mat: "00110001", old: "0103" },
+    { n: 3, th: "คอน คอร. สปัน ขนาด 120 × 120 × 3,000 มม.", en: "Crossarm, spun, prestressed concrete, 120 × 120 × 3,000 mm", qty: [2, 2, "–", "–", "–", "–"], mat: "00110002", old: "0104" },
+    { n: 4, th: "คอน คอร. สปัน (สำหรับเข้าปลายสาย) ขนาด 120 × 120 × 2,500 มม.", en: "Crossarm, spun, prestressed (for deadending), 120 × 120 × 2,500 mm", qty: ["–", "–", 6, 4, 6, 4], mat: "00110004", old: "0196" },
+    { n: 5, th: "เหล็กประกับคอน ขนาด 30 × 6 × 760 มม.", en: "Brace, flat, for crossarm, 30 × 6 × 760 mm", qty: [2, 2, 4, "–", 2, "–"], mat: "01200001", old: "0120", kgm: 1.413, len: .76 },
+    { n: 6, th: "เหล็กประกับคอน ขนาด 40 × 6 × 1,000 มม.", en: "Brace, flat, for crossarm, 40 × 6 × 1,000 mm", qty: [4, 4, 8, 8, 4, 8], mat: "01200002", old: "0121", kgm: 1.884, len: 1 },
+    { n: 7, th: "เหล็กฉากรับคอนสาย ขนาด 50 × 50 × 6 มม. ช่วงกว้าง 1,800 มม. ตกท้อง 450 มม.", en: "Brace, angle steel, 50 × 50 × 6 mm, 1,800 mm wide, 450 mm drop", qty: ["–", "–", "–", 2, "–", "–"], mat: "01200007", old: "0119", kgm: 4.47, len: 2.05, star: true },
+    { n: 8, th: "สลักเกลียว M16 × 130 มม.", en: "Bolt, machine, M16 × 130 mm", qty: [2, 2, "–", "–", "–", "–"], mat: "01110200", old: "0220" },
+    { n: 9, th: "สลักเกลียว M16 × 170 มม.", en: "Bolt, machine, M16 × 170 mm", qty: ["5 (6)", "5 (6)", 10, 8, 10, 8], mat: "01110201", old: "0221" },
+    { n: 10, th: "สลักเกลียว M16 × 200 มม.", en: "Bolt, machine, M16 × 200 mm", qty: ["–", "–", "–", 4, "–", "–"], mat: "01110202", old: "0222" },
+    { n: 11, th: "สลักเกลียว M16 × 250 มม.", en: "Bolt, machine, M16 × 250 mm", qty: [5, 5, 4, 4, 5, "–"], mat: "01110203", old: "0223" },
+    { n: 12, th: "สลักเกลียว M16 × 300 มม.", en: "Bolt, machine, M16 × 300 mm", qty: ["–", "–", "–", "–", "–", 2], mat: "01110204", old: "0224" },
+    { n: 13, th: "สลักเกลียว M16 × 350 มม.", en: "Bolt, machine, M16 × 350 mm", qty: [3, 3, "–", "–", "–", 2], mat: "01110205", old: "0225" },
+    { n: 14, th: "สลักเกลียว M16 × 400 มม.", en: "Bolt, machine, M16 × 400 mm", qty: ["–", "–", "–", 1, "–", "–"], mat: "01110206", old: "0226" },
+    { n: 15, th: "สลักเกลียว M16 × 500 มม.", en: "Bolt, machine, M16 × 500 mm", qty: ["–", "–", "–", "–", 1, "–"], mat: "01110208", old: "0228" },
+    { n: 16, th: "สลักเกลียวห่วงกลม M16 × 400 มม.", en: "Bolt, double arming, round eye, M16 × 400 mm", qty: ["–", "–", "–", 8, "–", "–"], mat: "01130000", old: "0246" },
+    { n: 17, th: "สลักเกลียวห่วงกลม M16 × 450 มม.", en: "Bolt, double arming, round eye, M16 × 450 mm", qty: ["–", "–", 3, 3, "–", "–"], mat: "01130001", old: "0247" },
+    { n: 18, th: "สลักเกลียวห่วงกลม M16 × 500 มม.", en: "Bolt, double arming, round eye, M16 × 500 mm", qty: ["–", "–", 7, 3, 9, 3], mat: "01130002", old: "0248" },
+    { n: 19, th: "สลักเกลียวห่วงกลม M16 × 600 มม.", en: "Bolt, double arming, round eye, M16 × 600 mm", qty: ["–", "–", "–", "–", "–", 3], mat: "01130003", old: "0249" },
+    { n: 20, th: "สลักห่วงกลม M16 × 200 มม.", en: "Bolt, round eye, M16 × 200 mm", qty: ["–", "–", "–", "–", "–", 3], mat: "01140001", old: "0253" },
+    { n: 21, th: "หัวรูปห่วง M16 DIN 582", en: "Nut, eye, M16, DIN 582", qty: ["–", "–", "–", "–", 5, "–"], mat: "01180001", old: "0345" },
+    { n: 22, th: "แหวนสี่เหลี่ยมแบน 52 × 52 × 4.5 มม. รู Ø18 มม. มอก. 258", en: "Washer, square, flat, 52 × 52 × 4.5 mm, hole Ø18 mm, TIS 258", qty: ["20 (23)", "18 (21)", 44, 68, "49 (53)", 30], mat: "01180100", old: "0355" },
+    { n: 23, th: "แหวนสี่เหลี่ยมโค้ง 60 × 60 × 5 มม. รู Ø22 มม.", en: "Washer, square, curved, 60 × 60 × 5 mm, hole Ø22 mm", qty: [6, 6, "–", "–", "–", "–"], mat: "01180201", old: "0361" },
+    { n: 24, th: "แหวนรองแบบสปริง ขนาดระบุ 16 มม. มอก. 259", en: "Washer, lock, spring, size 16 mm, TIS 259", qty: ["4 (5)", "4 (5)", "–", "–", "–", "–"], mat: "01180301", old: "0365" },
+    { n: 25, th: "สเตรนแคล้มป์ สำหรับสายอะลูมิเนียม ขนาดตามต้องการ", en: "Clamp, strain, for Al conductor; size as required", qty: ["–", "–", 6, 6, 12, 6], mat: "03110000 – 03110101" },
+    { n: 26, th: "หลอดต่อสายชนิดบีบไม่รับแรงดึง สายอะลูมิเนียมขนาดตามต้องการ", en: "Connector, splice, compression type, tensionless, Al; size as required", qty: ["–", "–", "–", "–", 6, "–"], mat: "02410001 – 02410007*" },
+    { n: 27, th: "กายทิมเบิล สำหรับสายยึดโยง 50–95 ตร.มม.", en: "Thimble, guy, for steel wire 50–95 mm²", qty: ["–", "–", 2, 3, "4 (6)", 1], mat: "01210304", old: "0150" },
+    { n: 28, th: "ยูแคล้มป์ สลัก 1 ตัว M8", en: "Clamp, single U-bolt, M8", qty: ["5 (7)", "5 (7)", 9, 13, "16 (24)", 6], mat: "01230000", old: "0165" },
+    { n: 29, th: "ลวดเหล็กตีเกลียว 25 ตร.มม. มอก. 404", en: "Wire, steel, stranded, 25 mm², TIS 404", qty: ["5 ม. (7)", "5 ม. (7)", "–", "–", "–", "–"], mat: "01100002", old: "0181" },
+    { n: 30, th: "ลวดเหล็กกลม เส้นผ่าศูนย์กลาง 4 มม. มอก. 71 (นน. ประมาณ 0.1 กก./ม.)", en: "Wire, steel, solid, Ø 4 mm, TIS 71 (weight 0.1 kg/m)", qty: ["8 ม.", "8 ม.", "–", "–", "–", "–"], mat: "01100000", old: "0191" },
+    { n: 31, th: "เหล็กฉากรับสายล่อฟ้า 65 × 65 × 6 ยาว 2,250* (ตีความ — แผ่นบัญชีวัสดุหน้า 10–11 ไม่มี)", en: "OHGW bayonet 65 × 65 × 6, 2,250 long* (inferred — BOM sheets 10–11 missing)", qty: ["1*", "–", "–", "–", "–", "–"], mat: "?" },
+    { n: 32, th: "เหล็กฉากรับสายล่อฟ้าทางโค้ง* (ตีความ)", en: "OHGW corner bayonet* (inferred)", qty: ["–", "1*", "–", "–", "–", "–"], mat: "?" },
+    { n: 33, th: "เหล็กรูปรางน้ำรับสายล่อฟ้า 100 × 50 × 5 ยาว 2.25 ม.* (ตีความ)", en: "Channel OHGW bayonet 100 × 50 × 5, 2.25 m* (inferred)", qty: ["–", "–", "1*", "1*", "1*", "–"], mat: "?" },
+    { n: 34, th: "เหล็กรูปรางน้ำ ชนิดรีดร้อน ขนาด 100 × 50 × 5 มม. ยาว 2.25 ม. มอก. 116 (อาจทำจากเหล็กรูปรางน้ำ วัสดุเลขที่ 6012 ได้) — แบบรายละเอียดแผ่นที่ 7", en: "Steel, channel, 100 × 50 × 5 mm, 2.25 m long, TIS 116 (may be made from channel steel mat. no. 6012) — detail on sheet 7", qty: ["–", "–", "–", "–", "–", "1*"], mat: "?", kgm: 9.36, len: 2.25, star: true },
+    { n: 35, th: "เหล็กรูปรางน้ำ ชนิดรีดร้อน ขนาด 150 × 75 × 6.5 มม. ยาว 4.00 ม. มอก. 116 — แบบรายละเอียดแผ่นที่ 8", en: "Steel, channel, 150 × 75 × 6.5 mm, 4.00 m long, TIS 116 — detail on sheet 8", qty: ["–", "–", "–", "2*", "–", "–"], mat: "?", kgm: 18.6, len: 4, star: true },
+    { n: 36, th: "กราวด์ไวร์แคล้มป์ J 1152* (ตีความ)", en: "Ground wire clamp J 1152* (inferred)", qty: ["1*", "1*", "–", "–", "–", "–"], mat: "?" },
+    { n: 37, th: "อุปกรณ์จับสายล่อฟ้าที่หัวเหล็กรางน้ำ ⑭ (ไม่ทราบรายละเอียด)", en: "OHGW fitting at the top of channel 34 (description unknown)", qty: ["–", "–", "–", "–", "–", "?"], mat: "?" },
+    { n: 38, th: "ลูกถ้วยก้านตรง 33 kV แบบ ค. (56-3) พร้อมก้าน* (ตีความ)", en: "Insulator, pin type, 33 kV, type C (56-3), with pin* (inferred)", qty: ["6*", "6*", "–", "–", "6*", "6*"], mat: "?" },
+    { n: 39, th: "ลูกถ้วยแขวน แบบ ง (52-4)* (ตีความ)", en: "Insulator, suspension, type D (52-4)* (inferred)", qty: ["–", "–", "27*", "36*", "36*", "18*"], mat: "?" },
+    { n: 40, th: "อุปกรณ์แขวนเคเบิลอากาศ (ไม่ทราบรายละเอียด)", en: "Aerial cable suspension fitting (description unknown)", qty: ["?", "?", "–", "–", "?", "–"], mat: "?" },
+    { n: 41, th: "อุปกรณ์แขวนเคเบิลอากาศ (ไม่ทราบรายละเอียด)", en: "Aerial cable suspension fitting (description unknown)", qty: ["?", "?", "–", "–", "?", "–"], mat: "?" },
+    { n: 42, th: "ชุดแขวน / สเปเซอร์เคเบิลอากาศ (ตีความจากรูป)", en: "Aerial cable hanger / spacer (interpreted from the sketch)", qty: ["2*", "2*", "–", "–", "2*", "–"], mat: "?" },
+    { n: 43, th: "อุปกรณ์ที่หัวลูกถ้วยก้านตรง (ไม่ทราบรายละเอียด)", en: "Fitting at the pin-insulator top (description unknown)", qty: ["?", "?", "–", "–", "?", "–"], mat: "?" },
+    { n: 44, th: "อุปกรณ์ที่หัวลูกถ้วยก้านตรง (ไม่ทราบรายละเอียด)", en: "Fitting at the pin-insulator top (description unknown)", qty: ["?", "?", "–", "–", "?", "–"], mat: "?" },
+    { n: 45, th: "สายยึดโยง GY-32* (ตีความ)", en: "Guy assembly GY-32* (inferred)", qty: ["–", "–", "2*", "2*", "2*", "–"], mat: "—" },
+    { n: 46, th: "สายยึดโยง GY-33* (ตีความ)", en: "Guy assembly GY-33* (inferred)", qty: ["–", "–", "1*", "1*", "–", "–"], mat: "—" },
+    { n: 47, th: "อุปกรณ์เข้าปลายเคเบิลอากาศ (ไม่ทราบรายละเอียด)", en: "Aerial cable dead-end fitting (description unknown)", qty: ["–", "–", "?", "?", "–", "–"], mat: "?" },
+    { n: 48, th: "เคเบิลอากาศ / สายแขวน (ไม่ทราบรายละเอียด)", en: "Aerial cable / messenger (description unknown)", qty: ["–", "–", "?", "?", "–", "–"], mat: "?" },
+    { n: 49, th: "อุปกรณ์เข้าปลายเคเบิลอากาศ (ไม่ทราบรายละเอียด)", en: "Aerial cable dead-end fitting (description unknown)", qty: ["–", "–", "?", "?", "–", "–"], mat: "?" },
+    { n: 50, th: "ตัวต่อแยกสายบนสายประธาน (ไม่ทราบรายละเอียด)", en: "Tap connector on the main conductor (description unknown)", qty: ["–", "–", "–", "–", "–", "?"], mat: "?" } ],
+  refs: [ { code: "3803", th: "สายดินลวด Ø4 ต่อระหว่างก้านลูกถ้วย", en: "Ø4 wire bond between insulator pins", qty: ["✓", "✓", "–", "–", "–", "–"] },
+          { code: "GY-32/33", th: "การประกอบสายยึดโยง = รายการ ㊺ ㊻*", en: "Guy assemblies = items 45, 46*", qty: ["–", "–", "✓", "✓", "✓", "–"] },
+          { code: "IB1-015/34071", th: "มุมเบี่ยง ช่วงเสา ระยะหย่อนยาน (แผ่น 6)", en: "Deflection angle, span, sag (sheet 6)", qty: ["–", "–", "–", "–", "✓", "–"] } ],
+  fabrication: [
+    ["หมายเหตุ — แบบนี้มี 11 แผ่น แต่ไฟล์ PDF มีเพียงแผ่นที่ 1–9 · แผ่นที่ 10–11 (บัญชีวัสดุรายการ ㉛–㊿ และหมายเหตุทั่วไป) ไม่มี จึงไม่สามารถถอดรายละเอียดรายการ ㉛–㊿ ได้ (ดูข้อสมมติ)", "Note — the drawing has 11 sheets but the PDF holds sheets 1–9 only · sheets 10–11 (BOM items 31–50 and general notes) are missing, so items 31–50 could not be transcribed (see assumptions)."],
+    ["* — กรณีใช้เหล็กฉากรับสายล่อฟ้า วัสดุเลขที่ 0128 หรือ 0129 ให้ใช้ระยะการยึดกับเสาเป็นระยะ 500 มม.", "* — In case of use overhead ground wire bayonet material no. 0128 or 0129, the distance for fitting on pole shall be 500 mm."],
+    ["** — กรณีใช้เหล็กรูปรางน้ำรับสายล่อฟ้า วัสดุเลขที่ 6013 ให้เพิ่มสลักเกลียวและแหวนสี่เหลี่ยมแบน รายการที่ ⑪ และ ㉒ อีกอย่างละ 1 อัน เพื่อยึดกับเสาที่ระยะ 200 มม. ถัดลงมา", "** — In case of use channel steel overhead ground wire bayonet material no. 6013, add each of items 11 and 22 for fitting at 200 mm lower."],
+    ["หมายเหตุแผ่น 6 — มุมเบี่ยงเบนของสาย (θ°) ช่วงเสาสูงสุด และระยะหย่อนยานต่ำสุดของสายทุกเส้น ดูแบบเลขที่ IB1-015/34071", "Sheet 6 note — line deflection angle (θ°), max. span length and min. sag of all conductors for structure: see drawing no. IB1-015/34071."],
+    ["จำนวนในวงเล็บ ( ) ในบัญชีวัสดุ (ช่อง I, II, V) พิมพ์ไว้ใต้จำนวนหลัก — คงไว้ตามแบบ (น่าจะเป็นจำนวนกรณีใช้อุปกรณ์ตามหมายเหตุ * / **)", "Bracketed quantities ( ) in the BOM (columns I, II, V) are printed under the main figures — kept as printed (probably the quantities for the * / ** alternatives)."],
+    ["แผ่นที่ 1 แบบ I ทางตรง/โค้ง ≤ 5° + รายละเอียด A + แผนผังการต่อลงดิน · 2 แบบ II โค้ง ≤ 30° · 3 แบบ III เข้าปลายสาย (สายเปลือย 2 วงจร + เคเบิลอากาศ 1 วงจร) · 4 แบบ IV (สายเปลือย 2 + เคเบิลอากาศ 2 วงจร) · 5–6 แบบ V เข้าปลายสายสองข้าง + การใช้งาน · 7 แบบ VI ต่อแยกสาย + วัสดุ ㉞ · 8 วัสดุ ㉟ + บัญชีวัสดุ ①–⑪ · 9 บัญชีวัสดุ ⑫–㉚", "Sheet 1 type I tangent / ≤ 5° + detail A + earthing diagram · 2 type II ≤ 30° · 3 type III deadend (2 bare + 1 aerial cable) · 4 type IV (2 bare + 2 aerial cable) · 5–6 type V double deadend + application · 7 type VI tap line + item 34 · 8 item 35 + BOM 1–11 · 9 BOM 12–30."],
+    ["ขั้นตอน 1 — ตั้งเสาคอนกรีต ① 14 ม. ระดับคอน: 150 ใต้ยอดเสา (วงจร 1) · 2,150 (วงจร 2) · 3,350 (เคเบิลอากาศ วงจร 3–4)", "Step 1 — erect the 14 m pole ①; arm levels 150 below the top (circuit 1), 2,150 (circuit 2) and 3,350 (aerial cable, circuits 3–4)."],
+    ["ขั้นตอน 2 (I, II) — ยึดคอน ③ 3,000 สองระดับ และคอน ② 100 × 100 × 2,500 ระดับล่างด้วยสลัก ⑬ M16 × 350 แหวน ㉒ ㉔ · เหล็กประกับ ⑥ (คอน ③, จุดยึด 620 ใต้คอน) และ ⑤ (คอน ②, 500 ใต้คอน) ยึดด้วย ⑨ ⑧ และ ⑪", "Step 2 (I, II) — bolt the two 3,000 arms ③ and the lower 100 × 100 × 2,500 arm ② with ⑬ M16 × 350 and washers ㉒ ㉔; braces ⑥ (arms ③, 620 below) and ⑤ (arm ②, 500 below) with ⑨ ⑧ and ⑪."],
+    ["ขั้นตอน 3 (I, II) — ลูกถ้วยก้านตรง ㊳* 3 ลูกต่อคอน รองแหวนโค้ง ㉓ · ลวด Ø4 ㉚ ต่อก้านลูกถ้วยและชุดแขวนเคเบิล ㊷ ลงสายดิน ㉙ · เหล็กฉาก ㉛ (I) หรือ ㉜ (II) ยึดด้วย ⑪ ที่ 100 และ 400 มม. ใต้ยอดเสา · ชุดแขวนเคเบิลอากาศ ㊷ ที่ปลายคอน ② ด้วย ⑨ ㉒ ㉔", "Step 3 (I, II) — pin insulators 38* three per arm on curved washers ㉓ · Ø4 wire ㉚ bonds the pins and the cable hangers 42 to ground lead ㉙ · bayonet 31 (I) or 32 (II) with ⑪ at 100 and 400 below the top · aerial cable hangers 42 at the ends of arm ② with ⑨ ㉒ ㉔."],
+    ["ขั้นตอน 2 (III–V) — คอนคู่ ④ ยึดด้วยสลักห่วง ⑰ M16 × 450 (ระดับบน) / ⑱ M16 × 500 · เข้าปลายสายด้วยลูกถ้วยแขวน ㊴* 3 ลูก สเตรนแคล้มป์ ㉕ · V ใช้หัวห่วง ㉑ ด้านหลัง ลูกถ้วยก้านตรงรองรับจัมเปอร์ และหลอดต่อ ㉖", "Step 2 (III–V) — double arms ④ with double-arming bolts ⑰ M16 × 450 (upper) / ⑱ M16 × 500 · dead-end with 3-disc strings 39* and strain clamps ㉕ · V: eye nuts ㉑ on the far side, pin insulators carrying the jumpers, splices ㉖."],
+    ["ขั้นตอน 3 (III) — ระดับล่าง: คอนคู่ ④ เข้าปลายเคเบิลอากาศ 1 วงจร (ลูกถ้วยแขวน 3 ชุด + สายแขวนด้วยกายทิมเบิล ㉗ ยูแคล้มป์ ㉘) · (IV) — เหล็กรางน้ำ ㉟ 150 × 75 × 6.5 ยาว 4 ม. คู่ ยึดด้วย ⑭ M16 × 400 ผ่านเสาและสลักห่วง ⑯ M16 × 400 ใส่เหล็กฉากรับ ⑦ ด้วย ⑩ M16 × 200 เข้าปลายเคเบิลอากาศ 2 วงจร", "Step 3 (III) — lower level: double arms ④ dead-ending one aerial-cable circuit (3 strings + messenger with thimble ㉗ and U-bolt clamps ㉘) · (IV) — pair of 4 m channels 35 150 × 75 × 6.5 with ⑭ M16 × 400 through the pole and eye bolts ⑯ M16 × 400; angle brace ⑦ with ⑩ M16 × 200; dead-ends for two aerial-cable circuits."],
+    ["ขั้นตอน 4 (III–V) — เหล็กรางน้ำ ㉝* ยึดข้างเสาด้วย ⑪ 3 ตัว (100, 400, 600** มม.) เข้าปลายสายล่อฟ้า · สายยึดโยง ㊺ ㊻* ตามรูป สมอห่าง ≥ 6.00 ม. และอีก 2.00 ม. (แผ่น 6)", "Step 4 (III–V) — channel 33* on the pole side with three ⑪ (100, 400, 600** mm); dead-end the OHGW · guys 45, 46* as drawn, anchors ≥ 6.00 m and a further 2.00 m (sheet 6)."],
+    ["ขั้นตอน (VI) — ติดตั้งบนเสาเดิมแบบ I (ไม่รวมเสา): คอนคู่ ④ ตั้งฉากแนวสายประธานที่ 1,000 มม. ใต้คอนประธานแต่ละระดับ ยึดด้วยสลักห่วง ⑱ / ⑲ M16 × 600 เข้าปลายสายแยกด้วย ㊴ ㉕ ลูกถ้วยก้านตรง ㊳ รองรับจัมเปอร์จากสายประธาน (㊿) · เหล็กรางน้ำ ㉞ ที่หัวเสา เข้าปลายสายล่อฟ้าสายแยกด้วยสลักห่วง ⑳ ㉗ ㉘", "Step (VI) — on an existing type-I pole (pole not included): double arms ④ square to the main line 1,000 mm below each main arm, bolted with eye bolts ⑱ / ⑲ M16 × 600; dead-end the tap with 39 + ㉕; pin insulators 38 carry the jumpers from the main conductors (50) · channel 34 at the pole top; tap OHGW dead-ended on eye bolt ⑳ with ㉗ ㉘."] ],
+  assumptions: [
+    ["แผ่นบัญชีวัสดุ 10–11 ไม่มีใน PDF: ชื่อรายการ ㉛–㊿ ตีความจากรูปและเทียบกับแบบ 3224 (㉛ = เหล็กฉาก ㉓, ㉜ = ㉚, ㉝ = ㉕, ㊱ = ㉔, ㊳ = ㉖, ㊴ = ㉗, ㊺/㊻ = GY-32/33) — จำนวนที่มี * คำนวณจากรูป ส่วน ? ไม่ทราบ · ㉞ ㉟ ถอดจากแบบรายละเอียดแผ่น 7–8", "BOM sheets 10–11 are missing: items 31–50 are inferred from the views and from drawing 3224 (31 = bayonet, 32 = corner bayonet, 33 = channel, 36 = J1152 clamp, 38 = pin insulator, 39 = disc, 45/46 = GY-32/33) — starred quantities are counted from the views, ? unknown · items 34 and 35 are transcribed from their detail drawings (sheets 7–8)."],
+    ["ความยาวฝังดินของเสา 2,000 มม. ยืนยันได้จากโซ่มิติแบบ VI (150 + 1,000 × 3 + 1,200 + 950 + 6,700 + 2,000 = 14,000 ✓) · หน้าตัดเสา 200 → 350 สมมติ", "Setting depth 2,000 mm is confirmed by the type VI chain (150 + 1,000 × 3 + 1,200 + 950 + 6,700 + 2,000 = 14,000 ✓) · pole section 200 → 350 assumed."],
+    ["โซ่มิติแบบ I/II: 150 + 620 + 1,380 + 620 + 580 + 500 (ยอดเสา → คอน 1 → ประกับ → คอน 2 → ประกับ → คอน 3 → ประกับ) · III–V: 150 / 100 + 300 + 200** / 2,000 / 1,200 / 500 — ผลรวมสอดคล้องกัน (คอน 3 ต่ำจากยอดเสา 3,350 ทุกแบบ)", "Chains I/II: 150 + 620 + 1,380 + 620 + 580 + 500 (top → arm 1 → brace → arm 2 → brace → arm 3 → brace) · III–V: 150 / 100 + 300 + 200** / 2,000 / 1,200 / 500 — consistent (arm 3 is 3,350 below the top in every type)."],
+    ["ระยะจุดยึดเหล็กประกับของคอนคู่ระดับ 1–2 (III–V) ไม่ระบุ ใช้ 620* เท่าแบบ I · ตำแหน่งรูบนคอน 3,000 / 2,500 ใช้ตามแบบคอน 3801 / 3805 · ชุดแขวน ㊷ ที่ ±1,150*", "Brace drop of the double arms at levels 1–2 (III–V) is not dimensioned: 620* as type I · hole positions on the 3,000 / 2,500 arms per arm drawings 3801 / 3805 · hangers 42 at ±1,150*."],
+    ["แบบ IV ระดับล่าง: ลูกถ้วยแขวน 6 ชุดที่รู ±950 ±1,400 ±1,850 และสายแขวนที่ ±500 ตามรูปตัด A-A และแบบวัสดุ ㉟ · เหล็กฉาก ⑦ ยึดที่รูปีก ±900 (ช่วงกว้าง 1,800) จุดต่ำสุด 500 ใต้แนวราง (โซ่มิติ 500; ตกท้อง 450 ตามชื่อรายการ)", "Type IV lower level: six strings at holes ±950 ±1,400 ±1,850 and messengers at ±500 per section A-A and item 35 · angle brace ⑦ on the flange holes ±900 (1,800 wide), lowest point 500 below the channel axis (chain 500; 450 drop per the item name)."],
+    ["แบบ III ระดับล่าง: ลูกถ้วยแขวนที่ −1,100, +500, +1,100 และสายแขวนที่สลักกลาง ตามรูปตัด A-A แผ่น 3 · ลูกถ้วยแขวน ㊴ นับได้ III 27 / IV 36 / V 36 / VI 18 ลูก (3 ลูกต่อชุด)", "Type III lower level: strings at −1,100, +500, +1,100 and the messenger on the centre bolt per section A-A on sheet 3 · discs 39 counted III 27 / IV 36 / V 36 / VI 18 (3 per string)."],
+    ["แบบ VI ติดตั้งบนเสาเดิมแบบ I (ช่องเสา ① เป็น \"–\") — วาดโครงสร้างเดิมเป็นเส้นประ · คอนต่อแยกวางตามแนวสายประธาน สายแยกออกตั้งฉาก · ลูกถ้วยก้านตรง 3 ลูกต่อคอนที่ −1,150 / +650 / +1,150*", "Type VI is added to an existing type-I pole (pole column \"–\") — existing structure drawn dashed · tap arms lie along the main line, tap leaves at right angles · 3 pin insulators per tap arm at −1,150 / +650 / +1,150*."],
+    ["สายยึดโยง: จุดยึดที่เสาวาด 250 มม. ใต้คอน · III/IV ใช้ ㊻ สองเส้น (หัวรางน้ำ + ระดับ 1) และ ㊺ ระดับ 2 และใต้ระดับ 3 ตามเส้นชี้ในแผ่น 3–4 · ระยะสมอ ≥ 6.00 + 2.00 ม. จากแผ่น 6 (แบบ V) ใช้กับทุกแบบ", "Guys: pole attachment drawn 250 mm below the arm · III/IV use 46 with two leads (channel top + level 1) and 45 at level 2 and below level 3 per the leaders on sheets 3–4 · anchor leads ≥ 6.00 + 2.00 m from sheet 6 (type V) used for all."],
+    ["แบบ III/IV รูปด้านข้างชี้รายการ ⑫ (M16 × 300) ใต้ระดับ 3 แต่บัญชีวัสดุช่อง III/IV เป็น \"–\" — แสดงตามรูป", "Types III/IV side views point to item ⑫ (M16 × 300) below level 3 but the BOM shows \"–\" in columns III/IV — shown as drawn."],
+    ["สลักห่วง III: ⑰ 3 + ⑱ 7 = 10 ตัว แต่รูปต้องการ 3 + 3 + 5 = 11 ตัว (ระดับล่าง 5 ตำแหน่ง) — ตรวจสอบ", "Type III eye bolts: ⑰ 3 + ⑱ 7 = 10, while the views need 3 + 3 + 5 = 11 (5 positions on the lower arms) — verify."],
+    ["เคเบิลอากาศ (ระดับ 3) ชุดแขวน ㊷ ㊵ ㊶ และอุปกรณ์เข้าปลาย ㊼ ㊽ ㊾ วาดแบบสัญลักษณ์ตามภาพร่าง (สายแขวน + 3 เส้น) · ⊏150 × 75 × 6.5 18.6 กก./ม. · ⊏100 × 50 × 5 9.36 · ∟50 × 50 × 6 4.47 (ค่าทั่วไป; ⑦ ยาวคลี่ ≈ 2.05 ม.)", "Aerial cable (level 3) hangers 42, 40, 41 and dead-end parts 47–49 are drawn schematically per the sketch (messenger + 3 cables) · ⊏150 × 75 × 6.5 18.6 kg/m · ⊏100 × 50 × 5 9.36 · ∟50 × 50 × 6 4.47 (typical; ⑦ developed length ≈ 2.05 m)."],
+    ["วันที่ผู้ว่าการลงนามเขียนด้วยลายมือ อ่านได้ \"16 ต.ค. 34\" · ตราประทับใต้กรอบ \"11 ต.ค. 2534 (เทคนิค)\"", "Governor's handwritten date reads \"16 Oct 34\" · stamp below the frame \"11 Oct 2534 (technical)\"."] ]
+};
+
+/* ---------- per-level geometry ---------- */
+const armOf = L => ({ pin: A3, aer: A2, de: A25, dde: A25, aerde: A25, aerdde: A25, tap: A25, aerde2: C35 })[L.type];
+const dropOf = L => ({ pin: 620, aer: 500, de: 620, dde: 620, aerde: 500, aerdde: 500, tap: 620, aerde2: 500 })[L.type];
+const fzOf = (P, L) => L.type === "aerde2" ? q_hw(P, L.z) : q_hd(P, L.z) + armOf(L).s / 2;
+const daOf = L => L.type === "aerde" ? [-1100, 0, 500, 1100] : L.type === "aerdde" ? [-1100, 0, 1100] : A25.da;
+const DE_X = { aerde: [-1100, 500, 1100] };
+/* hanger 42 (front view, cables end-on): bolt down from arm bottom, hook, cross spacer with messenger + 3 cables */
+function q_hangF(V, x, zb){ const k = V.k, X = V.X(x), y0 = V.Y(zb), y1 = V.Y(zb - 200), yc = V.Y(zb - 420), r = 140 * k; let s = "";
+  s += x_line(X, y0, X, y1, 1.6) + `<path d="M${X} ${y1} q${tlR(-40 * k)} ${tlR(30 * k)} 0 ${tlR(70 * k)}" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`;
+  s += `<path d="M${tlR(X - r)} ${yc} L${X} ${tlR(yc - r)} L${tlR(X + r)} ${yc} L${X} ${tlR(yc + r)} Z" fill="none" stroke="var(--ink)" stroke-width="1.2"/>`;
+  [[0, -r], [-r, 0], [r, 0], [0, r]].forEach(([dx, dy], i) => { s += `<circle cx="${tlR(X + dx)}" cy="${tlR(yc + dy)}" r="${tlR(Math.max(2, (i ? 30 : 12) * k))}" fill="${i ? "var(--soft)" : "var(--ink)"}" stroke="var(--ink)" stroke-width=".9"/>`; });
+  return s; }
+const HANG = { msg: 340, c: 420 }, HANGX = [-1150, 1150];   /* messenger / cable centre below arm bottom (schematic*) */
+
+/* ---------- FRONT view of a level (looking along the main line) ---------- */
+function lvFront(V, P, L, items){ const k = V.k, A = armOf(L), z = L.z, yc = V.Y(z), t = L.type, dr = dropOf(L); let s = "";
+  const cal = (px, py, dx, dy, n) => { if (!L.ghost) items.push([px, py, px + dx, py + dy, n]); };
+  if (t === "tap"){ const hw = q_hw(P, z), fx = hw + 60, L3 = tlStrLen(X_DISC3) * k;
+    [-1, 1].forEach(sd => { s += q_armEnd2D(V.X(sd * fx), yc, k, 120); });
+    s += q_boltH(V.X(-fx - 60) - 3, V.X(fx + 60) + 3, yc);
+    const e0 = V.X(-fx - 60) - 3; s += `<circle cx="${tlR(e0 - 3)}" cy="${yc}" r="3" fill="none" stroke="var(--ink)" stroke-width="1.3"/>` + x_deRun2D(e0 - 6, yc, X_DISC3, k, -1, 50);
+    s += q_pin2D(V.X(-fx), tlR(yc - 60 * k), k);
+    s += x_line(V.X(-fx), V.Y(z - 60), V.X(0), V.Y(z - dr), 1.4) + q_boltH(V.X(-hw) - 4, V.X(hw) + 4, V.Y(z - dr));
+    cal(e0 - 6 - L3 * .5, yc - 12, -14, -40, 39); cal(e0 - 6 - L3 - 2, yc + 4, -8, 34, 25); cal(V.X(fx + 60) + 4, yc, 40, 22, z === ZTA ? [18, 22] : [19, 22]);
+    cal(V.X(-fx), yc - 60 * k - Q_PIN.h * k * .6, -46, -26, 38); cal(V.X(fx) + 6, yc - 6, 40, -26, 4); cal(V.X(hw) + 4, V.Y(z - dr), 40, 18, [12]);
+    return s; }
+  if (t === "aerde2"){ const h = A.h * k, x1 = V.X(-A.len / 2), x2 = V.X(A.len / 2);
+    s += x_brace2D(V, -A.br, z - A.h / 2, 0, z - A.drop, 30, 50) + x_brace2D(V, A.br, z - A.h / 2, 0, z - A.drop, 30, 50);
+    s += `<rect x="${x1}" y="${tlR(yc - h / 2)}" width="${tlR(x2 - x1)}" height="${tlR(h)}" fill="var(--steel)" stroke="var(--ink)" stroke-width="1.2"/>` + x_line(x1, yc - h / 2 + 2, x2, yc - h / 2 + 2, .5) + x_line(x1, yc + h / 2 - 2, x2, yc + h / 2 - 2, .5);
+    A.de.forEach(x => { s += q_discEnd2D(V.X(x), yc, k); }); A.msg.forEach(x => { s += `<circle cx="${V.X(x)}" cy="${yc}" r="3.4" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`; });
+    s += q_nut2D(V.X(0), yc, 2.6) + q_nut2D(V.X(0), V.Y(z - A.drop), 2.6);
+    cal(x2, yc, 10, -26, 35); cal(V.X(-A.br * .5), V.Y(z - A.drop * .8), -90, 40, 7); cal(V.X(-500), yc + 3, -60, 36, [16, 22]); cal(V.X(0) - 3, yc - 3, -60, -45, [14, 22]); cal(V.X(1400) + 6, yc + 8, 20, 36, 39);
+    return s; }
+  const dots = t === "pin" ? [-A.br, 0, A.br] : [-A.br, A.br];
+  if (!(t === "tap")) s += q_braceV(V, A, z, dr, t === "aer" || t === "aerde" || t === "aerdde" ? 30 : 40);
+  s += q_arm2D(V, A, z, { dots });
+  const ytop = tlR(yc - A.s * k / 2), xR = V.X(A.len / 2);
+  if (t === "pin"){ A.pins.forEach(x => { s += q_pin2D(V.X(x), ytop, k) + `<rect x="${tlR(V.X(x) - 3.5)}" y="${tlR(yc + A.s * k / 2)}" width="7" height="3.5" fill="var(--ink)"/>`; });
+    s += x_line(V.X(-1400), yc + A.s * k / 2 + 5, V.X(1400), yc + A.s * k / 2 + 5, .9, "var(--ink)", "5 2");
+    cal(xR, yc + 2, 10, 26, 3); cal(V.X(A.pins[2]), ytop - Q_PIN.h * k * .6, 24, -22, 38); cal(V.X(A.br), yc, 18, -34, [9, 22]); cal(V.X(-900), yc + A.s * k / 2 + 5, -20, 30, 30); }
+  else if (t === "aer"){ HANGX.forEach(x => { s += q_hangF(V, x, z - A.s / 2) + `<rect x="${tlR(V.X(x) - 3.5)}" y="${tlR(ytop - 4)}" width="7" height="4" fill="var(--ink)"/>`; });
+    cal(xR, yc, 10, -22, 2); cal(V.X(HANGX[0]), ytop - 3, -10, -30, [9, 22, 24]); cal(V.X(HANGX[0]) - 140 * k, V.Y(z - A.s / 2 - 420), -30, 26, 42); cal(V.X(A.br), yc, 26, -30, [8, 22]); }
+  else if (t === "aerdde"){ HANGX.forEach(x => { s += q_hangF(V, x, z - A.s / 2); }); [-1100, 1100].forEach(x => { s += `<circle cx="${V.X(x)}" cy="${yc}" r="3.4" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`; });
+    s += q_nut2D(V.X(0), yc, 2.6); cal(xR, yc, 10, 26, 4); cal(V.X(HANGX[0]), ytop - 3, -10, -30, [9, 22, 24]); cal(V.X(0) - 3, yc - 3, -70, -30, [15, 22]); cal(V.X(HANGX[0]) - 140 * k, V.Y(z - A.s / 2 - 420), -30, 26, 42); }
+  else { const des = t === "aerde" ? DE_X.aerde : A.da; des.forEach(x => { s += q_discEnd2D(V.X(x), yc, k); });
+    if (t === "aerde") s += `<circle cx="${V.X(0)}" cy="${yc}" r="3.4" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`;
+    if (t === "dde"){ A.pins.forEach(x => { s += q_pin2D(V.X(x), ytop, k); });
+      [[-1100, -1150], [0, 650], [1100, 1150]].forEach(([a, c]) => { s += `<path d="M${V.X(a)} ${tlR(yc - 4)} Q${tlR((V.X(a) + V.X(c)) / 2)} ${tlR(yc - 40)} ${V.X(c)} ${tlR(ytop - Q_PIN.h * k + 2)}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`; });
+      cal(V.X(650), ytop - Q_PIN.h * k * .6, 30, -28, 38); }
+    cal(xR, yc + 2, 10, 26, 4); cal(V.X(-1100) + 4, yc + 8, -6, 36, z === ZA && t !== "dde" ? [17, 22] : [18, 22]); cal(V.X(A.br), yc, 18, -34, [9, 22]);
+    if (t === "aerde") cal(V.X(1100) - 4, yc + 8, 20, 36, 39); }
+  s += q_nut2D(V.X(0), V.Y(z - dr), 2.4); cal(V.X(0) + 3, V.Y(z - dr), 34, 14, [11, 22]);
+  cal(V.X(A.br * .55), V.Y(z - dr * .55), 40, -6, t === "aer" || t === "aerde" || t === "aerdde" ? 5 : 6);
+  return s; }
+
+/* ---------- SIDE view of a level (looking across the main line; line runs left–right) ---------- */
+function lvSide(W, P, L, items, o){ const k = W.k, A = armOf(L), z = L.z, y = W.Y(z), t = L.type, f = fzOf(P, L), hd = q_hd(P, z), X = W.X, dr = dropOf(L), L3 = tlStrLen(X_DISC3) * k; let s = "";
+  const cal = (px, py, dx, dy, n) => { if (!L.ghost) items.push([px, py, px + dx, py + dy, n]); };
+  const cw = o.cw;   /* conductor half-length px */
+  if (t === "tap"){ const ytop = tlR(y - A.s * k / 2), x1 = X(-A.len / 2), x2 = X(A.len / 2);
+    s += x_brace2D(W, -A.br, z - 60, 0, z - dr, 30, 40) + x_brace2D(W, A.br, z - 60, 0, z - dr, 30, 40);
+    s += q_arm2D(W, A, z, { dots: [-A.br, A.br] });
+    A.da.forEach(x => { s += `<circle cx="${X(x)}" cy="${y}" r="${tlR(Math.max(4, 30 * k))}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.3"/>`; });
+    A.pins.forEach(x => { s += q_pin2D(X(x), ytop, k); });
+    s += q_nut2D(X(0), W.Y(z - dr), 2.4);
+    cal(x2, y + 2, 10, 24, 4); cal(X(A.pins[2]), ytop - Q_PIN.h * k * .6, 26, -20, 38); cal(x1, y, -14, -22, z === ZTA ? [18, 22] : [19, 22]); cal(X(-A.br), y + 6, -36, 34, [9, 22]); cal(X(A.br * .5), W.Y(z - dr * .5), 50, 16, 6);
+    return s; }
+  if (t === "pin"){ s += q_armEnd2D(X(-f), y, k, A.s) + q_pin2D(X(-f), tlR(y - A.s * k / 2), k) + q_boltH(X(-f - A.s / 2) - 3, X(hd) + 3, y);
+    const yw = tlR(y - A.s * k / 2 - Q_PIN.h * k + 4); s += tlConductorH(W.px0 - cw, X(-f) - 6, yw, { w: 1.6 }) + tlConductorH(X(-f) + 6, W.px0 + cw, yw, { w: 1.6 });
+    s += q_boltH(X(-hd) - 4, X(hd) + 4, W.Y(z - dr));
+    cal(X(hd) + 3, y, 34, 0, [13, 22, 24]); cal(X(hd) + 3, W.Y(z - dr), 34, 4, [11, 22]); return s; }
+  if (t === "aer"){ s += q_armEnd2D(X(-f), y, k, A.s) + q_boltH(X(-f - A.s / 2) - 3, X(hd) + 3, y) + q_boltH(X(-hd) - 4, X(hd) + 4, W.Y(z - dr));
+    const yb = W.Y(z - A.s / 2), ym = W.Y(z - A.s / 2 - HANG.msg); s += x_line(X(-f), yb, X(-f), ym, 1.6) + `<rect x="${tlR(X(-f) - 5)}" y="${tlR(yb + 4)}" width="10" height="${tlR(Math.max(6, (ym - yb) * .5))}" fill="var(--steel)" stroke="var(--ink)" stroke-width=".9"/>`;
+    [HANG.msg, HANG.msg + 140, HANG.msg + 280].forEach((d, i) => { s += tlConductorH(W.px0 - cw, W.px0 + cw, W.Y(z - A.s / 2 - d), { w: i ? 2.2 : 1.2 }); });
+    cal(X(hd) + 3, y, 34, 0, [13, 22, 24]); cal(X(-f) - 5, tlR(yb + 8), -40, -14, [40, 41]); cal(X(-f) - 30, y - 6, -20, -26, 28); return s; }
+  if (t === "aerde2"){ [-1, 1].forEach(sd => { s += x_chanEndIn(W, A, q_hd(P, z), z, sd); });
+    s += q_boltH(X(-hd - 75) - 3, X(hd + 75) + 3, y);
+    const e0 = X(-hd - 75) - 3; s += x_deRun2D(e0 - 6, y, X_DISC3, k, -1, 40);
+    const ym = W.Y(z - 220); s += x_line(e0 - 4, y + 2, e0 - 30, ym, 1.1) + x_line(e0 - 30, ym, W.px0 - cw, ym, 1.2) + `<path d="M${tlR(e0 - 34)} ${ym} q-8 -6 -16 0 q8 6 16 0" fill="var(--soft)" stroke="var(--ink)" stroke-width=".8"/>`;
+    [W.Y(z - 360), W.Y(z - 500)].forEach(yy => { s += tlConductorH(W.px0 - cw, e0 - L3 - 30, yy, { w: 2.2 }); });
+    s += x_line(X(-hd), W.Y(z - A.h / 2), X(-hd), W.Y(z - A.drop), 2.2);
+    cal(e0 - L3 * .5, y - 12, -10, -34, 39); cal(X(hd + 75) + 4, y, 30, -20, [16, 22]); cal(e0 - 40, ym + 2, -20, 26, [27, 28]); cal(X(hd + 40), y + 10, 30, 20, 35); return s; }
+  /* paired arms */
+  s += q_armEnd2D(X(-f), y, k, A.s) + q_armEnd2D(X(f), y, k, A.s) + q_boltH(X(-f - A.s / 2) - 3, X(f + A.s / 2) + 3, y);
+  s += q_boltH(X(-hd) - 4, X(hd) + 4, W.Y(z - dr));
+  const e0 = X(-f - A.s / 2) - 3, e1 = X(f + A.s / 2) + 3;
+  if (t === "de" || t === "dde" || t === "aerde"){ s += `<circle cx="${tlR(e0 - 3)}" cy="${y}" r="3" fill="none" stroke="var(--ink)" stroke-width="1.3"/>` + x_deRun2D(e0 - 6, y, X_DISC3, k, -1, Math.max(10, cw - (W.px0 - e0) - L3));
+    cal(e0 - 6 - L3 * .5, y - 12, -8, -34, 39); cal(e0 - 6 - L3 - 2, y + 4, -8, 30, 25); cal(e1 + 4, y, 30, -22, t === "dde" ? [18, 21, 22] : z === ZA ? [17, 22] : [18, 22]); }
+  if (t === "dde"){ s += `<circle cx="${tlR(e1 + 3)}" cy="${y}" r="3" fill="none" stroke="var(--ink)" stroke-width="1.3"/>` + x_deRun2D(e1 + 6, y, X_DISC3, k, 1, Math.max(10, cw - (e1 - W.px0) - L3));
+    const a = e0 - 6 - L3, c = e1 + 6 + L3, yt = tlR(y - A.s * k / 2 - Q_PIN.h * k);
+    s += q_pin2D(X(-f), tlR(y - A.s * k / 2), k) + `<path d="M${tlR(a)} ${y} C${tlR(a + 4)} ${tlR(yt - 26)} ${tlR(c - 4)} ${tlR(yt - 26)} ${tlR(c)} ${y}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`;
+    const sp = [(a + c) / 2 + (c - a) * .18, y + .75 * (yt - 26 - y) + 2]; s += `<rect x="${tlR(sp[0] - 6)}" y="${tlR(sp[1] - 3)}" width="12" height="6" fill="var(--ink)"/>`;
+    cal(sp[0] + 6, sp[1], 30, -18, 26); cal(X(-f), yt + 4, -70, -52, [43, 44]); }
+  if (t === "aerde"){ const ym = W.Y(z - 220); s += x_line(e0 - 4, y + 2, e0 - 30, ym, 1.1) + x_line(e0 - 30, ym, W.px0 - cw, ym, 1.2) + `<path d="M${tlR(e0 - 34)} ${ym} q-8 -6 -16 0 q8 6 16 0" fill="var(--soft)" stroke="var(--ink)" stroke-width=".8"/>`;
+    s += tlConductorH(W.px0 - cw, e0 - 6 - L3, y, { w: 3.2 });
+    cal(W.px0 - cw + 30, y - 3, -6, -30, 48); cal(e0 - 6 - L3 - 6, y, 2, -30, 49); cal(e0 - 40, ym + 2, -10, 26, 47); }
+  if (t === "aerdde"){ const ym = W.Y(z - A.s / 2 - HANG.msg);
+    [[-1, e0], [1, e1]].forEach(([sd, e]) => { s += `<circle cx="${tlR(e + sd * 3)}" cy="${y}" r="3" fill="none" stroke="var(--ink)" stroke-width="1.3"/>` + x_line(e + sd * 6, y, e + sd * 46, ym, 1.1) + `<path d="M${tlR(e + sd * 46)} ${ym} q${sd * 8} -6 ${sd * 16} 0 q${-sd * 8} 6 ${-sd * 16} 0" fill="var(--soft)" stroke="var(--ink)" stroke-width=".8"/>`; });
+    s += x_line(W.px0 - cw, ym, e0 - 62, ym, 1.2) + x_line(e1 + 62, ym, W.px0 + cw, ym, 1.2) + `<path d="M${tlR(e0 - 50)} ${ym} C${tlR(e0 - 50)} ${ym - 22} ${tlR(e1 + 50)} ${ym - 22} ${tlR(e1 + 50)} ${ym}" fill="none" stroke="var(--ink)" stroke-width="1" stroke-dasharray="4 2"/>`;
+    s += x_line(X(-f), W.Y(z - A.s / 2), X(-f), ym + 4, 1.6);
+    [HANG.msg + 140, HANG.msg + 280].forEach(d => { s += tlConductorH(W.px0 - cw, W.px0 + cw, W.Y(z - A.s / 2 - d), { w: 2.2 }); });
+    cal(e0 - 46, ym, -20, -26, [27, 28]); cal(X(-f) - 2, ym + 30, -40, 56, [40, 41]); cal(e1 + 4, y, 30, -22, [18, 22]); }
+  cal(X(hd) + 4, W.Y(z - dr), 30, 16, [11, 22]);
+  return s; }
+
+/* ---------- OHGW support (front + side) ---------- */
+function bayFront(V, P, b, both, items){ const k = V.k, xf = V.X(-q_hw(P, T37)); let s = "";
+  if (b.kind === "ang"){ s += q_bay2D(V, P, b.z0, b.z1, 65, b); b.bolts.forEach(z => { s += q_boltH(xf - 12, V.X(q_hw(P, z)) + 4, V.Y(z)); });
+    const xt = b.corner ? V.X(-q_hw(P, T37) - b.dx) - 4 : xf - 4; s += `<circle cx="${tlR(xt)}" cy="${V.Y(b.z1 - 60)}" r="4.5" fill="var(--ink)"/>`;
+    s += x_line(xf - 10, V.Y(b.z0 + 100), xf - 10, V.Y(ZC) - 4, 1, "var(--ink)", "6 3");
+    items.push([xt, V.Y(b.z1 - 60), xt - 40, V.Y(b.z1 - 60), 36], [xt + 2, V.Y(T37 + 900), xt - 50, V.Y(T37 + 900), b.n], [xf - 10, V.Y(ZA - 900), xf - 60, V.Y(ZA - 900), 29], [xf - 3, V.Y(ZA + 120), xf - 56, V.Y(ZA + 300), 28]);
+    return s; }
+  const w = b.b * k; s += `<rect x="${tlR(xf - w)}" y="${V.Y(b.z1)}" width="${tlR(w)}" height="${tlR((b.z1 - b.z0) * k)}" fill="var(--steel)" stroke="var(--ink)" stroke-width="1.1"/>`;
+  b.bolts.forEach(z => { s += q_boltH(xf - w - 4, V.X(q_hw(P, z)) + 4, V.Y(z)); });
+  if (b.kind === "chan34"){ s += `<circle cx="${tlR(xf - w / 2)}" cy="${V.Y(b.top)}" r="4.5" fill="var(--ink)"/>` + q_boltH(xf - w - 30, xf + 2, V.Y(b.eye)) + `<circle cx="${tlR(xf - w - 34)}" cy="${V.Y(b.eye)}" r="4" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`;
+    s += x_line(xf - w - 38, V.Y(b.eye), V.X(-2600), V.Y(b.eye), 1.2) + `<path d="M${tlR(xf - w - 38)} ${V.Y(b.eye)} q-10 -7 -22 0 q12 7 22 0" fill="var(--soft)" stroke="var(--ink)" stroke-width=".8"/>`;
+    items.push([xf - w / 2, V.Y(b.z1 - 700), xf - 60, V.Y(b.z1 - 700), 34], [xf - w / 2, V.Y(b.top), xf - 50, V.Y(b.top) - 16, 37], [xf - w - 30, V.Y(b.eye), xf - 70, V.Y(b.eye) + 30, [20, 22]], [xf - w - 50, V.Y(b.eye), xf - 110, V.Y(b.eye) - 22, [27, 28]]);
+    return s; }
+  s += q_nut2D(tlR(xf - w / 2), V.Y(b.eye), 2.4) + `<circle cx="${tlR(xf - w / 2)}" cy="${V.Y(b.eye) - 10}" r="4" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`;
+  items.push([xf - w / 2, V.Y(T37 + 800), xf - 60, V.Y(T37 + 800), 33], [xf - 3, V.Y(T37 - 400), xf - 60, V.Y(T37 + 240), [11, 22]]);
+  return s; }
+function baySide(W, P, b, both, items){ const k = W.k, X = W.X; let s = "";
+  if (b.kind === "ang"){ const w = 65 * k; s += `<rect x="${tlR(W.px0 - w / 2)}" y="${W.Y(b.z1)}" width="${tlR(w)}" height="${tlR((b.z1 - b.z0) * k)}" fill="var(--steel)" stroke="var(--ink)"/>`;
+    b.bolts.forEach(z => { s += `<circle cx="${W.px0}" cy="${W.Y(z)}" r="2.4" fill="var(--ink)"/>`; });
+    s += tlConductorH(W.px0 - 150, W.px0 + 150, W.Y(b.z1 - 60), { w: 1.3 }) + `<circle cx="${W.px0}" cy="${W.Y(b.z1 - 60)}" r="4.5" fill="var(--ink)"/>`;
+    items.push([W.px0 + 2, W.Y(T37 - 400), W.px0 + 60, W.Y(T37 - 400) + 20, [11, 22]]); return s; }
+  const w = b.h * k; s += `<rect x="${tlR(W.px0 - w / 2)}" y="${W.Y(b.z1)}" width="${tlR(w)}" height="${tlR((b.z1 - b.z0) * k)}" fill="none" stroke="var(--ink)" stroke-dasharray="5 2"/>`;
+  b.bolts.forEach(z => { s += `<circle cx="${W.px0}" cy="${W.Y(z)}" r="2.4" fill="var(--ink)"/>`; });
+  if (b.kind === "chan34"){ const yt = W.Y(b.top); s += tlConductorH(W.px0 - 150, W.px0 + 150, yt, { w: 1.3 }) + `<circle cx="${W.px0}" cy="${yt}" r="4.5" fill="var(--ink)"/>` + `<circle cx="${W.px0}" cy="${W.Y(b.eye)}" r="4" fill="none" stroke="var(--ink)" stroke-width="1.3"/>`;
+    items.push([W.px0 + 4, yt, W.px0 + 60, yt - 24, 37]); return s; }
+  const ye = W.Y(b.eye), ex = W.px0 - w / 2 - 6, dl1 = sd => { const e = sd < 0 ? ex : W.px0 + w / 2 + 6; let q = `<circle cx="${tlR(e)}" cy="${ye}" r="4" fill="none" stroke="var(--ink)" stroke-width="1.3"/><path d="M${tlR(e + sd * 4)} ${ye} q${sd * 10} -8 ${sd * 22} 0 q${-sd * 12} 8 ${-sd * 22} 0" fill="var(--soft)" stroke="var(--ink)" stroke-width=".9"/>` + x_line(e + sd * 26, ye, W.px0 + sd * 150, ye, 1.2);
+    [36, 46, 56].forEach(d => { q += `<rect x="${tlR(e + sd * d - 2)}" y="${ye - 4}" width="4" height="8" fill="var(--ink)"/>`; }); return q; };
+  s += dl1(-1) + x_line(W.px0 - w / 2 - 4, ye, W.px0 + w / 2 + 4, ye, 1, "var(--ink)", "3 2"); if (both) s += dl1(1);
+  items.push([ex - 40, ye - 4, ex - 60, ye - 36, [28, 27]], [W.px0 + w / 2 + 2, ye, W.px0 + 70, ye - 34, both ? [20, 21] : 20], [W.px0 + 4, W.Y(T37 + 600), W.px0 + 70, W.Y(T37 + 600), 33]);
+  return s; }
+
+/* ---------- 2D ---------- */
+function drawElev(){
+  const p = PART.variants[cur], P = P14, T = T37; AR = "ar";
+  let s = MK("ar");
+  s += `<line x1="192" y1="8" x2="192" y2="912" stroke="var(--line)"/><line x1="690" y1="8" x2="690" y2="912" stroke="var(--line)"/>`;
+  /* ---- panel 1: overall ---- */
+  const V0 = tlView(112, 92, T + 1900, .047), real = p.levels.filter(L => !L.ghost);
+  s += tlTitle(14, 24, "รูปรวม", "OVERALL · " + p.key);
+  s += tlGround(22, 190, V0.Y(0)) + (p.tap ? `<g opacity=".5">${tlPoleSVG(V0, P, { gl: 0 })}</g>` : tlPoleSVG(V0, P, { gl: 0 }));
+  p.levels.forEach(L => { const A = armOf(L), g = L.ghost ? ' opacity=".4"' : "";
+    if (L.type === "tap") s += `<rect x="${V0.X(-q_hw(P, L.z) - 120)}" y="${tlR(V0.Y(L.z) - 3)}" width="${tlR((2 * q_hw(P, L.z) + 240) * V0.k)}" height="6" fill="var(--sheet)" stroke="var(--ink)"/>` + x_line(V0.X(-q_hw(P, L.z) - 120), V0.Y(L.z), V0.X(-q_hw(P, L.z) - 900), V0.Y(L.z), 1.2);
+    else s += `<g${g}>${q_arm2D(V0, A, L.z)}${x_line(V0.X(-A.br), V0.Y(L.z), V0.X(0), V0.Y(L.z - dropOf(L)), .8)}${x_line(V0.X(A.br), V0.Y(L.z), V0.X(0), V0.Y(L.z - dropOf(L)), .8)}</g>`; });
+  s += `<rect x="${V0.X(-q_hw(P, T)) - 3}" y="${V0.Y(p.bay.z1)}" width="3" height="${tlR((p.bay.z1 - p.bay.z0) * V0.k)}" fill="var(--ink)"/>`;
+  s += tlChainV(76, [T, 0, P.bot], V0.Y, { extTo: V0.X(-q_hw(P, 6000)) - 6 });
+  s += ext(24, V0.Y(T), 70, V0.Y(T)) + ext(24, V0.Y(P.bot), 70, V0.Y(P.bot)) + tlTotalV(32, V0.Y(T), V0.Y(P.bot), "14,000");
+  if (p.tap){ s += `<rect x="${V0.X(-200)}" y="${V0.Y(ZC - 1000)}" width="${tlR(400 * V0.k)}" height="${tlR(900 * V0.k)}" fill="none" stroke="var(--muted)" stroke-dasharray="3 2"/>` + q_txt(V0.X(300), V0.Y(ZC - 1300), "แรงต่ำเดิม", { fs: 9.5 }) + q_txt(V0.X(300), V0.Y(ZC - 1300) + 11, "EXIST. LV", { fs: 9 }); }
+  s += tlCallout(V0.X(q_hw(P, 5000)), V0.Y(5000), 172, V0.Y(5600), p.tap ? "1" : 1);
+  s += tlText(126, V0.Y(0) - 6, "ระดับดิน", "GL", "start", 10.5);
+  s += q_txt(16, V0.Y(P.bot) + 34, p.tap ? "เสาเดิม (ไม่รวมในชุด)" : "ฝังดิน 2,000 · เสา 14 ม.") + q_txt(16, V0.Y(P.bot) + 47, p.tap ? "EXISTING POLE · NOT IN SET" : "2,000 EMBEDDED · 14 m POLE", { fs: 9.5 });
+  p.guys.forEach(([z, lead]) => { const gx = V0.X(0) + 4, x2 = V0.X(lead), y1 = V0.Y(z), y2 = V0.Y(0), xc = 186, t = (xc - gx) / (x2 - gx); s += x_guy2D(gx, y1, xc, y1 + (y2 - y1) * t, true); });
+  s += `<rect x="${V0.X(-1650)}" y="${V0.Y(T + 1850)}" width="${tlR(3300 * V0.k)}" height="${tlR((T + 1850 - ZC + 1100) * V0.k)}" fill="none" stroke="var(--accent)" stroke-width=".8" stroke-dasharray="4 3"/>`;
+  s += q_txt(V0.X(-1650), V0.Y(ZC - 1100) + 12, "ขยาย →", { c: "var(--accent)" });
+  /* ---- panel 2: front ---- */
+  const k = .1, zTop = T + 1950, V = tlView(468, 86, zTop, k), items = [];
+  s += tlTitle(206, 24, "รูปด้านหน้า (มองตามแนวสายประธาน)", "FRONT VIEW · LOOKING ALONG THE MAIN LINE");
+  const zLow = ZC - 1000;
+  s += p.tap ? `<g opacity=".5">${tlPoleSVG(V, P, { from: T, to: zLow, cut: true })}</g>` : tlPoleSVG(V, P, { from: T, to: zLow, cut: true });
+  p.levels.forEach(L => { const g = lvFront(V, P, L, items); s += L.ghost ? `<g opacity=".38">${g}</g>` : g; });
+  s += bayFront(V, P, p.bay, p.both, items);
+  if (p.tap){ /* jumpers from main conductors (circuit 1/2) to the tap dead-ends */
+    [[ZA, ZTA], [ZB, ZTB]].forEach(([zm, zt]) => { const fx = q_hw(P, zt) + 120, xe = V.X(-fx) - 6 - tlStrLen(X_DISC3) * k - 6, ym = V.Y(zm) - (120 / 2 + Q_PIN.h) * k + 4;
+      [-1400, 450, 1400].forEach((xm, i) => { s += `<path d="M${V.X(xm)} ${tlR(ym)} C${V.X(xm)} ${tlR(V.Y(zt) - 30)} ${tlR(xe - 10 + i * 4)} ${tlR(V.Y(zt) - 40)} ${tlR(xe)} ${V.Y(zt)}" fill="none" stroke="var(--ink)" stroke-width="1.1"/>`; });
+      items.push([V.X(1400), tlR(ym) + 1, V.X(1400) + 10, tlR(ym) - 26, 50]); });
+    s += q_txt(206, 870, "เส้นจาง = โครงสร้างเดิมแบบ I (ไม่อยู่ในชุดนี้) · สายแยกออกไปทางซ้าย") + q_txt(206, 884, "FADED = EXISTING TYPE-I STRUCTURE (NOT IN THIS SET) · TAP RUNS TO THE LEFT", { fs: 9.5 }); }
+  /* chains */
+  const lv = p.tap ? [T, ZA, ZTA, ZB, ZTB, ZC] : [T, ZA, ZB, ZC];
+  s += tlChainV(232, lv, V.Y, { extTo: V.X(-1500) - 4, labels: p.tap ? ["150", "1,000", "1,000", "1,000", "1,200"] : ["150", "2,000", "1,200"] });
+  if (p.key === "I" || p.key === "II") s += tlChainV(268, [ZA, ZA - 620, ZB, ZB - 620, ZC, ZC - 500], V.Y, { extTo: V.X(-1250) - 4, labels: ["620", "1,380", "620", "580", "500"] });
+  else if (!p.tap) s += tlChainV(268, [ZC, ZC - 500], V.Y, { extTo: V.X(-1250) - 4, labels: ["500"] });
+  if (p.bay.kind !== "chan34") s += tlChainV(p.key === "I" || p.key === "II" ? 303 : 268, p.bay.kind === "chan" ? [T, T - 100, T - 400, T - 600] : [T, T - 100, T - 400], V.Y, { extTo: V.X(-q_hw(P, T)) - 14, labels: p.bay.kind === "chan" ? ["100", "300", "200**"] : ["100", "300*"] });
+  items.forEach(([px, py, x, y, n]) => { s += tlCallout(tlR(px), tlR(py), tlR(x), tlR(y), n); });
+  s += q_txt(206, 902, "* เหล็กฉาก 0128/0129: ระยะ 500 · ** รางน้ำ 6013: เพิ่ม ⑪ ㉒ ที่ 200 ถัดลงมา · ㉛–㊿ ตีความ (แผ่น 10–11 ไม่มี)", { fs: 9.5 });
+  /* ---- panel 3: side ---- */
+  const W = tlView(850, 86, zTop, k), it2 = [];
+  s += tlTitle(704, 24, "รูปด้านข้าง (มองขวางแนวสาย)", "SIDE VIEW · LOOKING ACROSS THE LINE");
+  s += p.tap ? `<g opacity=".5">${tlPoleSVG(W, P, { axis: "d", from: T, to: zLow, cut: true })}</g>` : tlPoleSVG(W, P, { axis: "d", from: T, to: zLow, cut: true });
+  p.levels.forEach(L => { const g = lvSide(W, P, L, it2, { cw: 150 }); s += L.ghost ? `<g opacity=".38">${g}</g>` : g; });
+  s += baySide(W, P, p.bay, p.both, it2);
+  p.guys.forEach(([z, lead, n], i) => { const x1 = W.X(q_hd(P, z)) + 2, y1 = W.Y(z), xg = W.X(lead), yg = W.Y(0), t = (995 - x1) / (xg - x1);
+    s += q_guySide(x1, y1, xg, yg, 1000); if (i !== 1 || n !== 46) it2.push([x1 + (995 - x1) * .86, y1 + (yg - y1) * t * .86, x1 + (995 - x1) * .86 - 14, y1 + (yg - y1) * t * .86 + 26, n]); });
+  if (p.tap) s += q_txt(704, 870, "คอนต่อแยก ④ เต็มความยาว · คอนประธานเดิมเห็นด้านปลาย") + q_txt(704, 884, "TAP ARMS ④ FULL LENGTH · EXISTING MAIN ARMS END-ON", { fs: 9.5 });
+  if (!p.tap) s += tlChainV(1000, [T, ZA, ZB, ZC], W.Y, { extTo: W.X(q_hd(P, ZC)) + 60, labels: ["150", "2,000", "1,200"] });
+  it2.forEach(([px, py, x, y, n]) => { s += tlCallout(tlR(px), tlR(py), tlR(x), tlR(y), n); });
+  const lab = (z, th, en) => { s += tlText(704, W.Y(z) - 26, th, en, "start", 10); };
+  if (!p.tap){ lab(ZA, "วงจร 1", "CIRCUIT 1"); lab(ZB, "วงจร 2", "CIRCUIT 2"); lab(ZC - 1050, "วงจร 3, 4 เคเบิลอากาศ", "CIRCUITS 3, 4 · AERIAL CABLE"); }
+  $("elev").innerHTML = s;
+}
+
+/* ---------- detail panel ---------- */
+function planLevel(cx, cy, kp, L, P){ const A = armOf(L), z = L.z, t = L.type, X = x => tlR(cx + x * kp), Z = v => tlR(cy + v * kp), hw = q_hw(P, z), hd = q_hd(P, z); let s = "";
+  s += `<rect x="${tlR(cx - hw * kp)}" y="${tlR(cy - hd * kp)}" width="${tlR(2 * hw * kp)}" height="${tlR(2 * hd * kp)}" fill="var(--soft)" stroke="var(--ink)" stroke-width="1.2"/>`;
+  const S = X_DISC3, Ls = tlStrLen(S) * kp, str = (x, zz, dir) => `<g transform="rotate(${dir < 0 ? -90 : 90} ${X(x)} ${Z(zz)})">${tlDeadendString(X(x), Z(zz), S, kp, 1)}</g>`;
+  const armR = (zc, len, w, fill) => `<rect x="${X(-len / 2)}" y="${tlR(Z(zc) - w * kp / 2)}" width="${tlR(len * kp)}" height="${tlR(w * kp)}" fill="${fill || "var(--sheet)"}" stroke="var(--ink)" stroke-width="1.1"/>`;
+  if (t === "tap"){ const fx = hw + 60; s += `<g opacity=".4">${armR(-hd - 60, 3000, 120)}</g>`;
+    [-1, 1].forEach(sd => { s += `<rect x="${tlR(X(sd * fx) - 60 * kp)}" y="${Z(-1250)}" width="${tlR(120 * kp)}" height="${tlR(2500 * kp)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.1"/>`; });
+    A.da.forEach(zz => { s += x_line(X(-fx - 80), Z(zz), X(fx + 80), Z(zz), 1.1, "var(--ink)", "3 2") + `<g transform="rotate(180 ${X(-fx - 70)} ${Z(zz)})">${tlDeadendString(X(-fx - 70), Z(zz), S, kp, 1)}</g>`; });
+    A.pins.forEach(zz => { s += `<circle cx="${X(-fx)}" cy="${Z(zz)}" r="${tlR(Q_PIN.D / 2 * kp)}" fill="var(--sheet)" stroke="var(--ink)"/>`; });
+    return s; }
+  if (t === "pin"){ const f = hd + 60; s += armR(-f, A.len, A.s); A.pins.forEach(x => { s += `<circle cx="${X(x)}" cy="${Z(-f)}" r="${tlR(Q_PIN.D / 2 * kp)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.1"/><circle cx="${X(x)}" cy="${Z(-f)}" r="${tlR(Q_PIN.D / 5 * kp)}" fill="none" stroke="var(--ink)" stroke-width=".7"/>`; }); return s; }
+  if (t === "aerde2"){ [-1, 1].forEach(sd => { s += armR(sd * (hd + 37.5), A.len, 75, "var(--steel)"); });
+    A.web.forEach(x => { s += x_line(X(x), Z(-hd - 95), X(x), Z(hd + 95), 1, "var(--ink)", "3 2"); });
+    A.de.forEach(x => { s += str(x, -hd - 85, -1); }); A.msg.forEach(x => { s += `<circle cx="${X(x)}" cy="${Z(-hd - 100)}" r="3" fill="none" stroke="var(--ink)"/>` + x_line(X(x), Z(-hd - 106), X(x), Z(-hd - 106 - 650), 1.1); });
+    return s; }
+  const f = hd + 60; s += armR(-f, A.len, A.s) + armR(f, A.len, A.s);
+  daOf(L).forEach(x => { s += x_line(X(x), Z(-f - 80), X(x), Z(f + 80), 1, "var(--ink)", "3 2"); });
+  if (t === "aerde"){ DE_X.aerde.forEach(x => { s += str(x, -f - 70, -1); }); s += `<circle cx="${X(0)}" cy="${Z(-f - 85)}" r="3" fill="none" stroke="var(--ink)"/>` + x_line(X(0), Z(-f - 90), X(0), Z(-f - 90 - 650), 1.1); }
+  if (t === "dde"){ A.da.forEach(x => { s += str(x, -f - 70, -1) + str(x, f + 70, 1); }); A.pins.forEach(x => { s += `<circle cx="${X(x)}" cy="${Z(-f)}" r="${tlR(Q_PIN.D / 2 * kp)}" fill="var(--sheet)" stroke="var(--ink)"/>`; }); }
+  if (t === "aerdde"){ [-1100, 1100].forEach(x => { [-1, 1].forEach(sd => { s += `<circle cx="${X(x)}" cy="${Z(sd * (f + 85))}" r="3" fill="none" stroke="var(--ink)"/>` + x_line(X(x), Z(sd * (f + 90)), X(x), Z(sd * (f + 700)), 1.1); });
+    s += `<path d="M${tlR(X(x) - 3)} ${Z(-f - 300)} C${tlR(X(x) - 18)} ${Z(-f)} ${tlR(X(x) - 18)} ${Z(f)} ${tlR(X(x) - 3)} ${Z(f + 300)}" fill="none" stroke="var(--ink)" stroke-dasharray="3 2"/>`; }); }
+  return s; }
+function item35(x0, y0){ const k = .118, X = v => tlR(x0 + v * k), c = C35; let s = "";
+  s += tlTitle(x0 - 4, y0, "วัสดุ ㉟ เหล็กรูปรางน้ำ ⊏150 × 75 × 6.5 ยาว 4.00 ม. มอก. 116", "ITEM 35 · CHANNEL 150 × 75 × 6.5, 4.00 m · TIS 116 · SHEET 8, 1 : 30");
+  const yw = y0 + 46, hw = 150 * k * 1.4, yf = yw + hw + 70, hf = 75 * k * 1.4;
+  s += `<rect x="${X(0)}" y="${yw}" width="${tlR(4000 * k)}" height="${tlR(hw)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`;
+  const xs = [150, 600, 1050, 1500, 2000, 2500, 2950, 3400, 3850];
+  xs.forEach(v => { s += `<circle cx="${X(v)}" cy="${tlR(v === 2000 ? yw + 50 * k * 1.4 : yw + hw / 2)}" r="2.8" fill="var(--hole)" stroke="var(--ink)" stroke-width=".9"/>`; });
+  s += tlChainH([0, ...xs, 4000], yw + hw + 18, X, { extFrom: yw + hw + 2, below: true });
+  s += x_chainH([1100, 1700, 2000, 2300, 2900], yw - 8, X, ["900", "300", "300", "900"], { extFrom: yw + 2 });
+  s += `<rect x="${X(0)}" y="${tlR(yf)}" width="${tlR(4000 * k)}" height="${tlR(hf)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`;
+  [1100, 2900].forEach(v => { s += `<circle cx="${X(v)}" cy="${tlR(yf + hf / 2)}" r="2.8" fill="var(--hole)" stroke="var(--ink)" stroke-width=".9"/>`; });
+  [1700, 2300].forEach(v => { s += `<circle cx="${X(v)}" cy="${tlR(yf + hf / 2 - 2.2)}" r="1.9" fill="var(--hole)" stroke="var(--ink)" stroke-width=".8"/><circle cx="${X(v)}" cy="${tlR(yf + hf / 2 + 2.2)}" r="1.9" fill="var(--hole)" stroke="var(--ink)" stroke-width=".8"/>`; });
+  s += dl(X(0), yf + hf + 22, X(4000), yf + hf + 22, "4,000", undefined, yf + hf + 36);
+  s += q_txt(x0, yf + hf + 54, "ตัวราง (บน): รู Ø18 × 9 กึ่งกลางความลึก (รูกลางห่างขอบ 50)") + q_txt(x0, yf + hf + 66, "WEB (TOP): 9 × Ø18 ON THE CENTRE LINE (MIDDLE HOLE 50 FROM THE EDGE)", { fs: 9 })
+    + q_txt(x0, yf + hf + 82, "ปีก (ล่าง): Ø18 ที่ ±900 (ห่างขอบ 37.5) · Ø14 คู่ห่าง 20 ที่ ±300 (ห่างขอบ 27.5)") + q_txt(x0, yf + hf + 94, "FLANGE (BOTTOM): Ø18 AT ±900 (37.5 FROM EDGE) · Ø14 PAIRS 20 APART AT ±300 (27.5)", { fs: 9 });
+  return s; }
+function item34(x0, y0){ const k = .2, X = v => tlR(x0 + v * k); let s = "";
+  s += tlTitle(x0 - 4, y0, "วัสดุ ㉞ เหล็กรูปรางน้ำ ⊏100 × 50 × 5 ยาว 2.25 ม. มอก. 116", "ITEM 34 · CHANNEL 100 × 50 × 5, 2.25 m · TIS 116 · SHEET 7");
+  const yf = y0 + 52, hf = 50 * k * 1.6, yw = yf + hf + 36, hw = 100 * k * 1.6;
+  s += `<rect x="${X(0)}" y="${yf}" width="${tlR(2250 * k)}" height="${tlR(hf)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`;
+  [50, 250, 2150].forEach(v => { s += `<circle cx="${X(v)}" cy="${tlR(yf + 25 * k * 1.6)}" r="3" fill="var(--hole)" stroke="var(--ink)" stroke-width=".9"/>`; });
+  s += `<rect x="${tlR(X(1850) - 6)}" y="${tlR(yf + 25 * k * 1.6 - 3)}" width="12" height="6" rx="3" fill="var(--hole)" stroke="var(--ink)" stroke-width=".9"/>`;
+  s += x_chainH([0, 50, 250, 1850, 2150, 2250], yf - 8, X, null, { extFrom: yf + 2 });
+  s += `<rect x="${X(0)}" y="${tlR(yw)}" width="${tlR(2250 * k)}" height="${tlR(hw)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`;
+  s += `<circle cx="${X(950)}" cy="${tlR(yw + hw / 2)}" r="3" fill="var(--hole)" stroke="var(--ink)" stroke-width=".9"/>`;
+  [40, 60].forEach(d => { s += `<circle cx="${X(1550)}" cy="${tlR(yw + d * k * 1.6)}" r="1.8" fill="var(--hole)" stroke="var(--ink)" stroke-width=".8"/>`; });
+  s += tlChainH([0, 950, 1550, 2250], yw + hw + 18, X, { extFrom: yw + hw + 2, below: true });
+  s += dl(X(0), yw + hw + 46, X(2250), yw + hw + 46, "2,250", undefined, yw + hw + 60);
+  s += q_txt(x0, yw + hw + 80, "ปีก (บน): Ø18 ที่ 50, 250, 2,150 · รูยาว Ø18 × 30 ที่ 1,850 (ห่างขอบ 25)") + q_txt(x0, yw + hw + 92, "FLANGE (TOP): Ø18 AT 50, 250, 2,150 · SLOT Ø18 × 30 AT 1,850 (25 FROM EDGE)", { fs: 9 })
+    + q_txt(x0, yw + hw + 108, "ตัวราง (ล่าง): Ø18 ที่ 950 · Ø10 คู่ (40 / 20 / 40) ที่ 1,550") + q_txt(x0, yw + hw + 120, "WEB (BOTTOM): Ø18 AT 950 · Ø10 PAIR (40 / 20 / 40) AT 1,550", { fs: 9 });
+  return s; }
+function drawDetail(){
+  const p = PART.variants[cur], P = P14; AR = "ar2";
+  let s = MK("ar2"), y = 22;
+  const sec = { I: [p.levels[0], "แปลนคอนระดับ 1 (ด้านบนแผ่น 1)", "PLAN AT LEVEL 1 (TOP OF SHEET 1)"], II: [p.levels[0], "แปลนคอนระดับ 1 (ด้านบนแผ่น 2)", "PLAN AT LEVEL 1 (TOP OF SHEET 2)"],
+    III: [p.levels[2], "รูปตัด A-A · ระดับเคเบิลอากาศ", "SECTION A-A · AERIAL CABLE LEVEL"], IV: [p.levels[2], "รูปตัด A-A · รางน้ำ ㉟ คู่", "SECTION A-A · CHANNELS 35"],
+    V: [p.levels[1], "รูปตัด A-A · ระดับ 2", "SECTION A-A · LEVEL 2"], VI: [p.levels[3], "รูปตัด A-A · คอนต่อแยก", "SECTION A-A · TAP ARMS"] }[p.key];
+  s += tlTitle(20, y, sec[1], sec[2]);
+  const kp = p.key === "IV" ? .12 : p.tap ? .068 : .13; s += planLevel(280, 150, kp, sec[0], P);
+  s += cl(280, 52, 280, 248) + q_txt(286, 60, p.tap ? "แนวสายประธาน ↕" : "แนวสาย ↕ LINE");
+  if (p.key === "V"){ s += `<line x1="16" y1="262" x2="544" y2="262" stroke="var(--line)"/>` + tlTitle(20, 284, "รูปตัด B-B · ระดับเคเบิลอากาศ", "SECTION B-B · AERIAL CABLE LEVEL") + planLevel(280, 380, .13, p.levels[2], P); y = 470; }
+  else y = 262;
+  s += `<line x1="16" y1="${y}" x2="544" y2="${y}" stroke="var(--line)"/>`; y += 24;
+  if (p.key === "I" || p.key === "II"){
+    s += tlTitle(20, y, "รายละเอียด A · หน้าตัดคอน ③ ที่ลูกถ้วย", "DETAIL A · ARM ③ SECTION AT AN INSULATOR");
+    const kd = .42, ax = 150, ay = y + 200, h = 60 * kd;
+    s += q_pin2D(ax, ay - h, kd) + q_armEnd2D(ax, ay, kd, 120);
+    s += `<rect x="${tlR(ax - 6)}" y="${tlR(ay + h)}" width="12" height="5" fill="var(--steel)" stroke="var(--ink)"/><rect x="${tlR(ax - 9)}" y="${tlR(ay + h + 5)}" width="18" height="16" fill="var(--sheet)" stroke="var(--ink)"/>` + x_line(ax - 50, ay + h + 3, ax + 20, ay + h + 3, 1.4);
+    s += tlCallout(ax - 30, ay - h - 40, 60, ay - h - 70, 38) + tlCallout(ax + h, ay, 260, ay, 3) + tlCallout(ax - 9, ay + h + 3, 64, ay + h + 40, 23) + tlCallout(ax + 12, ay + h + 3, 240, ay + h + 40, 30);
+    y = ay + h + 70; s += `<line x1="16" y1="${y}" x2="544" y2="${y}" stroke="var(--line)"/>`; y += 24;
+    s += tlTitle(20, y, "แผนผังแสดงการต่อลงดิน", "EARTHING DIAGRAM");
+    const ex = 210, ey = y + 50; s += tlConductorH(ex - 150, ex + 220, ey, { w: 1.3 }) + q_txt(ex + 120, ey - 8, "สายล่อฟ้า OHGW");
+    [ey + 45, ey + 100].forEach(yy => { [-120, 70, 190].forEach(x => { s += q_pin2D(ex + x, yy, .1); }); s += x_line(ex - 120, yy + 6, ex + 190, yy + 6, 1, "var(--ink)", "8 3 2 3"); });
+    const yh = ey + 150; [-130, 130].forEach(x => { s += `<path d="M${ex + x - 8} ${yh} l8 -8 l8 8 l-8 8 z" fill="none" stroke="var(--ink)"/>`; }); s += x_line(ex - 130, yh - 12, ex + 130, yh - 12, 1, "var(--ink)", "8 3 2 3");
+    s += x_line(ex, ey, ex, ey + 210, 1.1, "var(--ink)", "6 3") + `<path d="M${ex - 10} ${ey + 210} h20 M${ex - 6} ${ey + 215} h12 M${ex - 3} ${ey + 220} h6" stroke="var(--ink)"/>`;
+    s += tlCallout(ex, ey, ex - 40, ey - 26, [p.bay.n, 36]) + tlCallout(ex, ey + 18, ex - 70, ey + 26, 28) + tlCallout(ex, ey + 70, ex - 70, ey + 76, 29) + tlCallout(ex + 150, ey + 106, ex + 240, ey + 80, 30) + tlCallout(ex - 130, yh + 8, ex - 160, yh + 30, 42);
+    s += q_txt(ex + 20, ey + 175, "สายดินลวดเหล็กตีเกลียว 25 ตร.มม. (ฝังอยู่ในเสาคอนกรีต)") + q_txt(ex + 20, ey + 188, "25 mm² STEEL GROUND WIRE (BURIED IN CONCRETE POLE)", { fs: 9.5 });
+    y = ey + 230;
+  } else if (p.key === "IV"){ s += item35(30, y); y += 250; }
+  else if (p.key === "VI"){ s += item34(40, y); y += 230; }
+  if (!p.tap && p.key !== "I" && p.key !== "II"){
+    s += `<line x1="16" y1="${y}" x2="544" y2="${y}" stroke="var(--line)"/>`; y += 24;
+    s += tlTitle(20, y, "การใช้งาน (แผ่น 6) · สายยึดโยง", "APPLICATION (SHEET 6) · GUYS");
+    const ka = .016, gx = 90, gy = y + 250, Y = z => tlR(gy - z * ka), Xg = v => tlR(gx + v * ka);
+    s += tlGround(gx - 40, gx + 30, gy) + tlGround(Xg(GUY_B) - 20, Xg(GUY_A) + 30, gy) + `<rect x="${gx - 3}" y="${Y(T37)}" width="6" height="${tlR(T37 * ka)}" fill="var(--sheet)" stroke="var(--ink)"/>`;
+    [[CH33.eye, "สายล่อฟ้า OHGW"], [ZA, "วงจร 1"], [ZB, "วงจร 2"], [ZC, "วงจร 3, 4"]].forEach(([z, t]) => { s += tlConductorH(gx - 70, gx + 330, Y(z), { w: 1.2 }) + q_txt(gx + 340, Y(z) + 4, t); });
+    p.guys.forEach(([z, l]) => { s += x_guy2D(gx + 3, Y(z), Xg(l), gy, false); });
+    s += tlChainH([0, GUY_B, GUY_A], gy + 22, Xg, { extFrom: gy + 4, labels: ["≥ 6,000", "2,000"] });
+    s += q_txt(24, gy + 52, (p.key === "V" ? "" : "III/IV: ระยะสมอใช้ตามแผ่น 6 (แบบ V)* · ") + "มุมเบี่ยง θ ช่วงเสา ระยะหย่อนยาน: แบบ IB1-015/34071")
+      + q_txt(24, gy + 65, (p.key === "V" ? "" : "III/IV: LEADS FROM SHEET 6 (TYPE V)* · ") + "DEFLECTION θ, SPAN, SAG: DWG. IB1-015/34071", { fs: 9.5 });
+  }
+  $("detail").innerHTML = s;
+}
+
+function tables(){
+  const p = PART.variants[cur], P = P14, T = T37, real = p.levels.filter(L => !L.ghost);
+  const nm = { pin: ["คอน ③ ลูกถ้วยก้านตรง", "Pin arm ③"], aer: ["คอน ② ชุดแขวนเคเบิลอากาศ ㊷", "Arm ② + aerial cable hangers 42"], de: ["คอนคู่ ④ เข้าปลายสาย", "Double arms ④ · deadend"], dde: ["คอนคู่ ④ ปลายสายสองข้าง", "Double arms ④ · double deadend"],
+    aerde: ["คอนคู่ ④ เข้าปลายเคเบิลอากาศ", "Double arms ④ · aerial cable deadend"], aerde2: ["รางน้ำคู่ ㉟ เข้าปลายเคเบิลอากาศ 2 วงจร", "Channels 35 · 2 aerial cable deadends"], aerdde: ["คอนคู่ ④ เคเบิลอากาศ (แขวน + เข้าปลายสายแขวน)", "Double arms ④ · aerial cable (hung, messengers dead-ended)"], tap: ["คอนคู่ ④ ต่อแยกสาย", "Double arms ④ · tap dead-end"] };
+  const levels = [ { z: p.bay.z1, th: "ปลายบนอุปกรณ์รับสายล่อฟ้า " + "(" + p.bay.n + ")", en: "Top of OHGW support", star: true }, { z: T, th: "ยอดเสา", en: "Pole top" },
+    ...p.levels.map(L => ({ z: L.z, th: (L.ghost ? "เดิม · " : "") + nm[L.type][0], en: (L.ghost ? "existing · " : "") + nm[L.type][1] })),
+    ...real.map(L => ({ z: L.z - (L.type === "aerde2" ? C35.drop : dropOf(L)), th: "จุดยึดเหล็กประกับ", en: "Brace bolt", star: !(L.type === "pin" || L.type === "aer" || L.z === ZC) })),
+    { z: 0, th: "ระดับดิน", en: "Ground line" }, { z: P.bot, th: "โคนเสา", en: "Pole butt", note: ["ฝังดิน 2,000", "2,000 embedded"] } ].sort((a, b) => b.z - a.z);
+  $("dimTbl").innerHTML = tlDimTable(levels, [
+    { th: "แบบ / การใช้งาน", en: "Type / application", v: `${p.key} · ${p.en}` },
+    { th: "เสา", en: "Pole", v: p.tap ? "เสาเดิม 14 ม. · existing" : "① 14 ม. / ยอด +12,000" },
+    { th: "ระยะคอน", en: "Arm spacing", v: p.tap ? "150 / 1,000 × 3 / 1,200" : "150 / 2,000 / 1,200" },
+    { th: "สายยึดโยง", en: "Guys", v: p.guys.length ? `${p.guys.length} เส้น · leads` : "–", note: p.guys.length ? ["สมอ ≥ 6.00 + 2.00 ม.*", "anchors ≥ 6.00 + 2.00 m*"] : null } ]);
+  $("bomTbl").innerHTML = tlBomTable(PART.bom, PART.refs, { variants: ["I", "II", "III", "IV", "V", "VI"], cur });
+  const wt = PART.bom.reduce((a, b) => a + (b.kgm && typeof b.qty[cur] === "number" ? b.kgm * b.len * b.qty[cur] : b.kgm && /^\d+\*$/.test(b.qty[cur]) ? b.kgm * b.len * parseInt(b.qty[cur]) : 0), 0);
+  $("varSpec").textContent = `Type ${p.key} · ${p.en} · ${p.tap ? "added to an existing 14 m type-I pole" : "14 m pole"} · ${real.length} arm levels · structural steel ≈ ${wt.toFixed(1)} kg (items 5–7, 34–35)`;
+}
+
+/* ---------- 3D ---------- */
+const q_cableMat = () => new THREE.MeshStandardMaterial({ color: 0x2e3236, roughness: .7 });
+function lv3D(g, P, L){ const A = armOf(L), z = L.z, t = L.type, M = tlMats(), S = X_DISC3, L3 = tlStrLen(S), hd = q_hd(P, z), hw = q_hw(P, z), dr = dropOf(L), STUB = 3000;
+  const grp = new THREE.Group(); g.add(grp); const G = o => grp.add(o);
+  if (t === "tap"){ const fx = hw + 60;
+    [-1, 1].forEach(sd => { const a = q_arm3D(A.len, A.s, 0, z, 0); const w = new THREE.Group(); w.add(a); w.rotation.y = Math.PI / 2; w.position.x = sd * fx; G(w); });
+    A.da.forEach(zz => { G(x_eyeBolt3D([fx + 80, z, zz], [-fx - 80, z, zz])); const st = x_de3D(S, Math.PI); st.position.set(-fx - 125, z, zz); G(st);
+      G(tlConductor3D([[-fx - 125 - L3, z, zz], [-fx - 125 - L3 - STUB, z - 200, zz]], 9)); });
+    A.pins.forEach((zz, i) => { const pi = q_pin3D(); pi.position.set(-fx, z + 60, zz); G(pi);
+      const zm = i === 0 ? ZA : ZB; });
+    [-A.br, A.br].forEach(zz => G(tlBrace3D([-fx, z - 60, zz], [-hw - 4, z - dr, 0], { w: 40, t: 6 })));
+    G(tlBolt3D([-hw - 30, z - dr, 0], [hw + 30, z - dr, 0], { d: 16 }));
+    return grp; }
+  const f = t === "aerde2" ? hw : hd + A.s / 2, ha = (A.s || A.h) / 2;
+  if (t === "aerde2"){ [-1, 1].forEach(sd => { const ch = x_chan3D({ len: A.len, h: A.h, b: A.b, t: A.t, tf: A.t, web: A.web.map(x => ({ x: x + A.len / 2, d: 18, y: x === 0 ? A.h / 2 - 50 : 0 })) });
+      ch.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, sd)));
+      ch.position.set(-A.len / 2, z, sd * hd); G(ch); });
+    A.web.forEach(x => G(tlBolt3D([x, z, -hd - 30], [x, z, hd + 30], { d: 16 })));
+    [-1, 1].forEach(sd => { const br = tlBrace3D([sd * A.br, z - A.h / 2, -hd - 40], [0, z - A.drop, -hd - 40], { w: 50, t: 6 }); G(br); G(tlBrace3D([sd * A.br, z - A.h / 2, hd + 40], [0, z - A.drop, hd + 40], { w: 50, t: 6 })); });
+    A.de.forEach(x => { const st = x_de3D(S, -Math.PI / 2); st.position.set(x, z, -hd - 120); G(st); G(tlConductor3D([[x, z, -hd - 120 - L3], [x, z - 200, -hd - 120 - L3 - STUB]], 13, q_cableMat())); });
+    A.msg.forEach(x => G(x_wire3D([[x, z - 30, -hd - 110], [x, z - 260, -hd - 900], [x, z - 300, -hd - 900 - STUB]], 6)));
+    return grp; }
+  const sides = (t === "pin" || t === "aer") ? [-1] : [-1, 1];
+  sides.forEach(sd => { G(q_arm3D(A.len, A.s, 0, z, sd * f));
+    if (sd === -1 || t === "de" || t === "aerde") [-A.br, A.br].forEach(x => { G(tlBrace3D([x, z - ha, sd * (f + ha + 4)], [0, z - dr, sd * (hd + 4)], { w: t === "aer" || t === "aerde" || t === "aerdde" ? 30 : 40, t: 6 }));
+      G(tlBolt3D([x, z - ha + 20, sd * (f - ha - 10)], [x, z - ha + 20, sd * (f + ha + 20)], { d: 16 })); }); });
+  G(tlBolt3D([0, z - dr, -hd - 30], [0, z - dr, hd + 30], { d: 16 }));
+  if (t === "pin" || t === "aer") G(tlBolt3D([0, z, -f - ha - 30], [0, z, hd + 30], { d: 16 }));
+  if (t === "pin"){ A.pins.forEach(x => { const pi = q_pin3D(); pi.position.set(x, z + ha, -f); G(pi); G(tlBolt3D([x, z - ha - 40, -f], [x, z + ha, -f], { d: 20, nuts: false })); });
+    G(x_wire3D([[-1400, z - ha - 30, -f], [1400, z - ha - 30, -f]], 3));
+    const yc = z + ha + Q_PIN.h - 40; A.pins.forEach(x => G(tlConductor3D([[x, yc, -f - STUB], [x, yc, -f + STUB]], 9))); }
+  const hang = (x, zf) => { const yb = z - ha, ym = yb - HANG.msg; G(tlBolt3D([x, z + ha + 20, zf], [x, ym, zf], { d: 16 }));
+    const sp = new THREE.Mesh(new THREE.BoxGeometry(300, 300, 40), MAT.steel); sp.rotation.z = Math.PI / 4; sp.position.set(x, ym - 140, zf); G(sp);
+    G(x_wire3D([[x, ym, zf - STUB], [x, ym, zf + STUB]], 6)); [[-150, -140], [150, -140], [0, -280]].forEach(([dx, dy]) => G(tlConductor3D([[x + dx, ym + dy, zf - STUB], [x + dx, ym + dy, zf + STUB]], 14, q_cableMat()))); };
+  if (t === "aer") HANGX.forEach(x => hang(x, -f));
+  if (t === "aerdde"){ HANGX.forEach(x => hang(x, -f)); G(tlBolt3D([0, z, -f - ha - 30], [0, z, f + ha + 30], { d: 16 })); }
+  if (t === "de" || t === "dde" || t === "aerde"){ const des = t === "aerde" ? DE_X.aerde : A.da;
+    daOf(L).forEach(x => G(x_eyeBolt3D([x, z, f + ha + 30], [x, z, -f - ha - 20])));
+    des.forEach(x => { const st = x_de3D(S, -Math.PI / 2); st.position.set(x, z, -f - ha - 75); G(st);
+      G(tlConductor3D([[x, z, -f - ha - 75 - L3], [x, z - 220, -f - ha - 75 - L3 - STUB]], t === "aerde" ? 13 : 9, t === "aerde" ? q_cableMat() : undefined));
+      if (t === "dde"){ const e = new THREE.Mesh(new THREE.TorusGeometry(24, 7, 8, 18), MAT.steel); e.position.set(x, z, f + ha + 50); e.rotation.y = Math.PI / 2; G(e);
+        const s2 = x_de3D(S, Math.PI / 2); s2.position.set(x, z, f + ha + 75); G(s2); G(tlConductor3D([[x, z, f + ha + 75 + L3], [x, z - 220, f + ha + 75 + L3 + STUB]], 9)); } });
+    if (t === "aerde") G(x_wire3D([[0, z - 30, -f - ha - 60], [0, z - 250, -f - 900], [0, z - 300, -f - 900 - STUB]], 6));
+    if (t === "dde") A.pins.forEach((xp, i) => { const pi = q_pin3D(); pi.position.set(xp, z + ha, -f); G(pi);
+      const xd = A.da[i], yt = z + ha + Q_PIN.h; G(tlConductor3D([[xd, z - 20, -f - ha - 75 - L3], [xd + (xp - xd) * .5, yt - 60, -f - 500], [xp, yt + 10, -f], [xd + (xp - xd) * .5, yt - 60, f + 500], [xd, z - 20, f + ha + 75 + L3]], 8)); }); }
+  if (t === "aerdde") [-1100, 1100].forEach(x => { G(x_eyeBolt3D([x, z, f + ha + 20], [x, z, -f - ha - 20])); [-1, 1].forEach(sd => G(x_wire3D([[x, z - 20, sd * (f + ha + 60)], [x, z - ha - HANG.msg, sd * (f + 900)]], 6))); });
+  return grp; }
+function makeModel(p){
+  const g = new THREE.Group(), P = P14, T = T37;
+  g.add(tlGround3D(20000)); g.add(tlPole3D(P));
+  p.levels.forEach(L => { const grp = lv3D(g, P, L); if (L.ghost) grp.traverse(o => { if (o.isMesh){ o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = .28; o.material.depthWrite = false; } }); });
+  const b = p.bay;
+  if (b.kind === "ang"){ g.add(q_bay3D(P, b.z0, b.z1, b.a, b.t, b)); b.bolts.forEach(z => g.add(tlBolt3D([-q_hw(P, z) - 20, z, 0], [q_hw(P, z) + 30, z, 0], { d: 16 })));
+    const xo = -q_hw(P, T) - 40 - (b.corner ? b.dx : 0); g.add(box(60, 50, 120, xo, b.z1 - 60, 0, tlMats().cap)); g.add(x_wire3D([[xo, b.z1 - 30, -3000], [xo, b.z1 - 30, 3000]], 5)); }
+  else { g.add(q_bay3D(P, b.z0, b.z1, 0, 0, { chan: b, holes: [...b.bolts, b.eye] })); b.bolts.forEach(z => g.add(tlBolt3D([-q_hw(P, z) - 20, z, 0], [q_hw(P, z) + 30, z, 0], { d: 16 })));
+    const hw = q_hw(P, T);
+    if (b.kind === "chan34"){ g.add(box(60, 50, 120, -hw - 60, b.top, 0, tlMats().cap)); g.add(x_wire3D([[-hw - 60, b.top + 30, -3000], [-hw - 60, b.top + 30, 3000]], 5));
+      g.add(tlBolt3D([-hw + 20, b.eye, 0], [-hw - 150, b.eye, 0], { d: 16 })); g.add(x_wire3D([[-hw - 180, b.eye, 0], [-hw - 3200, b.eye - 100, 0]], 5)); }
+    else { g.add(tlBolt3D([-hw - 25, b.eye, 40], [-hw - 25, b.eye, -90], { d: 16 })); g.add(x_wire3D([[-hw - 25, b.eye, -140], [-hw - 25, b.eye - 100, -3000]], 5));
+      if (p.both) g.add(x_wire3D([[-hw - 25, b.eye, 90], [-hw - 25, b.eye - 100, 3000]], 5)); } }
+  if (p.tap) [[ZA, ZTA], [ZB, ZTB]].forEach(([zm, zt]) => { const fx = q_hw(P, zt) + 60, ex = -fx - 125 - tlStrLen(X_DISC3), yc = zm + 60 + Q_PIN.h - 40, f = q_hd(P, zm) + 60;
+    [-1400, 450, 1400].forEach((xm, i) => { const zz = A25.da[i]; g.add(tlConductor3D([[xm, yc, -f - 600], [xm * .6 - 500, zt + 500, -f - 300 + zz * .5], [-fx, zt + 60 + Q_PIN.h + 20, A25.pins[i]], [ex + 200, zt + 100, zz], [ex, zt - 10, zz]], 8)); }); });
+  const done = {}; p.guys.forEach(([z, l]) => { const q = [0, 0, l]; g.add(x_wire3D([[0, z, q_hd(P, z) + 10], q], 6)); if (!done[l]){ done[l] = 1; g.add(x_anchor3D(0, l + 800, 900, -1500, q)); } });
+  return g;
+}
+function views(p){ const top = p.bay.z1 + 200, hb = ZC - 1100, hc = (top + hb) / 2, H = top - hb, far = p.guys.length ? GUY_A : 0;
+  return { iso: x_cam([0, (top + P14.bot) / 2 + 1500, far / 3], .3, -.62, (top - P14.bot) * .92 + far * .2),
+    full: x_cam([0, (top + P14.bot) / 2, far / 2], .04, -Math.PI / 2 + .02, (top - P14.bot) * 1.06 + 600),
+    head: x_cam([0, hc, 0], .28, -.6, H * 1.1), front: x_cam([0, hc, 0], .03, 0, H * 1.1), side: x_cam([0, hc, 0], .03, -Math.PI / 2, H * 1.1) }; }
+
+
+/* ===== ส่วนกลาง (ใช้ร่วมทุกแบบ) ===== */
+let cur = 0;
+const $ = id => document.getElementById(id);
+const fmt = n => Number(n).toLocaleString("en-US");
+const C45 = Math.SQRT1_2;
+const MK = id => `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="var(--dim)"/></marker>
+  <pattern id="hat${id}" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--ink)" stroke-width="1"/></pattern></defs>`;
+let AR = "ar";
+function dl(x1,y1,x2,y2,label,lx,ly,anchor){
+  const t = label===""||label==null ? "" : `<text x="${lx??(x1+x2)/2}" y="${ly??Math.min(y1,y2)-6}" font-size="13" text-anchor="${anchor||"middle"}" style="fill:var(--dim)">${label}</text>`;
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width="1" marker-start="url(#${AR})" marker-end="url(#${AR})"/>` + t;
+}
+function ext(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width=".6" stroke-dasharray="3 3"/>`; }
+function cl(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="10 3 2 3"/>`; }
+function brk(x,top,bot){
+  const h = bot-top;
+  return `<path d="M${x} ${top-7} L${x} ${top+h*.32} L${x-6} ${top+h*.44} L${x+6} ${top+h*.56} L${x} ${top+h*.68} L${x} ${bot+7}" fill="none" stroke="var(--ink)" stroke-width=".9"/>`;
+}
+function lead(x1,y1,x2,y2,th,en,anchor){
+  const a = anchor||"start";
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width=".8"/><text class="th" x="${x2+(a==="start"?4:-4)}" y="${y2+4}" font-size="13" text-anchor="${a}">${th}</text>${en?`<text x="${x2+(a==="start"?4:-4)}" y="${y2+19}" font-size="11" text-anchor="${a}" style="fill:var(--muted)">${en}</text>`:""}`;
+}
+function header(){
+  $("grp").innerHTML = PART.group + `<span class="e" style="text-transform:none">${PART.groupEn}</span>`;
+  $("nameTh").textContent = PART.nameTh;
+  $("nameEn").textContent = PART.nameEn;
+  $("asmNo").textContent = PART.assembly;
+  $("asmOld").textContent = PART.assemblyOld ? "เดิม · OLD " + PART.assemblyOld : "";
+  $("varSeg").innerHTML = PART.variants.map((v,i)=>`<button type="button" id="var${i}" data-i="${i}">${v.label}</button>`).join("");
+  $("varSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setVariant(+b.dataset.i); });
+  const tb = PART.titleBlock;
+  $("tb").innerHTML = `<div class="w6">${tb.org}</div>
+    <div><span class="k">มาตราส่วน · SCALE</span>${tb.scale}</div>
+    <div><span class="k">วันที่ · DATE</span>${tb.date}</div>
+    <div class="w2"><span class="k">ชื่อแบบ · TITLE</span>${PART.nameTh}<span class="e">${PART.nameEn}</span></div>
+    <div><span class="k">แบบเลขที่ · DWG NO.</span>${tb.dwg}</div>
+    <div><span class="k">SHEET</span>${tb.sheet}</div>`;
+  $("fab").innerHTML = PART.fabrication.map(([th,en])=>`<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = PART.assumptions.map(([th,en])=>`<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join("");
+}
+
+/* ===== 3D ===== */
+const box3 = $("v3d");
+let R, scene, cam, pivot, model, rx = .5, ry = -.55, dist = 3000, lastView = "iso";
+const MAT = {};
+function init3d(){
+  if (!window.THREE){ box3.innerHTML = '<p style="padding:16px;color:var(--muted)">โหลดโมเดล 3 มิติไม่สำเร็จ / 3D model could not load</p>'; return; }
+  R = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  R.setClearColor(0x000000,0); R.setPixelRatio(Math.min(devicePixelRatio,2));
+  box3.appendChild(R.domElement);
+  scene = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(32,1,1,200000);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8890a0,.85)); scene.add(new THREE.AmbientLight(0xffffff,.25));
+  const d1 = new THREE.DirectionalLight(0xffffff,.8); d1.position.set(900,1600,1400); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xffffff,.55); d2.position.set(-700,900,-1400); scene.add(d2);
+  pivot = new THREE.Group(); scene.add(pivot);
+  MAT.steel = new THREE.MeshStandardMaterial({color:0xb9c1c9, metalness:.3, roughness:.5});
+  MAT.weld = new THREE.MeshStandardMaterial({color:0xd27a22, metalness:.25, roughness:.7});
+  MAT.concrete = new THREE.MeshStandardMaterial({color:0xc9c4b8, metalness:0, roughness:.95, transparent:true, opacity:.55, depthWrite:false});
+  MAT.pile = new THREE.MeshStandardMaterial({color:0x9a958a, metalness:0, roughness:.9});
+  MAT.ground = new THREE.MeshStandardMaterial({color:0x8a7a5c, metalness:0, roughness:1, transparent:true, opacity:.18, side:THREE.DoubleSide, depthWrite:false});
+  let drag=false,px=0,py=0;
+  box3.addEventListener("pointerdown",e=>{drag=true;px=e.clientX;py=e.clientY;box3.setPointerCapture(e.pointerId);box3.style.cursor="grabbing"});
+  box3.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.008;rx+=(e.clientY-py)*.008;px=e.clientX;py=e.clientY;render()});
+  box3.addEventListener("pointerup",()=>{drag=false;box3.style.cursor="grab"});
+  box3.addEventListener("wheel",e=>{e.preventDefault();dist=Math.max(100,Math.min(60000,dist*(1+e.deltaY*.0012)));render()},{passive:false});
+  new ResizeObserver(size).observe(box3);
+  document.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>view(b.dataset.v)));
+}
+function size(){ if(!R)return; const w=box3.clientWidth,h=box3.clientHeight; R.setSize(w,h); cam.aspect=w/h; cam.updateProjectionMatrix(); render(); }
+function box(w,h,d,x,y,z,mat){ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat||MAT.steel); m.position.set(x,y,z); return m; }
+function build3d(){
+  if (!R) return;
+  if (model) pivot.remove(model);
+  model = makeModel(PART.variants[cur]);
+  pivot.add(model);
+  view(lastView);
+}
+function view(v){
+  lastView = v;
+  if (!R || !model) return;
+  const T = views(PART.variants[cur])[v];
+  model.position.set(-T[0],-T[1],-T[2]); rx=T[3]; ry=T[4]; dist=T[5]; render();
+}
+function render(){ if(!R||!model)return; pivot.rotation.set(rx,ry,0); cam.position.set(0,0,dist); cam.lookAt(0,0,0); R.render(scene,cam); }
+
+function setVariant(i){
+  cur = i;
+  PART.variants.forEach((_,j)=>$("var"+j).setAttribute("aria-pressed", j===i));
+  drawElev(); drawDetail(); tables(); build3d();
+}
+header(); init3d(); setVariant(0); size();
+</script>
+</html><a id="hubBack" href="../index.html" onclick="if(history.length>1){history.back();return false}" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← คลังแบบ</a><style id="blnCss">
+svg text.bln-t{cursor:pointer}
+svg .bln-g:focus{outline:none}svg .bln-g:focus-visible circle.bln-c{stroke:#2563eb!important;stroke-width:2.4!important}
+svg circle.bln-c{cursor:pointer;transition:fill .15s}
+svg .bln-g:hover circle.bln-c,svg circle.bln-c.hov{fill:rgba(37,99,235,.18)!important}
+svg circle.bln-c.on{fill:rgba(234,88,12,.28)!important;stroke:#ea580c!important;stroke-width:2.4!important}
+svg text.bln-t.on{fill:#c2410c!important;font-weight:700}
+#blnPop{position:fixed;z-index:10000;max-width:340px;width:calc(100vw - 24px);background:var(--sheet,#fff);color:var(--ink,#111);border:1px solid var(--line,#d4d4d8);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);font:14px/1.45 "IBM Plex Sans Thai",system-ui,sans-serif;display:none;overflow:hidden}
+#blnPop .hd{display:flex;gap:10px;align-items:flex-start;padding:12px 14px 8px}
+#blnPop .no{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 15px "IBM Plex Mono",monospace}
+#blnPop .th{font-weight:600}
+#blnPop .en{color:var(--muted,#666);font-size:12.5px}
+#blnPop .x{margin-left:auto;border:0;background:none;font-size:20px;line-height:1;color:var(--muted,#666);cursor:pointer;padding:0 2px}
+#blnPop .qty{display:flex;align-items:baseline;gap:8px;padding:8px 14px;background:rgba(234,88,12,.08);border-top:1px solid var(--line,#e4e4e7);border-bottom:1px solid var(--line,#e4e4e7)}
+#blnPop .qty b{font:700 22px "IBM Plex Mono",monospace;color:#c2410c}
+#blnPop .qty .u{font-weight:600}
+#blnPop .qty .v{margin-left:auto;font-size:12px;color:var(--muted,#666)}
+#blnPop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;padding:8px 14px;font-size:13px}
+#blnPop dt{color:var(--muted,#666)}#blnPop dd{margin:0;font-family:"IBM Plex Mono",monospace}
+#blnPop .all{padding:0 14px 6px;font-size:12px;color:var(--muted,#666)}
+#blnPop .ft{padding:8px 14px 12px}
+#blnPop .ft button{border:1px solid var(--line,#d4d4d8);background:none;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;color:inherit}
+tr.bln-flash>td{animation:blnF 1.8s ease}
+@keyframes blnF{0%,60%{background:rgba(234,88,12,.25)}100%{background:transparent}}
+.bln-hint{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted,#555);background:rgba(37,99,235,.08);border-radius:14px;padding:3px 10px;margin:4px 0 6px}
+.bln-hint i{font-style:normal;width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;display:inline-grid;place-items:center;font-size:10px}
+</style>
+<div id="blnPop" role="dialog" aria-live="polite"></div>
+<script>
+(function(){
+const CIR="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳",RX=/^([0-9]{1,2}[a-zก-ฮ]?['′]?|[a-e]|[①-⑳])$/;
+const norm=s=>{s=(s||"").trim().replace(/'/g,"′");const i=CIR.indexOf(s);return i>=0?String(i+1):s;};
+let BOM={},VLAB="";
+/* BOM first-column text -> keys: "6*"->6, "4 *"->4, "6a/6b"->6a,6b, "19a/b/c"->19a,19b,19c */
+function bkeys(t){t=(t||"").replace(/[*✱\s]/g,"").replace(/'/g,"′");if(!t)return[];const ps=t.split("/");const out=[];let base="";
+  ps.forEach((p,i)=>{let m=p.match(/^(\d+)([a-z]?)(′?)$/);if(m){base=m[1];out.push(p);}else if(/^[a-z]$/.test(p)&&base)out.push(base+p);else out.push(p);});
+  return out.map(norm).filter(k=>RX.test(k));}
+function readBom(){
+  const tb=document.getElementById("bomTbl")||[...document.querySelectorAll("table")].find(t=>/วัสดุเลขที่|Mat/i.test(t.tHead?.textContent||""));
+  BOM={};VLAB="";if(!tb)return;
+  const hs=[...(tb.tHead?.rows[0]?.cells||[])];
+  const iDesc=hs.findIndex(h=>/รายละเอียด|Description/.test(h.textContent));
+  const iMat=hs.findIndex(h=>/วัสดุเลขที่|Mat/.test(h.textContent));
+  const qIdx=[];hs.forEach((h,i)=>{if(i>iDesc&&(iMat<0||i<iMat))qIdx.push(i)});
+  let cur=qIdx.find(i=>hs[i].classList.contains("on"));if(cur==null)cur=qIdx[0];
+  VLAB=qIdx.length>1?hs[cur].textContent.trim():"";
+  [...tb.tBodies].forEach(b=>[...b.rows].forEach(r=>{
+    const c=r.cells;if(c.length<3||c[0].tagName!=="TD")return;
+    const ks=bkeys(c[0].textContent);if(!ks.length)return;const n=ks[0];
+    const d=c[iDesc],en=d.querySelector(".e");const th=en?d.textContent.replace(en.textContent,"").trim():d.textContent.trim();
+    const all=qIdx.map(i=>({l:hs[i].textContent.trim(),q:(c[i]?.textContent||"").trim()}));
+    const m=c[iMat];const me=m?.querySelector(".e");
+    const o={n,th,en:en?en.textContent.trim():"",q:(c[cur]?.textContent||"").trim(),all,mat:m?(me?m.textContent.replace(me.textContent,""):m.textContent).trim():"",old:me?me.textContent.trim():"",row:r};
+    ks.forEach(k=>{if(!BOM[k])BOM[k]=Object.assign({},o,{n:k});});
+    ks.forEach(k=>{const m=k.match(/^(\d+)[a-z]$/);if(m&&!BOM[m[1]])BOM[m[1]]=Object.assign({},o,{n:m[1]});});
+  }));
+}
+const UNITS=[[/สลักเกลียว|สกรู|bolt|screw/i,"ตัว","pcs"],[/น็อต|นัต|nut/i,"ตัว","pcs"],[/แหวน|washer/i,"อัน","pcs"],[/แป้น|แผ่น|plate|board/i,"แผ่น","pcs"],[/แร็ค|rack/i,"ชุด","set"],[/มิเตอร์|meter/i,"เครื่อง","set"],[/ตู้|cabinet/i,"ตู้","set"],[/เสา|pole/i,"ต้น","pcs"],[/สาย|cable|conductor|wire/i,"ม.","m"],[/คอนเนคเตอร์|connector|แคลมป์|clamp/i,"ตัว","pcs"],[/ลูกถ้วย|insulator/i,"ลูก","pcs"],[/หลักดิน|ground rod/i,"แท่ง","pcs"],[/เหล็กฉาก|เหล็ก|angle|channel/i,"ท่อน","pcs"]];
+function qtyUnit(it){
+  const q=it.q;if(!q||q==="–"||q==="-")return {v:"–",u:"ไม่ใช้ในแบบนี้",inf:false};
+  const m=q.match(/^([\d.,/]+)\s*(.*)$/);if(m&&m[2])return {v:m[1],u:m[2],inf:false};
+  if(m){const k=UNITS.find(([re])=>re.test(it.en))||UNITS.find(([re])=>re.test(it.th));return {v:m[1],u:k?k[1]:"ชิ้น",inf:true};}
+  return {v:q,u:"",inf:false};
+}
+const pop=document.getElementById("blnPop");let curN=null;
+function mark(n){document.querySelectorAll(".bln-c,.bln-t").forEach(e=>e.classList.toggle("on",e.dataset.bn===n));}
+function show(n,ev){
+  const it=BOM[n];if(!it)return;curN=n;mark(n);
+  const qu=qtyUnit(it);const cnt=document.querySelectorAll('text.bln-t[data-bn="'+n+'"]').length;
+  pop.innerHTML='<div class="hd"><div class="no">'+n+'</div><div><div class="th">'+it.th+'</div><div class="en">'+it.en+'</div></div><button class="x" aria-label="ปิด">×</button></div>'
+   +'<div class="qty"><span>จำนวน</span><b>'+qu.v+'</b><span class="u">'+qu.u+(qu.inf?'<sup title="หน่วยนี้ระบบประมาณจากชื่อวัสดุ">*</sup>':'')+'</span>'+(VLAB?'<span class="v">แบบที่เลือก: '+VLAB+'</span>':'')+'</div>'
+   +'<dl><dt>วัสดุเลขที่</dt><dd>'+(it.mat||"–")+(it.old?' <span style="color:var(--muted)">'+it.old+'</span>':'')+'</dd>'
+   +'<dt>ในรูปนี้</dt><dd style="font-family:inherit">ชี้ไว้ '+cnt+' ตำแหน่ง (ไฮไลต์สีส้ม)</dd></dl>'
+   +(it.all.length>1?'<div class="all">ทุกแบบย่อย: '+it.all.map(a=>a.l+' = '+a.q).join(' · ')+'</div>':'')
+   +'<div class="ft"><button class="go">ดูในตารางรายการวัสดุ ↓</button></div>';
+  pop.style.display="block";
+  lastEv=ev;place();
+  if(window.P3D&&window.THREE){const v=document.createElement("div");v.className="v3";pop.querySelector(".hd").after(v);try{P3D.mount(v,it);}catch(e){v.remove();}}
+  place();
+  pop.querySelector(".x").onclick=hide;
+  pop.querySelector(".go").onclick=()=>{hide();it.row.scrollIntoView({behavior:"smooth",block:"center"});it.row.classList.remove("bln-flash");void it.row.offsetWidth;it.row.classList.add("bln-flash");};
+}
+let lastEv=null;
+/* Position the card. Phones get a bottom sheet that stays the same on-screen size even when the page is pinch-zoomed
+   (counter-scale by visualViewport.scale and pin to the visual viewport). */
+function place(){
+  if(pop.style.display!=="block")return;const vv=window.visualViewport,sc=vv?vv.scale:1,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight;
+  const W0=vw*sc;
+  if(W0<600){pop.style.maxWidth="none";pop.style.width=Math.min(W0-16,520)+"px";pop.style.maxHeight=Math.round(vh*sc*.62)+"px";pop.style.overflowY="auto";
+    pop.style.transformOrigin="0 0";pop.style.transform=sc!==1?"scale("+(1/sc)+")":"";
+    const h=pop.offsetHeight/sc,w=pop.offsetWidth/sc;pop.style.left=(ox+(vw-w)/2)+"px";pop.style.top=(oy+vh-h-8/sc)+"px";pop.style.bottom="auto";pop.classList.add("sheet");}
+  else{pop.style.transform="";pop.style.maxHeight="";pop.style.overflowY="";pop.style.width="";pop.style.maxWidth="";pop.classList.remove("sheet");
+    const W=innerWidth,H=innerHeight,r=pop.getBoundingClientRect(),ev=lastEv||{clientX:W/2,clientY:H/2};
+    let x=ev.clientX+16,y=ev.clientY+16;if(x+r.width>W-8)x=ev.clientX-r.width-16;if(y+r.height>H-8)y=Math.max(8,H-r.height-8);pop.style.left=x+"px";pop.style.top=y+"px";pop.style.bottom="auto";}
+}
+window.blnPlace=place;
+if(window.visualViewport){visualViewport.addEventListener("resize",place);visualViewport.addEventListener("scroll",place);}
+addEventListener("resize",place);
+function hide(){if(window.P3D)P3D.stop();pop.style.display="none";curN=null;mark(null);}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hide();});
+document.addEventListener("click",e=>{if(pop.style.display==="block"&&!pop.contains(e.target)&&!e.target.closest(".bln-g"))hide();});
+function wire(){
+  readBom();
+  document.querySelectorAll("svg").forEach(s=>{
+    const cs=[...s.querySelectorAll("circle")].filter(c=>c.r.baseVal.value>3);
+    s.querySelectorAll("text").forEach(t=>{
+      if(t.dataset.bn)return;const n=norm(t.textContent);if(!RX.test(t.textContent.trim())||!BOM[n])return;
+      let bb;try{bb=t.getBBox()}catch(e){return}
+      const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+      const c=cs.find(c=>Math.hypot(c.cx.baseVal.value-cx,c.cy.baseVal.value-cy)<c.r.baseVal.value);
+      if(!c)return;
+      const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+      c.parentNode.insertBefore(g,c);g.appendChild(c);g.appendChild(t);
+      c.classList.add("bln-c");t.classList.add("bln-t");c.dataset.bn=t.dataset.bn=n;
+      if(!c.getAttribute("fill")||c.getAttribute("fill")==="none")c.setAttribute("fill","rgba(0,0,0,0)");
+      g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+      g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+    });
+  });
+  /* labels that carry a circled number, e.g. "steel pipe Ø 50 ③" */
+  document.querySelectorAll("svg text").forEach(t=>{
+    if(t.dataset.bn||t.closest(".bln-g"))return;const m=t.textContent.match(/[①-⑳]/g);if(!m)return;
+    const n=norm(m[m.length-1]);if(!BOM[n])return;
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+    t.parentNode.insertBefore(g,t);g.appendChild(t);t.classList.add("bln-t");t.dataset.bn=n;t.style.textDecoration="underline dotted";
+    g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+  });
+  if(curN)mark(curN);
+}
+let tm;const mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{mo.disconnect();wire();obs();},120);});
+const obs=()=>document.querySelectorAll("svg").forEach(s=>mo.observe(s.parentElement||s,{childList:true,subtree:true}));
+function hint(){const g0=document.querySelector(".bln-g");const s=g0&&g0.ownerSVGElement;if(!s||document.querySelector(".bln-hint"))return;const h=document.createElement("div");h.className="bln-hint";h.innerHTML="<i>3</i> แตะหมายเลขในวงกลมบนรูป เพื่อดูชื่อวัสดุ จำนวน และหน่วย";(s.closest("section")||s.parentElement).insertBefore(h,(s.closest("section")||s.parentElement).querySelector("svg")?.parentElement===s.closest("section")?s:s.parentElement);}
+function init(){wire();obs();hint();const bt=document.getElementById("bomTbl");if(bt)new MutationObserver(()=>{readBom();}).observe(bt,{childList:true,subtree:true});}
+if(document.readyState==="complete")setTimeout(init,300);else addEventListener("load",()=>setTimeout(init,300));
+})();
+</script>
+<style id="p3dCss">
+#blnPop.sheet .v3{height:150px!important}
+#blnPop .v3{position:relative;height:190px;margin:0 14px 8px;border:1px solid var(--line,#e4e4e7);border-radius:10px;background:radial-gradient(circle at 50% 35%,var(--sheet,#fff),var(--soft,#f1f4f7));overflow:hidden;touch-action:none;cursor:grab}
+#blnPop .v3 canvas{display:block;width:100%!important;height:100%!important}
+#blnPop .v3 .cap{position:absolute;left:8px;bottom:6px;right:8px;font-size:11.5px;color:var(--muted,#666);pointer-events:none;display:flex;justify-content:space-between;gap:6px}
+#blnPop .v3 .cap b{font-weight:600;color:var(--ink,#222)}
+#blnPop .v3 .tg{position:absolute;top:6px;right:8px;font-size:10.5px;color:var(--muted,#777);background:var(--sheet,#fff);border:1px solid var(--line,#e4e4e7);border-radius:8px;padding:0 6px}
+</style>
+<script>
+/* P3D — generic 3D preview of one BOM item, built from its description (type + dimensions parsed from text). */
+window.P3D=(function(){
+  let R=null,scene,cam,root,raf=0,host=null,rx=.45,ry=.6,auto=true,dist=1;
+  const M={};
+  function mats(){if(M.steel)return M;const S=(c,m,r)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
+    Object.assign(M,{steel:S(0xc4cbd2,.25,.4),dark:S(0x7b838b,.25,.5),alu:S(0xdfe3e7,.2,.35),cu:S(0xc8794a,.3,.4),wood:S(0xb98a55,0,.8),woodE:S(0x9c6f3e,0,.85),
+      pvc:S(0x26292d,0,.55),grey:S(0x9aa1a8,0,.6),porc:S(0x8a4b2c,.05,.25),white:S(0xeef0f2,0,.4),glass:new THREE.MeshStandardMaterial({color:0x9fc3d9,metalness:0,roughness:.1,transparent:true,opacity:.55}),
+      conc:S(0xb3aea4,0,.95),red:S(0xc0392b,0,.5),orange:S(0xd9822b,.2,.5)});return M;}
+  const num=s=>parseFloat(String(s).replace(",","."));
+  function dims(t){
+    const r={};let m;
+    if(m=t.match(/M\s?(\d+)\s*[×x]\s*(\d+)/i)){r.d=+m[1];r.L=+m[2];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*(mm|cm|m\b|มม|ซม)?/i)){let k=/cm|ซม/.test(m[4]||"")?10:1;r.a=num(m[1])*k;r.b=num(m[2])*k;r.c=num(m[3])*k;}
+    if(m=t.match(/Ø\s?(\d+(?:[.,]\d+)?)/))r.hole=num(m[1]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)(?:\s*[–-]\s*(\d+(?:[.,]\d+)?))?\s*(?:mm²|ตร\.?มม)/)){r.mm2=num(m[1]);r.mm2s=m[2]?m[1]+"–"+m[2]:m[1];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*mm\s*wide|กว้าง\s*(\d+)/i))r.w=num(m[1]||m[2]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*(?:m|ม\.)\s*(?:long|ยาว)?\b/)&&!r.L)r.len=num(m[1]);
+    if(m=t.match(/(\d{1,2}(?:[.,]\d+)?)\s*(?:m\b|ม\.)\s*(?:concrete\s*)?pole|เสา[^\d]{0,12}(\d{1,2}(?:\.\d+)?)\s*ม/i))r.pole=num(m[1]||m[2]);
+    return r;}
+  /* ---- part builders (mm) ---- */
+  const G=()=>new THREE.Group();
+  function cyl(r1,r2,h,mat,seg){return new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg||24),mat);}
+  function box(x,y,z,mat){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),mat);}
+  function hex(d,h,mat){const m=cyl(d*.9,d*.9,h,mat,6);return m;}
+  function thread(g,d,L,y0,mat){g.add(cyl(d/2,d/2,L,mat,20).translateY(y0+L/2));for(let y=y0+d*.3;y<y0+L;y+=Math.max(2.5,d*.2)){const t=new THREE.Mesh(new THREE.TorusGeometry(d/2,Math.max(.3,d*.035),5,20),M.steel);t.rotation.x=Math.PI/2;t.position.y=y;g.add(t);}}
+  const B={
+    bolt(t,D){const d=D.d||16,L=D.L||200,g=G();g.add(hex(d,d*.65,M.steel).translateY(L+d*.32));thread(g,d,L,0,M.steel);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2.2;g.add(n);const w=box(d*3.2,d*.28,d*3.2,M.steel);w.position.y=d*2.8;g.add(w);
+      g.rotation.z=Math.PI/2;return {g,lab:`M${d} × ${L} มม.`,note:"หัวหกเหลี่ยม + แหวน + แป้นเกลียว"};},
+    eyebolt(t,D){const d=D.d||16,L=D.L||250,g=G();thread(g,d,L,0,M.steel);const e=new THREE.Mesh(new THREE.TorusGeometry(d*1.6,d*.45,10,28),M.steel);e.position.y=L+d*1.9;g.add(e);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2;g.add(n);g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวตาเดียว M${d} × ${L}`};},
+    dabolt(t,D){const d=D.d||16,L=D.L||400,g=G();thread(g,d,L,0,M.steel);[d*1.5,L-d*1.5].forEach(y=>{const n=hex(d,d*.8,M.steel);n.position.y=y;g.add(n);});g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวสองหัว M${d} × ${L}`};},
+    screw(t,D){const g=G(),L=20,d=4;g.add(cyl(d*1.1,d*.5,d*.8,M.steel).translateY(L));g.add(cyl(d/2,.3,L,M.steel).translateY(L/2));
+      for(let y=2;y<L-1;y+=1.4){const r=new THREE.Mesh(new THREE.TorusGeometry(d/2*(y/L*.6+.4),.35,4,14),M.dark);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);}g.rotation.z=Math.PI/2;return {g,lab:"สกรู 15–20 มม."};},
+    nail(t,D){const g=G();g.add(cyl(1.6,1.6,.5,M.steel).translateY(18));g.add(cyl(.5,.15,18,M.steel).translateY(9));g.rotation.z=Math.PI/2;return {g,lab:"ตะปู 15–20 มม. Ø1"};},
+    nut(t,D){const d=D.d||16,g=G();const n=hex(d,d*.8,M.steel);g.add(n);const h=cyl(d/2,d/2,d,M.dark);g.add(h);return {g,lab:`แป้นเกลียว M${d}`};},
+    sqwasher(t,D){const a=D.a||52,c=D.c||4.5,h=D.hole||18,g=G();const s=new THREE.Shape();s.moveTo(-a/2,-a/2);s.lineTo(a/2,-a/2);s.lineTo(a/2,a/2);s.lineTo(-a/2,a/2);s.lineTo(-a/2,-a/2);
+      const p=new THREE.Path();p.absarc(0,0,h/2,0,Math.PI*2,true);s.holes.push(p);const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:c,bevelEnabled:false,curveSegments:24}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);
+      return {g,lab:`${a} × ${a} × ${c} มม. รู Ø${h}`};},
+    washer(t,D){const d=D.d||16,g=G();const s=new THREE.Shape();s.absarc(0,0,d*1.1,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,d*.55,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false,curveSegments:28}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);return {g,lab:"แหวนกลม"};},
+    spring(t,D){const d=D.d||16,g=G();const tq=new THREE.Mesh(new THREE.TorusGeometry(d*.75,d*.18,8,28,Math.PI*1.9),M.steel);tq.rotation.x=Math.PI/2;g.add(tq);return {g,lab:"แหวนสปริง"};},
+    connector(t,D){const g=G();const b1=box(70,14,46,M.alu),b2=box(70,14,46,M.alu);b1.position.y=9;b2.position.y=-9;g.add(b1,b2);
+      [[-15,0],[15,0]].forEach(([z])=>{const c=cyl(5,5,320,M.pvc,16);c.rotation.z=Math.PI/2;c.position.z=z;c.position.y=0;g.add(c);});
+      const bo=cyl(5,5,50,M.steel);bo.position.y=0;g.add(bo);const h=hex(10,8,M.steel);h.position.y=20;g.add(h);
+      return {g,lab:/single bolt|สลักเดียว/i.test(t)?"พีจีคอนเนคเตอร์ 1 สลัก":"พีจีคอนเนคเตอร์ (ร่องขนาน)",note:D.mm2?`สาย ${D.mm2s} ตร.มม.`:""};},
+    tape(t,D){const w=D.w||19,g=G();const s=new THREE.Shape();s.absarc(0,0,48,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,19,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:w,bevelEnabled:false,curveSegments:40}),M.pvc);g.add(m);const c=cyl(19,19,w,M.white,32);c.rotation.x=Math.PI/2;c.position.z=w/2;g.add(c);
+      const tail=box(60,.6,w,M.pvc);tail.position.set(30,-48,w/2);g.add(tail);return {g,lab:`เทป PVC กว้าง ${w} มม.`};},
+    strap(t,D){const g=G();const r=new THREE.Mesh(new THREE.TorusGeometry(60,1,6,48),M.steel);r.scale.set(1,1,10);g.add(r);const c=box(18,10,14,M.steel);c.position.set(60,0,0);g.add(c);
+      const cab=cyl(10,10,240,M.pvc);cab.rotation.x=Math.PI/2;cab.position.x=-40;g.add(cab);return {g,lab:"เข็มขัดรัดสาย (เทปเกราะ 1 × 10 มม.)"};},
+    cable(t,D){const a=D.mm2||16,r=Math.sqrt(a/Math.PI)*1.1+1.5,g=G(),cu=/\bCu\b|ทองแดง/.test(t)&&!/\bAl\b|อะลูมิเนียม/.test(t);
+      const pts=[];for(let i=0;i<=60;i++){const u=i/60;pts.push(new THREE.Vector3(Math.cos(u*Math.PI*3.2)*60,u*60-30,Math.sin(u*Math.PI*3.2)*60));}
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),120,r,14,false),M.pvc));
+      const end=pts[60],cd=cyl(r*.62,r*.62,r*4,cu?M.cu:M.alu,14);cd.position.copy(end).add(new THREE.Vector3(0,r*2,0));g.add(cd);
+      return {g,lab:`สาย ${cu?"ทองแดง":"อะลูมิเนียม"} ${a} ตร.มม.`,note:"หุ้มฉนวน PVC · ปลายแสดงตัวนำ"};},
+    meter(t,D){const g=G();const body=box(130,180,110,M.white);body.material=M.white;body.position.y=90;g.add(body);const base=box(130,60,110,M.grey);base.position.y=-30;g.add(base);
+      const win=box(96,70,4,M.glass);win.position.set(0,120,56);g.add(win);const reg=box(70,16,2,M.pvc);reg.position.set(0,125,55);g.add(reg);
+      const disk=cyl(30,30,2,M.dark,28);disk.rotation.x=Math.PI/2;disk.position.set(0,98,55);g.add(disk);
+      for(let i=0;i<4;i++){const c=cyl(5,5,60,M.pvc,12);c.position.set(-36+i*24,-90,0);g.add(c);}
+      return {g,lab:"วัตต์อาวร์มิเตอร์",note:"ตัวเครื่อง + ฝาครอบขั้วสาย"};},
+    plate(t,D){let a=D.a||600,b=D.b||200,c=D.c||20;const g=G();const p=box(b,a,c,/wood|ไม้/i.test(t)?M.wood:M.steel);p.position.y=a/2;g.add(p);
+      [a*.12,a*.88].forEach(y=>{const h=cyl(9,9,c+2,M.pvc,16);h.rotation.x=Math.PI/2;h.position.y=y;g.add(h);});
+      return {g,lab:`แป้น ${a/10} × ${b/10} × ${c/10} ซม.`,note:/wood|ไม้/i.test(t)?"ไม้เนื้อแข็ง ไสเรียบ":""};},
+    cabinet(t,D){const g=G();const b=box(300,820,250,M.grey);b.position.y=410;g.add(b);const dr=box(280,790,6,M.steel);dr.position.set(0,410,128);g.add(dr);
+      const w=box(140,120,4,M.glass);w.position.set(0,620,132);g.add(w);const hd=box(10,60,14,M.dark);hd.position.set(120,420,136);g.add(hd);return {g,lab:"ตู้เหล็ก"};},
+    rack(t,D){const g=G(),n=/2\s*[×x]|2 ×|2 spool/.test(t)?2:(/4/.test(t)?4:1);const h=200*n+60;
+      const bk=box(10,h,60,M.steel);bk.position.set(-60,h/2,0);g.add(bk);[0,h].forEach(y=>{const a=box(120,10,60,M.steel);a.position.set(0,y,0);g.add(a);});
+      for(let i=0;i<n;i++){const y=60+i*200,sp=cyl(38,38,70,M.porc,24);sp.position.set(20,y+40,0);g.add(sp);const gr=new THREE.Mesh(new THREE.TorusGeometry(38,8,8,24),M.porc);gr.rotation.x=Math.PI/2;gr.position.set(20,y+40,0);g.add(gr);}
+      const pin=cyl(8,8,h,M.steel);pin.position.set(20,h/2,0);g.add(pin);return {g,lab:`แร็คแรงต่ำ ${n} ช่อง`,note:"พร้อมลูกถ้วยลูกรอก"};},
+    spool(t,D){const g=G();const c=cyl(38,38,75,M.porc,28);g.add(c);[-26,26].forEach(y=>{const r=new THREE.Mesh(new THREE.TorusGeometry(36,6,8,28),M.porc);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);});
+      const hole=cyl(10,10,78,M.dark,16);g.add(hole);return {g,lab:"ลูกถ้วยลูกรอกแรงต่ำ"};},
+    pinins(t,D){const g=G();[0,40,80].forEach((y,i)=>{const s=cyl(70-i*12,40-i*6,30,M.porc,28);s.position.y=y;g.add(s);});const top=cyl(28,28,40,M.porc,24);top.position.y=120;g.add(top);
+      const pin=cyl(12,12,160,M.steel,16);pin.position.y=-60;g.add(pin);return {g,lab:"ลูกถ้วยก้านตรง"};},
+    disc(t,D){const g=G();for(let i=0;i<3;i++){const p=[[0,0],[20,0],[24,-25],[125,-70],[127,-76],[78,-74],[50,-82],[28,-78],[12,-90],[0,-90]].map(([x,y])=>new THREE.Vector2(x,y));
+      const d=new THREE.Mesh(new THREE.LatheGeometry(p,36),M.porc);d.position.y=-i*146;g.add(d);const c=cyl(28,32,32,M.steel);c.position.y=-i*146-4;g.add(c);}return {g,lab:"ลูกถ้วยแขวน"};},
+    rod(t,D){const g=G(),L=2400;g.add(cyl(8,8,L,M.cu,16).translateY(L/2));const tip=cyl(8,.5,40,M.cu,16);tip.position.y=-20;g.add(tip);const cl=box(30,40,30,M.cu);cl.position.y=L-60;g.add(cl);return {g,lab:"หลักดิน 2.4 ม."};},
+    channel(t,D){const L=Math.min(D.len?D.len*1000:2400,3000),g=G(),ang=/angle|ฉาก/i.test(t);const s=new THREE.Shape();
+      if(ang){const a=D.a||65,c=D.c||6;[[0,0],[a,0],[a,c],[c,c],[c,a],[0,a]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      else{const h=D.a||100,b=D.b||50,c=7;[[0,0],[b,0],[b,c],[c,c],[c,h-c],[b,h-c],[b,h],[0,h]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:L,bevelEnabled:false}),M.steel);m.position.z=-L/2;g.add(m);g.rotation.y=Math.PI/2;
+      return {g,lab:(ang?"เหล็กฉาก":"เหล็กรางน้ำ (คอนสาย)")+(D.len?` ยาว ${D.len} ม.`:"")};},
+    pole(t,D){const g=G(),L=(D.pole||9)*1000;const p=cyl(70,130,L,M.conc,4);p.rotation.y=Math.PI/4;p.position.y=L/2;g.add(p);return {g,lab:`เสาคอนกรีต ${D.pole||9} ม.`};},
+    transformer(t,D){const g=G();const tk=cyl(220,220,700,M.grey,32);tk.position.y=350;g.add(tk);for(let i=0;i<12;i++){const f=box(8,560,90,M.grey);const a=i/12*Math.PI*2;f.position.set(Math.cos(a)*250,330,Math.sin(a)*250);f.rotation.y=-a;g.add(f);}
+      [-90,90].forEach(x=>{const b=cyl(22,30,180,M.porc);b.position.set(x,790,0);g.add(b);});return {g,lab:"หม้อแปลงจำหน่าย"};},
+    cutout(t,D){const g=G();const b=cyl(35,45,320,M.porc,20);b.rotation.z=.35;g.add(b);const tube=cyl(16,16,300,M.dark);tube.position.set(60,0,0);tube.rotation.z=.35;g.add(tube);
+      const br=box(20,20,200,M.steel);br.position.set(-40,0,0);g.add(br);return {g,lab:/arrester|กับดัก/i.test(t)?"กับดักเสิร์จ":"ฟิวส์คัตเอาต์"};},
+    generic(t,D){const g=G();const b=box(120,80,80,M.grey);g.add(b);return {g,lab:"รูปแบบทั่วไป",note:"ยังไม่มีแบบจำลองเฉพาะของวัสดุนี้"};}
+  };
+  function classify(t){const L=t.toLowerCase();
+    if(/nail|ตะปู/.test(L))return"nail";if(/screw|สกรู/.test(L))return"screw";
+    if(/eye\s*bolt|ตาเดียว|ตาไก่/.test(L))return"eyebolt";if(/double arming|สองหัว/.test(L))return"dabolt";
+    if(/\bbolt|สลักเกลียว/.test(L))return"bolt";
+    if(/washer.*(square|สี่เหลี่ยม)|แหวนสี่เหลี่ยม|square.*washer/.test(L))return"sqwasher";if(/spring|lock washer|แหวนสปริง/.test(L))return"spring";if(/washer|แหวน/.test(L))return"washer";
+    if(/\bnut\b|แป้นเกลียว|น็อต/.test(L))return"nut";
+    if(/strap|เข็มขัด/.test(L))return"strap";if(/tape|เทป/.test(L))return"tape";
+    if(/connector|คอนเนค|parallel groove/.test(L))return"connector";
+    if(/rack|แร็ค/.test(L))return"rack";if(/spool|ลูกรอก/.test(L))return"spool";
+    if(/suspension|disc|ลูกถ้วยแขวน/.test(L))return"disc";if(/pin.*insulator|insulator.*pin|ก้านตรง|line post/.test(L))return"pinins";
+    if(/transformer|หม้อแปลง/.test(L))return"transformer";if(/cutout|cut-out|fuse|arrester|ฟิวส์|กับดัก/.test(L))return"cutout";
+    if(/ground rod|หลักดิน/.test(L))return"rod";
+    if(/watthour|kwh|มิเตอร์|meter,/.test(L)&&!/plate|แป้น|board/.test(L))return"meter";
+    if(/cabinet|ตู้/.test(L))return"cabinet";if(/plate|แป้น|board/.test(L))return"plate";
+    if(/conductor|cable|\bwire\b|สาย/.test(L))return"cable";
+    if(/crossarm|คอน|channel|รางน้ำ|angle|ฉาก/.test(L))return"channel";if(/\bpole\b|เสา/.test(L))return"pole";
+    return"generic";}
+  function setup(){mats();R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setClearColor(0,0);
+    scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(30,1,1,1e6);scene.add(new THREE.HemisphereLight(0xffffff,0x5a6470,.85));
+    const d=new THREE.DirectionalLight(0xffffff,.85);d.position.set(1,1.4,1.2);scene.add(d);const d2=new THREE.DirectionalLight(0xffffff,.3);d2.position.set(-1,-.4,-1);scene.add(d2);
+    const el=R.domElement;let drag=0,px=0,py=0;
+    el.addEventListener("pointerdown",e=>{drag=1;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);e.stopPropagation();});
+    el.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.01;rx+=(e.clientY-py)*.01;rx=Math.max(-1.4,Math.min(1.4,rx));px=e.clientX;py=e.clientY;});
+    el.addEventListener("pointerup",()=>drag=0);el.addEventListener("click",e=>e.stopPropagation());
+    el.addEventListener("wheel",e=>{e.preventDefault();dist*=1+e.deltaY*.001;dist=Math.max(.4,Math.min(3,dist));},{passive:false});}
+  function loop(){raf=requestAnimationFrame(loop);if(!host||!host.isConnected){stop();return;}if(auto)ry+=.004;root.rotation.set(rx,ry,0);
+    const s=root.userData.size;cam.position.set(0,0,s*2.1*dist);cam.lookAt(0,0,0);R.render(scene,cam);}
+  function stop(){cancelAnimationFrame(raf);raf=0;}
+  function mount(el,it){
+    if(!window.THREE){el.remove();return;}if(!R)setup();stop();
+    const txt=(it.en||"")+" "+(it.th||""),D=dims(txt);let k=classify(it.en||"");if(k==="generic")k=classify(it.th||"");if(k==="generic"){el.remove();return;}const r=B[k](txt,D);
+    if(root)scene.remove(root);root=new THREE.Group();const inner=G();inner.add(r.g);
+    const bb=new THREE.Box3().setFromObject(inner),c=bb.getCenter(new THREE.Vector3()),sz=bb.getSize(new THREE.Vector3());inner.position.sub(c);root.add(inner);
+    root.userData.size=Math.max(sz.x,sz.y,sz.z);scene.add(root);rx=.38;ry=-.5;auto=true;dist=1;
+    el.innerHTML="";el.appendChild(R.domElement);const w=el.clientWidth||300,h=el.clientHeight||190;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+    const cap=document.createElement("div");cap.className="cap";cap.innerHTML="<span><b>"+r.lab+"</b>"+(r.note?" · "+r.note:"")+"</span>";el.appendChild(cap);
+    const tg=document.createElement("div");tg.className="tg";tg.textContent=(k==="generic"?"ภาพตัวแทน":"3D ตัวแทน")+" · ลากเพื่อหมุน";el.appendChild(tg);
+    host=el;loop();}
+  return {mount,classify,dims,stop};
+})();
+</script>
+<script>
+/* ===== 3237: tag 3D parts with BOM item numbers (tagged copies of lv3D + makeModel) ===== */
+(function(){
+const TG=(o,...n)=>{o.userData.bn=n.map(String);return o;};
+lv3D=function(g, P, L){ const A = armOf(L), z = L.z, t = L.type, M = tlMats(), S = X_DISC3, L3 = tlStrLen(S), hd = q_hd(P, z), hw = q_hw(P, z), dr = dropOf(L), STUB = 3000;
+  const grp = new THREE.Group(); g.add(grp); const G = o => grp.add(o);
+  if (t === "tap"){ const fx = hw + 60;
+    [-1, 1].forEach(sd => { const a = q_arm3D(A.len, A.s, 0, z, 0); const w = new THREE.Group(); w.add(a); w.rotation.y = Math.PI / 2; w.position.x = sd * fx; G(TG(w, 4)); });
+    A.da.forEach(zz => { G(TG(x_eyeBolt3D([fx + 80, z, zz], [-fx - 80, z, zz]), 18, 19, 22)); const st = x_de3D(S, Math.PI); st.position.set(-fx - 125, z, zz); G(TG(st, 39, 25));
+      G(tlConductor3D([[-fx - 125 - L3, z, zz], [-fx - 125 - L3 - STUB, z - 200, zz]], 9)); });
+    A.pins.forEach((zz, i) => { const pi = q_pin3D(); pi.position.set(-fx, z + 60, zz); G(TG(pi, 38));
+      const zm = i === 0 ? ZA : ZB; });
+    [-A.br, A.br].forEach(zz => G(TG(tlBrace3D([-fx, z - 60, zz], [-hw - 4, z - dr, 0], { w: 40, t: 6 }), 6, 9)));
+    G(TG(tlBolt3D([-hw - 30, z - dr, 0], [hw + 30, z - dr, 0], { d: 16 }), 13, 22));
+    return grp; }
+  const f = t === "aerde2" ? hw : hd + A.s / 2, ha = (A.s || A.h) / 2;
+  if (t === "aerde2"){ [-1, 1].forEach(sd => { const ch = x_chan3D({ len: A.len, h: A.h, b: A.b, t: A.t, tf: A.t, web: A.web.map(x => ({ x: x + A.len / 2, d: 18, y: x === 0 ? A.h / 2 - 50 : 0 })) });
+      ch.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, sd)));
+      ch.position.set(-A.len / 2, z, sd * hd); G(TG(ch, 35)); });
+    A.web.forEach(x => G(TG(tlBolt3D([x, z, -hd - 30], [x, z, hd + 30], { d: 16 }), x === 0 ? 14 : 16, 22)));
+    [-1, 1].forEach(sd => { const br = tlBrace3D([sd * A.br, z - A.h / 2, -hd - 40], [0, z - A.drop, -hd - 40], { w: 50, t: 6 }); G(TG(br, 7, 10)); G(TG(tlBrace3D([sd * A.br, z - A.h / 2, hd + 40], [0, z - A.drop, hd + 40], { w: 50, t: 6 }), 7, 10)); });
+    A.de.forEach(x => { const st = x_de3D(S, -Math.PI / 2); st.position.set(x, z, -hd - 120); G(TG(st, 39, 47, 49)); G(TG(tlConductor3D([[x, z, -hd - 120 - L3], [x, z - 200, -hd - 120 - L3 - STUB]], 13, q_cableMat()), 48)); });
+    A.msg.forEach(x => G(TG(x_wire3D([[x, z - 30, -hd - 110], [x, z - 260, -hd - 900], [x, z - 300, -hd - 900 - STUB]], 6), 48, 27, 28)));
+    return grp; }
+  const sides = (t === "pin" || t === "aer") ? [-1] : [-1, 1];
+  sides.forEach(sd => { G(TG(q_arm3D(A.len, A.s, 0, z, sd * f), t === "pin" ? 3 : t === "aer" ? 2 : 4));
+    if (sd === -1 || t === "de" || t === "aerde") [-A.br, A.br].forEach(x => { const w30 = t === "aer" || t === "aerde" || t === "aerdde"; G(TG(tlBrace3D([x, z - ha, sd * (f + ha + 4)], [0, z - dr, sd * (hd + 4)], { w: w30 ? 30 : 40, t: 6 }), w30 ? 5 : 6));
+      G(TG(tlBolt3D([x, z - ha + 20, sd * (f - ha - 10)], [x, z - ha + 20, sd * (f + ha + 20)], { d: 16 }), t === "aer" ? 8 : 9, 22)); }); });
+  G(TG(tlBolt3D([0, z - dr, -hd - 30], [0, z - dr, hd + 30], { d: 16 }), 11, 22));
+  if (t === "pin" || t === "aer") G(TG(tlBolt3D([0, z, -f - ha - 30], [0, z, hd + 30], { d: 16 }), 13, 22, 24));
+  if (t === "pin"){ A.pins.forEach(x => { const pi = q_pin3D(); pi.position.set(x, z + ha, -f); G(TG(pi, 38, 43, 44)); G(TG(tlBolt3D([x, z - ha - 40, -f], [x, z + ha, -f], { d: 20, nuts: false }), 38, 23)); });
+    G(TG(x_wire3D([[-1400, z - ha - 30, -f], [1400, z - ha - 30, -f]], 3), 30));
+    const yc = z + ha + Q_PIN.h - 40; A.pins.forEach(x => G(tlConductor3D([[x, yc, -f - STUB], [x, yc, -f + STUB]], 9))); }
+  const hang = (x, zf) => { const yb = z - ha, ym = yb - HANG.msg; G(TG(tlBolt3D([x, z + ha + 20, zf], [x, ym, zf], { d: 16 }), 9, 22, 24));
+    const sp = new THREE.Mesh(new THREE.BoxGeometry(300, 300, 40), MAT.steel); sp.rotation.z = Math.PI / 4; sp.position.set(x, ym - 140, zf); G(TG(sp, 42, 40, 41));
+    G(x_wire3D([[x, ym, zf - STUB], [x, ym, zf + STUB]], 6)); [[-150, -140], [150, -140], [0, -280]].forEach(([dx, dy]) => G(tlConductor3D([[x + dx, ym + dy, zf - STUB], [x + dx, ym + dy, zf + STUB]], 14, q_cableMat()))); };
+  if (t === "aer") HANGX.forEach(x => hang(x, -f));
+  if (t === "aerdde"){ HANGX.forEach(x => hang(x, -f)); G(TG(tlBolt3D([0, z, -f - ha - 30], [0, z, f + ha + 30], { d: 16 }), 15, 22)); }
+  if (t === "de" || t === "dde" || t === "aerde"){ const des = t === "aerde" ? DE_X.aerde : A.da;
+    daOf(L).forEach(x => G(TG(x_eyeBolt3D([x, z, f + ha + 30], [x, z, -f - ha - 20]), t === "de" && z === ZA ? 17 : 18, 22)));
+    des.forEach(x => { const st = x_de3D(S, -Math.PI / 2); st.position.set(x, z, -f - ha - 75); G(t === "aerde" ? TG(st, 39, 47, 49) : TG(st, 39, 25));
+      { const cd = tlConductor3D([[x, z, -f - ha - 75 - L3], [x, z - 220, -f - ha - 75 - L3 - STUB]], t === "aerde" ? 13 : 9, t === "aerde" ? q_cableMat() : undefined); G(t === "aerde" ? TG(cd, 48) : cd); }
+      if (t === "dde"){ const e = new THREE.Mesh(new THREE.TorusGeometry(24, 7, 8, 18), MAT.steel); e.position.set(x, z, f + ha + 50); e.rotation.y = Math.PI / 2; G(TG(e, 21));
+        const s2 = x_de3D(S, Math.PI / 2); s2.position.set(x, z, f + ha + 75); G(TG(s2, 39, 25)); G(tlConductor3D([[x, z, f + ha + 75 + L3], [x, z - 220, f + ha + 75 + L3 + STUB]], 9)); } });
+    if (t === "aerde") G(TG(x_wire3D([[0, z - 30, -f - ha - 60], [0, z - 250, -f - 900], [0, z - 300, -f - 900 - STUB]], 6), 48, 27, 28));
+    if (t === "dde") A.pins.forEach((xp, i) => { const pi = q_pin3D(); pi.position.set(xp, z + ha, -f); G(TG(pi, 38, 43, 44));
+      const xd = A.da[i], yt = z + ha + Q_PIN.h; G(TG(tlConductor3D([[xd, z - 20, -f - ha - 75 - L3], [xd + (xp - xd) * .5, yt - 60, -f - 500], [xp, yt + 10, -f], [xd + (xp - xd) * .5, yt - 60, f + 500], [xd, z - 20, f + ha + 75 + L3]], 8), 26)); }); }
+  if (t === "aerdde") [-1100, 1100].forEach(x => { G(TG(x_eyeBolt3D([x, z, f + ha + 20], [x, z, -f - ha - 20]), 18, 22)); [-1, 1].forEach(sd => G(TG(x_wire3D([[x, z - 20, sd * (f + ha + 60)], [x, z - ha - HANG.msg, sd * (f + 900)]], 6), 27, 28))); });
+  return grp; };
+makeModel=function(p){
+  const g = new THREE.Group(), P = P14, T = T37;
+  g.add(tlGround3D(20000)); g.add(p.tap ? tlPole3D(P) : TG(tlPole3D(P), 1));
+  p.levels.forEach(L => { const grp = lv3D(g, P, L); if (L.ghost) grp.traverse(o => { delete o.userData.bn; if (o.isMesh){ o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = .28; o.material.depthWrite = false; } }); });
+  const b = p.bay;
+  if (b.kind === "ang"){ g.add(TG(q_bay3D(P, b.z0, b.z1, b.a, b.t, b), b.n)); b.bolts.forEach(z => g.add(TG(tlBolt3D([-q_hw(P, z) - 20, z, 0], [q_hw(P, z) + 30, z, 0], { d: 16 }), 11, 22)));
+    const xo = -q_hw(P, T) - 40 - (b.corner ? b.dx : 0); g.add(TG(box(60, 50, 120, xo, b.z1 - 60, 0, tlMats().cap), 36)); g.add(TG(x_wire3D([[xo, b.z1 - 30, -3000], [xo, b.z1 - 30, 3000]], 5), 28)); }
+  else { g.add(TG(q_bay3D(P, b.z0, b.z1, 0, 0, { chan: b, holes: [...b.bolts, b.eye] }), b.n)); b.bolts.forEach(z => g.add(TG(tlBolt3D([-q_hw(P, z) - 20, z, 0], [q_hw(P, z) + 30, z, 0], { d: 16 }), b.kind === "chan34" ? 12 : 11, 22)));
+    const hw = q_hw(P, T);
+    if (b.kind === "chan34"){ g.add(TG(box(60, 50, 120, -hw - 60, b.top, 0, tlMats().cap), 37)); g.add(x_wire3D([[-hw - 60, b.top + 30, -3000], [-hw - 60, b.top + 30, 3000]], 5));
+      g.add(TG(tlBolt3D([-hw + 20, b.eye, 0], [-hw - 150, b.eye, 0], { d: 16 }), 20, 22)); g.add(TG(x_wire3D([[-hw - 180, b.eye, 0], [-hw - 3200, b.eye - 100, 0]], 5), 27, 28)); }
+    else { g.add(TG(tlBolt3D([-hw - 25, b.eye, 40], [-hw - 25, b.eye, -90], { d: 16 }), 20, 27)); g.add(TG(x_wire3D([[-hw - 25, b.eye, -140], [-hw - 25, b.eye - 100, -3000]], 5), 28));
+      if (p.both) g.add(TG(x_wire3D([[-hw - 25, b.eye, 90], [-hw - 25, b.eye - 100, 3000]], 5), 28)); } }
+  if (p.tap) [[ZA, ZTA], [ZB, ZTB]].forEach(([zm, zt]) => { const fx = q_hw(P, zt) + 60, ex = -fx - 125 - tlStrLen(X_DISC3), yc = zm + 60 + Q_PIN.h - 40, f = q_hd(P, zm) + 60;
+    [-1400, 450, 1400].forEach((xm, i) => { const zz = A25.da[i]; g.add(TG(tlConductor3D([[xm, yc, -f - 600], [xm * .6 - 500, zt + 500, -f - 300 + zz * .5], [-fx, zt + 60 + Q_PIN.h + 20, A25.pins[i]], [ex + 200, zt + 100, zz], [ex, zt - 10, zz]], 8), 50)); }); });
+  const done = {}; p.guys.forEach(([z, l, gn]) => { const q = [0, 0, l]; g.add(TG(x_wire3D([[0, z, q_hd(P, z) + 10], q], 6), gn)); if (!done[l]){ done[l] = 1; g.add(x_anchor3D(0, l + 800, 900, -1500, q)); } });
+  return g;
+};
+})();
+window.HL3_BOUND=true;
+</script>
+<style id="hl3Css">
+#v3d .hl3bar{position:absolute;left:8px;right:8px;top:8px;display:none;align-items:center;gap:8px;background:var(--sheet,#fff);border:1px solid #ea580c;border-radius:10px;padding:6px 10px;font:13px/1.35 "IBM Plex Sans Thai",system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.15);z-index:2}
+#v3d .hl3bar .no{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 12px "IBM Plex Mono",monospace}
+#v3d .hl3bar .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#v3d .hl3bar button{flex:none;border:1px solid var(--line,#d4d4d8);background:var(--soft,#f5f7f9);border-radius:8px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer;color:inherit}
+#v3d .hl3pin{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#ea580c;color:#fff;font:700 11px "IBM Plex Mono",monospace;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(234,88,12,.25);pointer-events:none;z-index:1;animation:hl3p 1.6s ease-in-out infinite}
+@keyframes hl3p{50%{box-shadow:0 0 0 9px rgba(234,88,12,.08)}}
+#blnPop .loc{display:flex;align-items:center;gap:8px;margin:0 14px 10px;padding:8px 10px;border:1px solid #ea580c;border-radius:10px;background:rgba(234,88,12,.07);color:#c2410c;font:600 13.5px "IBM Plex Sans Thai",system-ui,sans-serif;cursor:pointer;width:calc(100% - 28px);text-align:left}
+#blnPop .loc small{font-weight:400;color:var(--muted,#666);margin-left:auto}
+#blnPop .loc.no{border-color:var(--line,#d4d4d8);background:var(--soft,#f5f7f9);color:var(--muted,#777);cursor:default}
+</style>
+<script>
+/* ===== HL3: highlight tagged parts inside the page's own 3D model ===== */
+window.HL3=(function(){
+  let on=null,saved=new Map(),ghost=null,hot=null,ret=null;
+  const box3=()=>document.getElementById("v3d");
+  function mats(){if(ghost)return;ghost=new THREE.MeshStandardMaterial({color:0x9aa3ad,transparent:true,opacity:.2,depthWrite:false,roughness:.9});
+    hot=new THREE.MeshStandardMaterial({color:0xff6a00,emissive:0xff5a00,emissiveIntensity:.55,roughness:.4,metalness:.1});}
+  const nk=t=>String(t).replace(/[*✱\s]/g,"").replace(/'/g,"′");
+  let LOOSE=false;function hasN(arr,n){n=nk(n);return arr.some(t=>{t=nk(t);return t===n||(LOOSE&&/^\d+$/.test(n)&&new RegExp("^"+n+"[a-z]$").test(t));});}
+  function tagged0(n){const out=[];if(typeof model==="undefined"||!model)return out;
+    model.traverse(o=>{if(!(o.userData&&o.userData.bn&&hasN(o.userData.bn,n)))return;let a=o.parent,dup=false;while(a){if(a.userData&&a.userData.bn&&hasN(a.userData.bn,n)){dup=true;break;}a=a.parent;}if(!dup)out.push(o);});return out;}
+  function tagged(n){LOOSE=false;let r=tagged0(n);if(!r.length){LOOSE=true;r=tagged0(n);}return r;}
+  function meshesOf(r,n){const set=[];(function walk(o){if(o!==r&&o.userData&&o.userData.bn&&!hasN(o.userData.bn,n))return;if(o.isMesh)set.push(o);o.children.forEach(walk);})(r);return set;}
+  function has(n){return tagged(n).length>0;}
+  let pins=[];
+  function drawPins(){const v=box3();v.querySelectorAll(".hl3pin").forEach(e=>e.remove());if(!on||typeof cam==="undefined")return;const W=v.clientWidth,H=v.clientHeight;
+    pins.forEach(o=>{const bb=new THREE.Box3().setFromObject(o),c=bb.getCenter(new THREE.Vector3()).project(cam);if(c.z>1)return;
+      const d=document.createElement("div");d.className="hl3pin";d.textContent=on;d.style.left=((c.x+1)/2*W)+"px";d.style.top=((1-c.y)/2*H)+"px";v.appendChild(d);});}
+  function clear(){pins=[];saved.forEach((m,o)=>o.material=m);saved.clear();on=null;const b=box3()?.querySelector(".hl3bar");if(b)b.style.display="none";}
+  function reset(){clear();if(ret){model.position.copy(ret.p);rx=ret.rx;ry=ret.ry;dist=ret.d;ret=null;}render();}
+  function show(n,it){mats();if(typeof model==="undefined"||!model)return false;clear();const roots=tagged(n);if(!roots.length)return false;
+    const hotSet=new Set();roots.forEach(r=>meshesOf(r,n).forEach(o=>hotSet.add(o)));
+    model.traverse(o=>{if(!o.isMesh&&!o.isLine)return;saved.set(o,o.material);o.material=hotSet.has(o)?hot:(o.isMesh?ghost:o.material);});
+    if(!ret)ret={p:model.position.clone(),rx,ry,d:dist};
+    /* fly to the parts: centre of their bounding box in model space */
+    pivot.updateMatrixWorld(true);const bb=new THREE.Box3();roots.forEach(r=>bb.expandByObject(r));const inv=new THREE.Matrix4().copy(pivot.matrixWorld).invert();
+    const c=bb.getCenter(new THREE.Vector3()).applyMatrix4(inv).sub(model.position),s=bb.getSize(new THREE.Vector3()).length();
+    model.position.set(-c.x,-c.y,-c.z);dist=Math.max(450,Math.min(9000,s*2.4));render();
+    on=n;pins=roots;const b=bar();b.querySelector(".no").textContent=n;b.querySelector(".tx").innerHTML="<b>"+(it?it.th:"")+"</b> · "+roots.length+" ตำแหน่ง";b.style.display="flex";render();
+    return true;}
+  function bar(){const v=box3();let b=v.querySelector(".hl3bar");if(!b){b=document.createElement("div");b.className="hl3bar";b.innerHTML='<span class="no"></span><span class="tx"></span><button type="button">ดูทั้งชุด</button>';
+      b.querySelector("button").onclick=e=>{e.stopPropagation();reset();};v.appendChild(b);}return b;}
+  /* re-apply after variant switch rebuilds the model */
+  const _b=window.build3d;if(_b)window.build3d=function(){const n=on;ret=null;clear();_b.apply(this,arguments);if(n&&has(n))setTimeout(()=>show(n,null),0);};
+  const _r=window.render;if(typeof _r==="function"){window.render=function(){_r.apply(this,arguments);drawPins();};try{render();}catch(e){}}
+  return {show,has,reset,count:n=>tagged(n).length};
+})();
+/* add a "locate in 3D" button to the item card */
+(function(){const pop=document.getElementById("blnPop");if(!pop)return;
+  new MutationObserver(()=>{if(pop.style.display!=="block"||pop.querySelector(".loc"))return;const no=pop.querySelector(".no");if(!no)return;const n=no.textContent.trim();
+    const b=document.createElement("button");b.type="button";const k=window.HL3?HL3.count(n):0;
+    if(k){b.className="loc";b.innerHTML="📍 ดูตำแหน่งในโมเดล 3 มิติของชุด<small>"+k+" ชิ้น</small>";
+      b.onclick=e=>{e.stopPropagation();const th=pop.querySelector(".th")?.textContent||"";pop.style.display="none";document.querySelectorAll(".bln-c.on,.bln-t.on").forEach(x=>x.classList.remove("on"));
+        const v=document.getElementById("v3d");v.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>HL3.show(n,{th}),350);};}
+    else if(window.HL3_BOUND){b.className="loc no";b.textContent="ชิ้นนี้ไม่ได้แสดงในโมเดล 3 มิติของชุด";}else return;
+    const q=pop.querySelector(".qty");q.parentNode.insertBefore(b,q);
+    if(window.blnPlace)blnPlace();
+  }).observe(pop,{childList:true});
+})();
+/* rebuild once so the tagged model is used */
+if(window.HL3_BOUND&&window.build3d)setTimeout(()=>{try{build3d();}catch(e){}},50);
+</script>

@@ -1,0 +1,841 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>0709 ข้อแนะนำการติดตั้งคะแปซิเตอร์แรงต่ำในระบบของผู้ใช้ไฟเฉพาะราย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting sheet — title strip, variant switch, 2D elevation, details + 3D, tables, title block */
+:root{
+  --paper:#eef1f4; --sheet:#ffffff; --ink:#18212b; --muted:#5a6573; --line:#cdd4dc; --soft:#f5f7f9;
+  --accent:#7a1e6b; --accent-bg:#f6e9f3; --dim:#245f93; --weld:#c2620f; --steel:#9aa5b1; --hole:#ffffff;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:1080px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--ink);display:flex;flex-direction:column}
+.blk{padding:20px 24px;border-top:1px solid var(--line);min-width:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-family:var(--f-body);font-weight:400;font-size:13px;color:var(--muted)}
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;padding:20px 24px;align-items:start}
+.eyebrow{font-size:13px;color:var(--muted)}
+.head h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,4vw,34px);line-height:1.2;margin:4px 0 2px;text-wrap:balance}
+.head .en{font-family:var(--f-mono);font-size:16px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.asm{border:1.5px solid var(--ink);padding:8px 14px;text-align:right}
+.asm .n{font-family:var(--f-display);font-size:34px;font-weight:600;line-height:1;color:var(--accent)}
+.asm .l{font-size:12px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--soft);border-top:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+.seg button{font:500 14px var(--f-body);background:transparent;color:var(--ink);border:0;padding:7px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.seg button:focus-visible,.btn:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+.spec{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto}
+.scroll svg{display:block;min-width:720px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--ink)}
+svg .th{font-family:var(--f-body)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+.two>.blk{border-top:0}
+.two>.blk+.blk{border-left:1px solid var(--line)}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}.two>.blk+.blk{border-left:0;border-top:1px solid var(--line)}.head{grid-template-columns:1fr}.asm{justify-self:start;text-align:left}}
+#v3d{height:360px;border:1px solid var(--line);background:var(--soft);touch-action:none;cursor:grab;position:relative;border-radius:4px;overflow:hidden}
+#v3d canvas{display:block}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.btn{font:13px var(--f-body);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:center;vertical-align:middle}
+th{font-weight:500;background:var(--soft);font-size:13px}
+td.l,th.l{text-align:left}
+tr.on td{background:var(--accent-bg)}
+td.mono{font-family:var(--f-mono)}
+tfoot td{font-weight:600}
+.notes{margin:0;padding-left:1.3em;max-width:72ch;display:grid;gap:6px}
+.e{display:block;font-family:var(--f-mono);font-size:.78em;font-weight:400;color:var(--muted);letter-spacing:.02em;line-height:1.35}
+h2 .e{display:inline;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.notes li .e{margin-top:1px}
+.btn .e{font-size:10px}
+.tag{display:inline-block;font-size:11px;font-family:var(--f-mono);padding:1px 6px;border-radius:3px;background:var(--accent-bg);color:var(--accent);vertical-align:1px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px}
+.tb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1.5px solid var(--ink);font-size:13px}
+.tb>div{padding:8px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.tb .k{display:block;font-size:11px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+.tb .w2{grid-column:span 2}.tb .w3{grid-column:span 3}.tb .w6{grid-column:span 6;text-align:center;font-family:var(--f-display);font-weight:600;letter-spacing:.06em}
+@media (max-width:640px){.tb{grid-template-columns:repeat(2,minmax(0,1fr))}.tb .w2,.tb .w3,.tb .w6{grid-column:span 2}}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.links .btn{text-decoration:none;display:inline-flex;flex-direction:column;line-height:1.25;font-weight:500;border-color:var(--ink)}
+.links .btn.pri{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.links .btn.pri .e{color:inherit;opacity:.8}
+</style>
+
+<style>
+/* ===== table-page additions (head CSS comes from parts/_head.html) ===== */
+.sheet .blk>p{margin:0 0 10px;max-width:80ch}
+.lead{font-size:14px;color:var(--muted);margin:-4px 0 12px}
+.tbl{width:auto;min-width:100%}
+.tbl th{line-height:1.3}
+.tbl th .e,.tbl td .e{font-size:10.5px}
+.tbl td.num{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.tbl.stick th:first-child,.tbl.stick td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:1px 0 0 var(--line)}
+.tbl.stick thead th:first-child{background:var(--soft)}
+.tbl tr.on td,.tbl td.on{background:var(--accent-bg)}
+.tbl td.hl{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-bg)}
+.cap{font-size:12px;color:var(--muted);margin-top:6px}
+.scroll .chart{min-width:640px}
+.reg{list-style:none;margin:0;padding:0;display:grid;gap:14px;counter-reset:none}
+.reg>li{display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:4px 10px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+.reg>li:last-child{border-bottom:0;padding-bottom:0}
+.reg .no{font-family:var(--f-display);font-weight:600;font-size:18px;color:var(--accent);line-height:1.4}
+.reg .tx{max-width:80ch}
+.reg .tx .e{font-size:.8em;margin-top:3px}
+.sheetmark{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--ink);padding-top:4px;margin:18px 0 12px}
+.sheetmark:first-child{margin-top:0}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end;margin:0 0 12px}
+.ctl label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--muted)}
+.ctl label .e{font-size:10px}
+.ctl input,.ctl select{font:14px var(--f-body);color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:5px 8px;min-width:0}
+.ctl input[type=range]{padding:0;accent-color:var(--accent);width:220px;max-width:60vw}
+.out{display:flex;flex-wrap:wrap;gap:10px}
+.out>div{border:1px solid var(--line);border-radius:4px;padding:8px 12px;min-width:150px;background:var(--soft)}
+.out .k{display:block;font-size:12px;color:var(--muted)}
+.out .k .e{font-size:10px}
+.out .v{font-family:var(--f-display);font-size:24px;font-weight:600;color:var(--accent);line-height:1.2}
+.out .u{font-size:13px;color:var(--muted);margin-left:4px}
+.chip{display:inline-block;font:12px var(--f-mono);border:1px solid var(--line);border-radius:3px;padding:0 6px;color:var(--muted)}
+.ref{font-family:var(--f-mono);font-size:13px;white-space:nowrap}
+.seg:empty{display:none}
+[data-tab][hidden]{display:none!important}
+@media (max-width:640px){.blk{padding:16px}.head,.bar{padding-inline:16px}.reg>li{grid-template-columns:1.8em minmax(0,1fr)}}
+</style>
+<script>
+/* ===== shared helpers for table pages (available to page scripts) ===== */
+const $ = id => document.getElementById(id);
+const fmt = (n, d) => d == null ? Number(n).toLocaleString("en-US") : Number(n).toLocaleString("en-US", {minimumFractionDigits: d, maximumFractionDigits: d});
+/* piece-wise linear interpolation on sorted xs; clamps outside the range */
+function lerp(xs, ys, x){
+  if (x <= xs[0]) return ys[0];
+  for (let i = 1; i < xs.length; i++) if (x <= xs[i]) { const t = (x - xs[i-1]) / (xs[i] - xs[i-1]); return ys[i-1] + t * (ys[i] - ys[i-1]); }
+  return ys[ys.length - 1];
+}
+/* Line chart → SVG markup string.
+   o = { W, H, pad:{l,r,t,b}, x:{min,max,major,minor,label:[th,en]}, y:{…same…},
+         series:[{key, label, pts:[[x,y],…], dash?}], hi: key of highlighted series, labelEnd: true }
+   returns { svg, X, Y } — X/Y map data → px so callers can add markers. */
+function lineChart(o){
+  const p = Object.assign({l:64, r:70, t:20, b:58}, o.pad || {});
+  const W = o.W, H = o.H, x = o.x, y = o.y;
+  const X = v => +(p.l + (v - x.min) / (x.max - x.min) * (W - p.l - p.r)).toFixed(1);
+  const Y = v => +(H - p.b - (v - y.min) / (y.max - y.min) * (H - p.t - p.b)).toFixed(1);
+  let s = "";
+  const grid = (a, isX) => { for (let v = a.min; v <= a.max + 1e-9; v += a.minor || a.major) {
+    const maj = Math.abs((v - a.min) / a.major - Math.round((v - a.min) / a.major)) < 1e-6;
+    s += isX ? `<line x1="${X(v)}" y1="${Y(y.min)}" x2="${X(v)}" y2="${Y(y.max)}" stroke="var(--line)" stroke-width="${maj?1:.5}"/>`
+             : `<line x1="${X(x.min)}" y1="${Y(v)}" x2="${X(x.max)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="${maj?1:.5}"/>`;
+    if (maj) s += isX ? `<text x="${X(v)}" y="${Y(y.min)+18}" font-size="12" text-anchor="middle">${fmt(+v.toFixed(6))}</text>`
+                      : `<text x="${X(x.min)-8}" y="${Y(v)+4}" font-size="12" text-anchor="end">${fmt(+v.toFixed(6))}</text>`; } };
+  grid(x, true); grid(y, false);
+  s += `<rect x="${X(x.min)}" y="${Y(y.max)}" width="${X(x.max)-X(x.min)}" height="${Y(y.min)-Y(y.max)}" fill="none" stroke="var(--ink)" stroke-width="1.2"/>`;
+  if (x.label) s += `<text class="th" x="${(X(x.min)+X(x.max))/2}" y="${H-22}" font-size="13" text-anchor="middle">${x.label[0]}</text><text x="${(X(x.min)+X(x.max))/2}" y="${H-7}" font-size="11" text-anchor="middle" style="fill:var(--muted)">${x.label[1]}</text>`;
+  if (y.label) { const cy = (Y(y.min)+Y(y.max))/2;
+    s += `<text class="th" transform="translate(16 ${cy}) rotate(-90)" font-size="13" text-anchor="middle">${y.label[0]}</text><text transform="translate(30 ${cy}) rotate(-90)" font-size="11" text-anchor="middle" style="fill:var(--muted)">${y.label[1]}</text>`; }
+  const ends = [];
+  (o.series || []).forEach(se => {
+    const on = o.hi != null && se.key === o.hi;
+    const d = se.pts.map((q, i) => (i ? "L" : "M") + X(q[0]) + " " + Y(q[1])).join("");
+    s += `<path d="${d}" fill="none" stroke="${on ? "var(--accent)" : "var(--ink)"}" stroke-width="${on ? 2.6 : 1.2}"${se.dash ? ` stroke-dasharray="${se.dash}"` : ""}/>`;
+    const q = se.pts[se.pts.length - 1]; ends.push({ y: Y(q[1]), x: X(q[0]), label: se.label, on });
+  });
+  if (o.labelEnd !== false) {               /* end labels, pushed apart ≥ 14 px */
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i-1].y < 14) ends[i].y = ends[i-1].y + 14;
+    ends.forEach(e => s += `<text x="${e.x + 6}" y="${e.y + 4}" font-size="12" style="fill:${e.on ? "var(--accent)" : "var(--ink)"};font-weight:${e.on ? 600 : 400}">${e.label}</text>`);
+  }
+  return { svg: s, X, Y };
+}
+</script>
+<div class="sheet">
+  <header class="head">
+    <div>
+      <div class="eyebrow" id="grp"></div>
+      <h1 id="nameTh"></h1>
+      <div class="en" id="nameEn"></div>
+    </div>
+    <div class="asm"><div class="l">การประกอบเลขที่ · ASSEMBLY NO.</div><div class="n" id="asmNo"></div><div class="l" id="asmOld"></div></div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="tabSeg" role="group" aria-label="เลือกแผ่น / Select sheet"></div>
+    <div class="spec" id="pgSpec"></div>
+    <div class="links">
+      <a class="btn pri" href="../pdf/d679c2f925e8.pdf" target="_blank" rel="noopener">เปิดแบบต้นฉบับ PDF<span class="e">Original drawing</span></a>
+      <a class="btn" href="../index.html" target="_blank" rel="noopener">คลังแบบทั้งหมด<span class="e">Drawing library</span></a>
+    </div>
+  </div>
+
+<!-- ===== page content (parts/tab/NAME.html) ===== -->
+  <section class="blk" data-tab="txt">
+    <h2>๑–๓ ทั่วไป ข้อกำหนด ตำแหน่งติดตั้ง <span class="e">1–3 General, requirement, installation positions</span></h2>
+    <div class="sheetmark">แผ่นที่ 1 · SHEET 1 — ข้อ ๑–๓</div>
+    <ol class="reg">
+      <li><span class="no">๑.</span><div class="tx"><b>ทั่วไป</b> — คะแปซิเตอร์ (Capacitor) หรือ "ตัวเก็บประจุไฟฟ้า" เป็นอุปกรณ์ไฟฟ้าที่ใช้สำหรับปรับค่าตัวประกอบพลังไฟฟ้า (Power Factor = P.F) ของระบบให้ดีขึ้น การใช้คะแปซิเตอร์เพื่อปรับค่าตัวประกอบพลังไฟฟ้าเป็นวิธีที่ประหยัดที่สุด เพราะติดตั้งง่ายไม่ต้องมีการบำรุงรักษา และเกิดการสูญเสียพลังไฟฟ้าในอุปกรณ์นี้น้อย ประโยชน์ที่ได้รับในการปรับค่าตัวประกอบพลังไฟฟ้า คือ<span class="e">General — a capacitor ("electric charge store") is used to improve the power factor (P.F) of the system. Correcting the power factor with capacitors is the most economical method: easy to install, no maintenance, and small losses in the device. The benefits of power-factor correction are:</span></div></li>
+      <li><span class="no">๑.๑</span><div class="tx">ลดความสูญเสียทางไฟฟ้า (Loss)<span class="e">Reduced electrical losses.</span></div></li>
+      <li><span class="no">๑.๒</span><div class="tx">ลดแรงดันไฟฟ้าตก (Voltage Drop) ในสาย<span class="e">Reduced voltage drop in the lines.</span></div></li>
+      <li><span class="no">๑.๓</span><div class="tx">เพิ่มประสิทธิภาพของอุปกรณ์ไฟฟ้า<span class="e">Better utilisation of electrical equipment.</span></div></li>
+      <li><span class="no">๒.</span><div class="tx"><b>ข้อกำหนด</b> — กฟภ. กำหนดให้ตัวประกอบพลังไฟฟ้าในช่วงความต้องการไฟฟ้าสูงสุดในระบบจำหน่ายของผู้ใช้ไฟต้องมีค่าไม่ต่ำกว่าร้อยละ ๘๕ หากมีค่าต่ำกว่านี้ผู้ใช้ไฟจะต้องดำเนินการแก้ไข<span class="e">Requirement — PEA requires the power factor of the customer's system at maximum demand to be not lower than 85 %; if lower, the customer must correct it.</span></div></li>
+      <li><span class="no">๓.</span><div class="tx"><b>ตำแหน่งติดตั้งคะแปซิเตอร์แรงต่ำสำหรับผู้ใช้ไฟ</b> — ดูรูปที่ ๑<span class="e">Positions of LV capacitors in a customer system — see figure 1.</span></div></li>
+    </ol>
+    <div class="scroll"><svg class="chart" viewBox="0 0 720 420" style="width:100%;height:auto;display:block;min-width:560px" role="img" aria-label="รูปที่ 1 ตำแหน่งติดตั้งคะแปซิเตอร์แรงต่ำ">
+      <defs><marker id="x09a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--ink)"/></marker></defs>
+      <g fill="none" stroke="var(--ink)" stroke-width="1.6">
+        <!-- transformer -->
+        <defs><g fill="none" stroke="var(--ink)" stroke-width="1.6" id="x09br"><path d="M0 150 V176 M0 192 V214 M0 176 a10 8 0 0 1 4 16"/><circle cx="0" cy="176" r="2.5" fill="var(--sheet)"/><circle cx="0" cy="192" r="2.5" fill="var(--sheet)"/></g></defs><path d="M360 18 l-8 -10 h16 z M360 18 V44"/>
+        <path d="M336 52 a8 8 0 0 1 16 0 a8 8 0 0 1 16 0 a8 8 0 0 1 16 0 M336 66 a8 8 0 0 0 16 0 a8 8 0 0 0 16 0 a8 8 0 0 0 16 0"/>
+        <path d="M360 44 V52 M360 66 V96"/>
+        <path d="M360 76 H470" stroke-dasharray="7 4" stroke-width="1.2"/><rect x="470" y="70" width="30" height="12" stroke-dasharray="3 2" stroke-width="1.2"/><path d="M500 76 H566 M574 76 H600" stroke-dasharray="7 4" stroke-width="1.2"/>
+        <path d="M566 66 V86 M574 66 V86" stroke-width="1.6" stroke-dasharray="3 2"/>
+        <!-- main breaker -->
+        <path d="M360 96 V110 M360 126 V150 M360 110 a10 8 0 0 1 4 16" /><circle cx="360" cy="110" r="2.5" fill="var(--sheet)"/><circle cx="360" cy="126" r="2.5" fill="var(--sheet)"/>
+        <path d="M120 150 H600" stroke-width="5"/>
+        <!-- feeders -->
+        
+        <use href="#x09br" x="150"/><use href="#x09br" x="250"/><use href="#x09br" x="450"/><use href="#x09br" x="560"/>
+        <!-- C1 -->
+        <path d="M150 214 V244 M140 244 H160 M140 252 q10 -6 20 0 M150 251 V262"/>
+        <!-- sub-buses -->
+        <path d="M200 228 H300 M400 228 H500" stroke-width="3"/><path d="M250 214 V228 M450 214 V228"/>
+        <path d="M208 228 V290" marker-end="url(#x09a)"/><path d="M232 228 V290" marker-end="url(#x09a)"/><path d="M256 228 V290" marker-end="url(#x09a)"/><path d="M400 228 V290" marker-end="url(#x09a)"/><path d="M424 228 V290" marker-end="url(#x09a)"/><path d="M448 228 V290" marker-end="url(#x09a)"/>
+        <path d="M290 228 V276 M280 276 H300 M280 284 q10 -6 20 0 M290 283 V294 M282 266 l16 -14 M294 252 l4 0 0 4"/>
+        <path d="M490 228 V276 M480 276 H500 M480 284 q10 -6 20 0 M490 283 V294 M482 266 l16 -14 M494 252 l4 0 0 4"/>
+        <!-- motor branch -->
+        <rect x="546" y="226" width="28" height="28" stroke-dasharray="4 3"/><path d="M560 214 V226 M560 254 V342"/>
+        <path d="M560 290 H596 M596 280 V300 M604 280 q-6 10 0 20 M604 290 H622"/>
+        <circle cx="560" cy="362" r="20"/>
+      </g>
+      <g font-size="13">
+        <text x="326" y="64" text-anchor="end" font-weight="600">หม้อแปลง</text>
+        <text x="352" y="142" text-anchor="end" font-weight="600">เมนบัส</text>
+        <text x="350" y="240" text-anchor="middle" font-weight="600">บัสย่อย</text>
+        <text x="232" y="316" text-anchor="middle" font-weight="600">โหลด</text><text x="424" y="316" text-anchor="middle" font-weight="600">โหลด</text>
+        <text x="582" y="245" font-weight="600">ชุดควบคุมมอเตอร์</text>
+        <text x="132" y="252" text-anchor="end" font-family="monospace">C1</text><text x="570" y="58" text-anchor="middle" font-family="monospace">C1</text>
+        <text x="306" y="290" font-family="monospace">C2</text><text x="506" y="290" font-family="monospace">C2</text>
+        <text x="600" y="276" font-family="monospace">C3</text>
+        <text x="560" y="367" text-anchor="middle" font-weight="700">M</text>
+      </g>
+      <g font-size="10.5" style="fill:var(--muted)">
+        <text x="326" y="78" text-anchor="end">transformer</text><text x="352" y="164" text-anchor="end">main bus</text><text x="350" y="254" text-anchor="middle">sub-bus</text>
+        <text x="232" y="330" text-anchor="middle">loads</text><text x="424" y="330" text-anchor="middle">loads</text><text x="582" y="258">motor control set</text>
+        <text x="610" y="96" text-anchor="middle">C1 alternative (dashed)</text>
+      </g>
+      <text x="360" y="404" text-anchor="middle" font-size="13" font-weight="600">รูปที่ ๑ ตำแหน่งติดตั้งคะแปซิเตอร์แรงต่ำ <tspan font-size="10.5" font-weight="400" style="fill:var(--muted)">· Fig. 1 LV capacitor positions</tspan></text>
+    </svg></div>
+    <div class="cap">วาดใหม่ตามต้นฉบับ ไม่ตามมาตราส่วน · เส้นประจากหม้อแปลง = ตำแหน่ง C1 อีกแบบ (ที่หม้อแปลง ผ่านอุปกรณ์ตัดตอน)*<span class="e">Redrawn, not to scale · the dashed branch from the transformer = alternative C1 position (at the transformer, through a switching device)*</span></div>
+
+    <div class="sheetmark">แผ่นที่ 2 · SHEET 2 — คำอธิบายรูปที่ ๑</div>
+    <ol class="reg">
+      <li><span class="no">–</span><div class="tx">รูปที่ ๑ แสดงตำแหน่งติดตั้งคะแปซิเตอร์แรงต่ำหลาย ๆ แบบ คือ<span class="e">Figure 1 shows several LV capacitor positions:</span></div></li>
+      <li><span class="no">C1</span><div class="tx">เป็นการติดตั้งคะแปซิเตอร์รวม เพื่อแก้ไขตัวประกอบพลังไฟฟ้าของโหลดรวม<span class="e">Central capacitor, correcting the power factor of the total load.</span></div></li>
+      <li><span class="no">C2</span><div class="tx">เป็นการติดตั้งคะแปซิเตอร์แยก เพื่อแก้ไขตัวประกอบพลังไฟฟ้าของโหลดที่เป็นกลุ่ม ๆ<span class="e">Separate capacitors, correcting groups of loads.</span></div></li>
+      <li><span class="no">C3</span><div class="tx">เป็นการติดตั้งคะแปซิเตอร์กระจายตามโหลดต่าง ๆ เพื่อแก้ไขตัวประกอบพลังไฟฟ้าเฉพาะโหลดจุดนั้น ๆ<span class="e">Capacitors distributed at individual loads, correcting each load only.</span></div></li>
+      <li><span class="no">–</span><div class="tx">ทั้งนี้ ตำแหน่งการติดตั้งคะแปซิเตอร์ที่ดีที่สุดในการปรับค่าตัวประกอบพลังไฟฟ้า คือ C3 รองลงมา คือ C2 และ C1 ตามลำดับ<span class="e">The best position for power-factor correction is C3, followed by C2 and C1.</span></div></li>
+    </ol>
+  </section>
+
+  <section class="blk" data-tab="ins">
+    <h2>๔ ลักษณะการติดตั้ง <span class="e">4 Methods of installation</span></h2>
+    <ol class="reg">
+      <li><span class="no">๔.๑</span><div class="tx">ติดตั้งคะแปซิเตอร์ เพื่อแก้ P.F ของโหลดรวม (Centralized correction) ในกรณีที่ผู้ใช้ไฟมีโหลดประเภทอินดัคตีฟ (Inductive Load) ได้แก่มอเตอร์ และได้ติดตั้งกระจายหลายจุด ทั้งยังมีการใช้งานแต่ละจุดไม่พร้อมเสมอกันด้วย การติดตั้งคะแปซิเตอร์อาจพิจารณาติดตั้งเพียงจุดเดียว เช่น จุด C1 (ในรูปที่ ๑) โดยติดตั้งไว้ภายในตู้เมนแผงสวิตช์ใหญ่ (Main distribution board) หรือบริเวณติดตั้งหม้อแปลง ลักษณะการติดตั้งดังในรูปที่ ๒<span class="e">Centralized correction — where the customer has inductive loads (motors) spread over many points that do not all run at the same time, a single capacitor installation may be considered, e.g. point C1 (figure 1), inside the main distribution board or at the transformer, as shown in figure 2.</span></div></li>
+    </ol>
+    <div class="scroll"><svg class="chart" viewBox="0 0 720 330" style="width:100%;height:auto;display:block;min-width:560px" role="img" aria-label="รูปที่ 2 ลักษณะการติดตั้งคะแปซิเตอร์ C1 ที่นั่งร้านหม้อแปลง">
+      <g fill="none" stroke="var(--ink)" stroke-width="1.4">
+        <!-- platform front -->
+        <path d="M60 20 V300 M300 20 V300 M60 40 H300"/><rect x="40" y="262" width="280" height="16" fill="var(--soft)"/>
+        <path d="M110 40 v14 M180 40 v14 M250 40 v14" stroke-width="3"/>
+        <path d="M110 60 C110 140 130 170 150 200 M180 60 V200 M250 60 C250 140 230 170 210 200"/>
+        <rect x="120" y="200" width="120" height="62" fill="var(--sheet)"/><path d="M140 208 v48 M160 208 v48 M180 208 v48 M200 208 v48 M220 208 v48" stroke-width=".8"/>
+        <rect x="274" y="96" width="34" height="56" fill="var(--sheet)"/>
+        <path d="M240 210 C262 212 266 240 266 256 V266 H292 V166" stroke-width="4"/>
+        <ellipse cx="292" cy="176" rx="34" ry="12" stroke-width="1"/>
+        <!-- side view -->
+        <path d="M520 20 V300"/><path d="M470 210 H600" stroke-width="5"/><path d="M480 210 v14 M505 210 v14 M535 210 v14 M560 210 v14 M590 210 v14"/>
+        <rect x="490" y="110" width="20" height="56" fill="var(--sheet)"/><rect x="530" y="110" width="20" height="56" fill="var(--sheet)"/>
+        <path d="M512 104 C512 90 528 90 528 104" stroke-width="3"/><path d="M520 100 V280 C520 290 512 290 506 284" stroke-width="3.5"/>
+        <path d="M520 190 L500 166 M520 190 L540 166"/>
+        <path d="M540 52 l20 -14 l14 34 l-20 10 z"/>
+        <rect x="496" y="270" width="48" height="20" fill="var(--soft)"/>
+      </g>
+      <g font-size="12.5" font-weight="600">
+        <text x="560" y="128">คะแปซิเตอร์แรงต่ำ</text><text x="560" y="144">ขนาดไม่เกิน 75 kvar</text>
+        <text x="330" y="300">ที่เสาต้นนั่งร้านหม้อแปลง</text>
+      </g>
+      <g font-size="10.5" style="fill:var(--muted)">
+        <text x="560" y="158">LV capacitor ≤ 75 kvar</text><text x="330" y="314">on the transformer-platform pole</text>
+        <text x="180" y="16" text-anchor="middle">รูปด้านหน้า · front</text><text x="520" y="14" text-anchor="middle">รูปด้านข้าง · side</text>
+      </g>
+      <path d="M556 132 H554" stroke="var(--ink)"/>
+      <text x="360" y="328" text-anchor="middle" font-size="12.5" font-weight="600">รูปที่ ๒ ลักษณะการติดตั้งคะแปซิเตอร์ (C1) <tspan font-size="10.5" font-weight="400" style="fill:var(--muted)">· Fig. 2 installing capacitor C1</tspan></text>
+    </svg></div>
+    <div class="cap">รูปร่างวาดใหม่แบบย่อ ไม่ตามมาตราส่วน (ต้นฉบับเป็นภาพลายเส้นไม่มีมิติ) · คะแปซิเตอร์ 2 ตัวติดที่เสานั่งร้าน เหนือคอนแรงต่ำ สายเดินลงเสาไปยังด้านแรงต่ำหม้อแปลง<span class="e">Simplified redraw, not to scale (the original is an undimensioned sketch) · two capacitors on the platform pole above the LV crossarm, leads run down the pole to the transformer LV side</span></div>
+
+    <div class="sheetmark">แผ่นที่ 3 · SHEET 3 — รูปที่ ๒ (ต่อ) · FIG. 2 (CONT.)</div>
+    <div class="scroll"><svg class="chart" viewBox="0 0 900 580" style="width:100%;height:auto;display:block;min-width:600px" role="img" aria-label="รูปที่ 2 (ต่อ)">
+      <path d="M450 10 V560 M10 290 H890" stroke="var(--line)"/>
+      <g fill="none" stroke="var(--ink)" stroke-width="1.3">
+        <path d="M10 230 H300"/><path d="M36 30 V230 M46 30 V230"/><path d="M42 62 l-22 -8 v20 z"/>
+        <rect x="110" y="170" width="70" height="58" fill="var(--sheet)"/><path d="M125 178 v42 M140 178 v42 M155 178 v42" stroke-width=".8"/><path d="M46 70 C80 90 120 120 140 170"/>
+        <path d="M180 184 C206 180 212 196 212 230" stroke-width="3"/>
+        <path d="M262 30 V230 M272 30 V230"/><rect x="250" y="44" width="34" height="28" fill="var(--sheet)"/><rect x="250" y="86" width="34" height="28" fill="var(--sheet)"/><rect x="252" y="158" width="30" height="24" fill="var(--sheet)"/>
+        <path d="M212 230 C230 236 262 236 267 214 V182" stroke-width="2" stroke-dasharray="4 3"/>
+        <rect x="470" y="30" width="390" height="200"/><path d="M500 46 V230"/><rect x="620" y="160" width="64" height="66" fill="var(--sheet)"/><path d="M635 168 v50 M652 168 v50 M669 168 v50" stroke-width=".8"/>
+        <path d="M500 52 C560 20 620 90 640 160"/><path d="M684 176 C712 172 716 196 716 230" stroke-width="2.5"/>
+        <rect x="760" y="200" width="30" height="30" fill="var(--sheet)"/><rect x="756" y="190" width="38" height="10" fill="var(--soft)"/><path d="M716 230 C730 190 750 186 770 190" stroke-width="2"/>
+        <path d="M60 400 H300 M60 480 V400 M300 480 V400 M80 470 H280"/>
+        <rect x="70" y="346" width="48" height="54" fill="var(--sheet)"/><rect x="126" y="340" width="48" height="60" fill="var(--sheet)"/><rect x="182" y="334" width="48" height="66" fill="var(--sheet)"/><rect x="238" y="328" width="48" height="72" fill="var(--sheet)"/>
+        <path d="M94 346 C110 332 240 326 262 328" stroke-width="2.2"/><path d="M170 333 C170 322 190 322 190 331" stroke-width="2"/>
+        <rect x="500" y="320" width="330" height="140" fill="var(--sheet)"/><path d="M610 320 V460 M720 320 V460 M500 360 H830"/>
+        <rect x="508" y="396" width="94" height="58" fill="var(--soft)"/><path d="M526 400 v50 M544 400 v50 M562 400 v50 M580 400 v50" stroke-width=".9"/><path d="M508 396 L470 410 V480 L508 456" stroke-width="1"/>
+        <g stroke-width="1"><rect x="630" y="380" width="14" height="12"/><rect x="654" y="380" width="14" height="12"/><rect x="678" y="380" width="14" height="12"/><rect x="740" y="380" width="14" height="12"/><rect x="764" y="380" width="14" height="12"/><rect x="788" y="380" width="14" height="12"/></g>
+      </g>
+      <g stroke="var(--ink)" stroke-width=".7" fill="none"><path d="M300 52 H286 M300 92 H286 M300 166 H284 M770 128 L776 190 M214 318 L190 326 M150 508 L170 470 M600 506 L560 456"/></g>
+      <g font-size="13" font-weight="600">
+        <text x="304" y="50">เสาคอนกรีต 6 ม.</text><text x="304" y="98">คะแปซิเตอร์แรงต่ำ</text><text x="304" y="166">ตู้ C.B.</text><text x="304" y="181">(ผู้ใช้ไฟจัดหา)</text>
+        <text x="150" y="256" text-anchor="middle">บริเวณแท่นหม้อแปลง</text>
+        <text x="665" y="256" text-anchor="middle">บริเวณห้องติดตั้งหม้อแปลง</text><text x="772" y="112" text-anchor="middle">คะแปซิเตอร์แรงต่ำ</text>
+        <text x="210" y="300" text-anchor="middle">สายต่อผ่านอุปกรณ์ป้องกัน</text><text x="210" y="316" text-anchor="middle">และตัดตอนที่ตู้แผงสวิตช์</text>
+        <text x="150" y="524" text-anchor="middle">โครงเหล็กยึดคะแปซิเตอร์แรงต่ำ (ผู้ใช้ไฟจัดหา)</text>
+        <text x="610" y="522" text-anchor="middle">คะแปซิเตอร์แรงต่ำ</text><text x="665" y="314" text-anchor="middle">ติดตั้งที่ตู้เมนแผงสวิตช์รวม</text>
+      </g>
+      <g font-size="10.5" style="fill:var(--muted)">
+        <text x="304" y="62">6 m concrete pole</text><text x="304" y="110">LV capacitors</text><text x="304" y="193">C.B. box (by customer)</text>
+        <text x="304" y="210">ตำแหน่งปักเสาต้องไม่กีดขวางต่อการปฏิบัติงาน</text><text x="304" y="222">pole must not obstruct operation</text>
+        <text x="150" y="270" text-anchor="middle">transformer pad</text><text x="665" y="270" text-anchor="middle">transformer room</text><text x="772" y="124" text-anchor="middle">LV capacitor</text>
+        <text x="400" y="330" text-anchor="middle">leads via protection /</text><text x="400" y="342" text-anchor="middle">switching at the switchboard</text>
+        <text x="150" y="538" text-anchor="middle">steel frame for LV capacitors (by customer)</text>
+        <text x="610" y="535" text-anchor="middle">LV capacitors</text><text x="665" y="302" text-anchor="middle" style="display:none"></text><text x="840" y="490" text-anchor="end">in the main switchboard</text>
+      </g>
+    </svg></div>
+    <div class="cap">สี่ภาพย่อยของรูปที่ ๒ (ต่อ) วาดใหม่แบบย่อ — ต้นฉบับมีรูปมองหน้าและมองข้างของเสา 6 ม. (คะแปซิเตอร์ 2 ชั้น ชั้นละ 1–2 ตัว)<span class="e">The four sub-views of figure 2 (cont.) redrawn in outline — the original shows the 6 m pole in front and side view (capacitors on two levels, 1–2 per level)</span></div>
+
+    <div class="sheetmark">แผ่นที่ 4 · SHEET 4 — ข้อ ๔.๒–๔.๓</div>
+    <ol class="reg">
+      <li><span class="no">๔.๒</span><div class="tx">การติดตั้งคะแปซิเตอร์เพื่อแก้ P.F โหลดเป็นกลุ่ม (Group correction) ในกรณีที่ผู้ใช้ไฟมีโหลดประเภทอินดัคตีฟ เช่นมอเตอร์ขนาดเล็กจำนวนหลายเครื่อง หากจะติดตั้งคะแปซิเตอร์กับโหลดแต่ละตัวอาจยุ่งยาก และสิ้นเปลืองค่าใช้จ่ายมาก ให้ติดตั้งคะแปซิเตอร์เพื่อแก้ P.F ของแต่ละฟีดเดอร์ที่มีโหลดมอเตอร์เป็นกลุ่ม เช่นจุด C2 (ในรูปที่ ๑) โดยติดตั้งไว้ที่แผงสวิตช์ย่อย (Distribution board) ดังแสดงในรูปที่ ๓<span class="e">Group correction — where there are many small inductive loads (e.g. small motors) and a capacitor at each would be awkward and costly, correct each feeder supplying a group of motors, e.g. point C2 (figure 1), at the distribution board, as in figure 3.</span></div></li>
+    </ol>
+    <div class="two">
+      <div><div class="scroll"><svg class="chart" viewBox="0 0 360 220" style="width:100%;height:auto;display:block;min-width:300px" role="img" aria-label="รูปที่ 3">
+        <g fill="none" stroke="var(--ink)" stroke-width="1.3">
+          <rect x="20" y="96" width="90" height="90" fill="var(--sheet)"/><rect x="30" y="110" width="66" height="60" fill="var(--soft)"/>
+          <rect x="110" y="40" width="220" height="146" fill="var(--sheet)"/><path d="M110 100 H330 M220 100 V186"/>
+          <g stroke-width="1"><rect x="124" y="64" width="12" height="16"/><rect x="150" y="64" width="12" height="16"/><rect x="176" y="64" width="12" height="16"/><rect x="202" y="64" width="12" height="16"/><rect x="228" y="64" width="12" height="16"/><rect x="254" y="64" width="12" height="16"/><rect x="280" y="64" width="12" height="16"/></g>
+          <g fill="var(--ink)" stroke="none"><circle cx="134" cy="134" r="4"/><circle cx="168" cy="134" r="4"/><circle cx="202" cy="134" r="4"/><circle cx="240" cy="134" r="4"/><circle cx="274" cy="134" r="4"/><circle cx="308" cy="134" r="4"/></g>
+        </g>
+        <g font-size="10" font-family="monospace" text-anchor="middle"><text x="134" y="160">M1</text><text x="168" y="160">M2</text><text x="202" y="160">M3</text><text x="240" y="160">M4</text><text x="274" y="160">M5</text><text x="308" y="160">M6</text><text x="182" y="58">A</text><text x="208" y="58">B</text><text x="234" y="58">C</text></g>
+        <g font-size="11.5" font-weight="600"><text x="330" y="30" text-anchor="end">แผงสวิตช์ย่อย</text><text x="20" y="34">คะแปซิเตอร์แรงต่ำ</text><text x="20" y="49">ติดตั้งอยู่ภายในตู้</text><path d="M50 56 L60 110" stroke="var(--ink)" stroke-width=".7"/></g>
+        <text x="20" y="204" font-size="10" style="fill:var(--muted)">LV capacitors inside the cubicle · distribution board</text>
+      </svg></div><div class="cap">รูปที่ ๓ ลักษณะการติดตั้งคะแปซิเตอร์ (C2) — วาดใหม่แบบย่อ<span class="e">Fig. 3 installing capacitor C2 — simplified redraw</span></div></div>
+      <div><div class="scroll"><svg class="chart" viewBox="0 0 420 250" style="width:100%;height:auto;display:block;min-width:320px" role="img" aria-label="รูปที่ 4">
+        <path d="M200 30 V240" stroke="var(--line)"/>
+        <g fill="none" stroke="var(--ink)" stroke-width="1.3">
+          <rect x="20" y="90" width="90" height="60" rx="12" fill="var(--sheet)"/><ellipse cx="114" cy="120" rx="12" ry="34" fill="var(--sheet)"/><path d="M10 120 H20 M40 150 l-6 16 h70 l-6 -16"/>
+          <rect x="140" y="90" width="30" height="66" fill="var(--sheet)"/><path d="M132 156 h46 v8 h-46 z"/>
+          <path d="M60 150 C60 190 120 190 155 156" stroke-width="2.4" stroke-dasharray="3 2"/><path d="M40 150 C40 180 30 190 22 196" stroke-width="2.4" stroke-dasharray="3 2"/>
+          <rect x="214" y="80" width="100" height="90" fill="var(--sheet)"/><circle cx="276" cy="102" r="10"/><path d="M224 130 h80 M224 140 h80 M224 150 h80" stroke-width=".8"/>
+          <rect x="342" y="100" width="28" height="64" fill="var(--sheet)"/><path d="M334 164 h44 v8 h-44 z"/>
+          <path d="M352 100 C352 76 336 66 330 56 M360 100 C360 76 346 66 342 56" stroke-width="2" stroke-dasharray="3 2"/>
+        </g>
+        <g stroke="var(--ink)" stroke-width=".7"><path d="M44 74 L50 90 M150 74 L155 90 M338 62 L354 100"/></g>
+        <g font-size="11.5" font-weight="600"><text x="20" y="70">มอเตอร์</text><text x="100" y="70">คะแปซิเตอร์แรงต่ำ</text><text x="10" y="214">ต่อกับชุดควบคุมมอเตอร์</text>
+          <text x="214" y="190">เครื่องเชื่อมไฟฟ้า</text><text x="336" y="66" text-anchor="end">คะแปซิเตอร์</text><text x="414" y="22" text-anchor="end">ต่อเข้ากับอุปกรณ์ป้องกันและตัดตอนชุดเดียวกัน</text></g>
+        <g font-size="9.5" style="fill:var(--muted)"><text x="10" y="227">to the motor control set</text><text x="214" y="203">electric welder</text><text x="414" y="35" text-anchor="end">same protection / switching device</text></g>
+      </svg></div><div class="cap">รูปที่ ๔ ลักษณะการติดตั้งคะแปซิเตอร์ (C3) — วาดใหม่แบบย่อ<span class="e">Fig. 4 installing capacitor C3 — simplified redraw</span></div></div>
+    </div>
+    <ol class="reg">
+      <li><span class="no">๔.๓</span><div class="tx">การติดตั้งคะแปซิเตอร์เพื่อแก้ P.F เฉพาะโหลดจุดเดียว (Single correction) เป็นการติดตั้งคะแปซิเตอร์กับโหลดแต่ละตัวโดยตรง เช่นจุด C3 (ในรูปที่ ๑) เป็นที่นิยมมาก โดยเฉพาะกับมอเตอร์ขนาดใหญ่ ๆ เพราะมีข้อดีในด้านปฏิบัติหลายประการคือ จะช่วยให้ P.F ดีขึ้นตั้งแต่จุดติดตั้งโหลด และเป็นตำแหน่งติดตั้งที่ดีที่สุด นอกจากนี้คะแปซิเตอร์ที่ติดตั้งร่วมกับมอเตอร์จะสามารถใช้สวิตช์หรือคอนแทคเตอร์ร่วมกันได้ เมื่อเลิกใช้งานมอเตอร์และคะแปซิเตอร์จะถูกปลดออกจากวงจรไปพร้อมกัน การติดตั้งคะแปซิเตอร์ดังกล่าวมีลักษณะรายละเอียดดังแสดงรูปที่ ๔<span class="e">Single correction — a capacitor connected directly at each load, e.g. point C3 (figure 1); very popular, especially for large motors: the P.F is improved right from the load, it is the best position, and the capacitor can share the motor's switch or contactor so both are disconnected together. Details as in figure 4.</span></div></li>
+    </ol>
+  </section>
+
+  <section class="blk" data-tab="calc">
+    <h2>๕ การคำนวณหาขนาด kVAR ของคะแปซิเตอร์ <span class="e">5 Sizing the capacitor kvar</span></h2>
+    <div class="sheetmark">แผ่นที่ 5 · SHEET 5 — ข้อ ๕–๖.๒</div>
+    <ol class="reg">
+      <li><span class="no">๕.</span><div class="tx">ขนาดคะแปซิเตอร์ที่จะใช้ติดตั้งให้ผู้ใช้ไฟนั้น บางครั้งผลการคำนวณหาขนาดคะแปซิเตอร์อาจจะเหมาะสมกับโหลดช่วงสูงสุด (Peak load) แต่ถ้าหากในช่วงโหลดน้อย ๆ หรือต่ำสุด (Light load) ขนาดคะแปซิเตอร์ดังกล่าวจะมีค่ามากเกินไปจนทำให้เกิด P.F เป็น Leading ซึ่งจะมีผลเสียทำให้แรงดันของระบบสูงเกินไป (Overvoltage) และเกิดการสูญเสียพลังไฟฟ้ามากขึ้น ดังนั้น ในการคำนวณหาขนาด kvar ของคะแปซิเตอร์กรณีที่โหลดมีการเปลี่ยนแปลงมาก จะต้องพิจารณาทั้งในช่วงโหลดสูงสุด และโหลดต่ำสุด โดยคำนึงถึง<span class="e">A capacitor sized for the peak load may be too large at light load, making the P.F leading, which raises the system voltage (overvoltage) and increases losses. Where the load varies a lot, size the kvar for both peak and light load, observing:</span></div></li>
+      <li><span class="no">๕.๑</span><div class="tx">ขนาดของคะแปซิเตอร์ต้องมีขนาดเพียงพอที่ไม่ทำให้ P.F ในช่วงโหลดสูงสุดมีค่าต่ำกว่า ๐.๘๕<span class="e">The capacitor must be large enough that the P.F at peak load is not below 0.85.</span></div></li>
+      <li><span class="no">๕.๒</span><div class="tx">ขนาดของคะแปซิเตอร์ที่ติดตั้งในช่วงโหลดต่ำสุด ต้องไม่ทำให้ P.F มีค่ามากกว่า ๑.๐๐ (เป็น Leading)<span class="e">The capacitance in service at light load must not make the P.F exceed 1.00 (leading).</span></div></li>
+      <li><span class="no">–</span><div class="tx">ดังนั้น การพิจารณาติดตั้งคะแปซิเตอร์ อาจจะต้องแยกคะแปซิเตอร์ติดตั้งแบบประจำ (Fixed Capacitor) ส่วนหนึ่ง และอีกส่วนหนึ่งติดตั้งแบบสับ-ปลดได้ (Switched Capacitor) โดยให้คะแปซิเตอร์สามารถปลดออก หรือต่อเข้ากับวงจรได้ตามสภาพตัวประกอบพลังไฟฟ้าของโหลดที่เปลี่ยนแปลงเพิ่มขึ้นหรือลดลง<span class="e">Hence part of the capacitance may be fixed and part switched, connected or disconnected as the load power factor changes.</span></div></li>
+    </ol>
+    <p class="lead">เครื่องคำนวณ (ไม่มีในต้นฉบับ) — kvar ที่ต้องใช้ Q = P (tan φ₁ − tan φ₂) และพิกัดตามข้อ ๖.๑–๖.๓<span class="e">Calculator (not on the original) — required kvar Q = P (tan φ1 − tan φ2) and the ratings of clauses 6.1–6.3</span></p>
+    <div class="ctl">
+      <label><span>โหลด P (kW)</span><span class="e">Load P (kW)</span><input id="cP" type="number" value="100" min="0" step="1"></label>
+      <label><span>P.F เดิม</span><span class="e">Present P.F</span><input id="cF1" type="number" value="0.75" min="0.1" max="1" step="0.01"></label>
+      <label><span>P.F เป้าหมาย</span><span class="e">Target P.F</span><input id="cF2" type="number" value="0.90" min="0.85" max="1" step="0.01"></label>
+      <label><span>แรงดัน (V)</span><span class="e">Voltage (V)</span><select id="cU"><option value="400">400 V 3 เฟส · 3-φ</option><option value="230">230 V 1 เฟส · 1-φ</option></select></label>
+    </div>
+    <div class="out" id="cOut"></div>
+    <div class="cap">กระแสคะแปซิเตอร์ I = Q / (√3 · U) สำหรับ 3 เฟส, Q / U สำหรับ 1 เฟส · สาย ≥ 145 % · ฟิวส์ ≈ 135 % · สวิตช์/C.B. ≥ 180 % ของกระแสคะแปซิเตอร์ · P.F เป้าหมายต้องไม่ต่ำกว่า 0.85 (ข้อ ๒, ๕.๑) และตรวจที่โหลดต่ำสุดไม่ให้เกิน 1.00 (ข้อ ๕.๒) · ขนาดฟิวส์จริงดูแบบ 0710<span class="e">Capacitor current I = Q / (√3·U) 3-φ, Q / U 1-φ · cable ≥ 145 % · fuse ≈ 135 % · switch / C.B. ≥ 180 % of the capacitor current · target P.F not below 0.85 (cl. 2, 5.1) and check light load stays ≤ 1.00 (cl. 5.2) · actual fuse sizes: assembly 0710</span></div>
+    <script>
+    (function(){ const f = () => { const P = +$("cP").value, a = Math.min(.9999, +$("cF1").value), b = Math.min(1, +$("cF2").value), U = +$("cU").value;
+      const t = x => Math.sqrt(1 - x * x) / x, Q = Math.max(0, P * (t(a) - t(b))), I = U === 400 ? Q * 1000 / (Math.sqrt(3) * U) : Q * 1000 / U;
+      const cell = (k, v, u) => `<div><div class="k">${k}</div><div class="v">${v}</div><div class="u">${u}</div></div>`;
+      $("cOut").innerHTML = cell("kvar ที่ต้องใช้ · required", fmt(Q, 1), "kvar") + cell("กระแสคะแปซิเตอร์ · current", fmt(I, 1), "A") + cell("สายรับได้ ≥ 145 % · cable", fmt(I * 1.45, 1), "A")
+        + cell("ฟิวส์ ≈ 135 % · fuse", fmt(I * 1.35, 1), "A") + cell("สวิตช์ / C.B. ≥ 180 %", fmt(I * 1.8, 1), "A"); };
+      ["cP", "cF1", "cF2", "cU"].forEach(id => $(id).addEventListener("input", f)); f(); })();
+    </script>
+  </section>
+
+  <section class="blk" data-tab="rules">
+    <h2>๖ ข้อปฏิบัติในการติดตั้งคะแปซิเตอร์แรงต่ำ <span class="e">6 Rules for installing LV capacitors</span></h2>
+    <div class="scroll"><table class="tbl">
+      <thead><tr><th class="l">ข้อ<span class="e">Clause</span></th><th class="l">อุปกรณ์<span class="e">Item</span></th><th>เกณฑ์ (ของพิกัดกระแสคะแปซิเตอร์)<span class="e">Criterion (of capacitor rated current)</span></th></tr></thead>
+      <tbody><tr><td class="mono">๖.๑</td><td class="l">ขนาดสายไฟ<span class="e">Cable size</span></td><td class="num">≥ 145 %</td></tr>
+        <tr><td class="mono">๖.๒</td><td class="l">ฟิวส์หรือเซอร์กิตเบรคเกอร์ (Overcurrent protection)<span class="e">Fuse or circuit breaker</span></td><td class="num">≈ 135 %</td></tr>
+        <tr><td class="mono">๖.๓</td><td class="l">สวิตช์หรือเซอร์กิตเบรคเกอร์ควบคุม (กระแสใช้งานสูงสุด)<span class="e">Control switch / C.B. (max. operating current)</span></td><td class="num">≥ 180 %</td></tr></tbody>
+    </table></div>
+    <div class="cap">ตารางสรุปจัดทำเพิ่ม ไม่มีในต้นฉบับ<span class="e">Summary table added, not on the original</span></div>
+    <ol class="reg">
+      <li><span class="no">๖.๑</span><div class="tx">ขนาดสายไฟที่ใช้กับคะแปซิเตอร์ จะต้องสามารถรับพิกัดกระแสของคะแปซิเตอร์ได้ไม่ต่ำกว่า ๑๔๕% ของพิกัดกระแสของคะแปซิเตอร์<span class="e">The capacitor cable must carry not less than 145 % of the capacitor rated current.</span></div></li>
+      <li><span class="no">๖.๒</span><div class="tx">จะต้องติดตั้ง Overcurrent protection เช่นฟิวส์หรือเซอร์กิตเบรคเกอร์ เพื่อป้องกันคะแปซิเตอร์ สำหรับพิกัดกระแสของฟิวส์ที่ใช้มีค่าประมาณ ๑๓๕% ของพิกัดกระแสของคะแปซิเตอร์<span class="e">Overcurrent protection (fuse or circuit breaker) must be installed; the fuse rating is about 135 % of the capacitor rated current.</span></div></li>
+    </ol>
+    <div class="sheetmark">แผ่นที่ 6 · SHEET 6 — ข้อ ๖.๓–๖.๑๐ และหมายเหตุ</div>
+    <ol class="reg">
+      <li><span class="no">๖.๓</span><div class="tx">สวิตช์หรือเซอร์กิตเบรคเกอร์ (C.B.) ที่ใช้ควบคุมคะแปซิเตอร์ จะต้องมีพิกัดกระแสใช้งานได้สูงสุดอย่างน้อย ๑๘๐% ของพิกัดกระแสของคะแปซิเตอร์<span class="e">The switch or C.B. controlling the capacitor must have a maximum operating current of at least 180 % of the capacitor rated current.</span></div></li>
+      <li><span class="no">๖.๔</span><div class="tx">ขนาดและการติดตั้งคะแปซิเตอร์ควรออกแบบให้เหมาะสมกับลักษณะสภาพของโหลดในวงจร และจะต้องไม่ทำให้ค่าตัวประกอบพลังไฟฟ้ามีค่าเป็น Leading หลังจากปลดโหลดออกแล้ว<span class="e">Size and arrange the capacitors to suit the load, and the power factor must not become leading after the load is disconnected.</span></div></li>
+      <li><span class="no">๖.๕</span><div class="tx">เพื่อความปลอดภัย ตัวถังคะแปซิเตอร์ให้ต่อลงดินด้วย<span class="e">For safety, the capacitor tank shall be earthed.</span></div></li>
+      <li><span class="no">๖.๖</span><div class="tx">เลือกขนาดคะแปซิเตอร์ให้เหมาะสมกับที่คำนวณได้ และติดตั้งให้ถูกต้องตามลักษณะการใช้งาน เช่น ชนิด Indoor type ใช้งานได้เฉพาะติดตั้งภายในอาคารเท่านั้น<span class="e">Choose the calculated size and install it according to its type — e.g. indoor-type units only inside buildings.</span></div></li>
+      <li><span class="no">๖.๗</span><div class="tx">จุดสัมผัสสายแคล้มป์ คอนเนคเตอร์ ให้ทาด้วยคอมเปาด์ช่วยการสัมผัสทางไฟฟ้า และขันสลักเกลียวให้แน่น<span class="e">Coat clamp / connector contact surfaces with contact compound and tighten the bolts.</span></div></li>
+      <li><span class="no">๖.๘</span><div class="tx">ในการติดตั้งคะแปซิเตอร์หรือเก็บรักษาไม่ควรวางคะแปซิเตอร์บนพื้นโดยตรง เพราะความชื้นจากพื้นจะทำให้ขอบตัวถังด้านล่างที่ทำด้วยเหล็กเป็นสนิมได้ง่าย และอาจเกิดการชำรุด (สำหรับคะแปซิเตอร์แรงต่ำผลิตภัณฑ์ ASEA ในการเบิกของไปติดตั้งให้ตรวจดูก่อนว่ามีอุปกรณ์ประกอบ เช่น หางปลา, เคเบิ้ลแกลนด์ ครบหรือไม่ และจะต้องติดตั้งให้ถูกต้องตามลักษณะการใช้งานด้วย ดังรูปที่ ๕)<span class="e">Do not stand capacitors directly on the floor when installed or stored: floor moisture rusts the steel bottom edge of the tank and may damage it. (For ASEA LV capacitors, check when drawing them from stores that accessories such as cable lugs and cable glands are complete, and install them correctly, as in figure 5.)</span></div></li>
+      <li><span class="no">๖.๙</span><div class="tx">สถานที่ติดตั้งคะแปซิเตอร์ ต้องมีความปลอดภัย และสะดวกต่อการปฏิบัติงาน<span class="e">The capacitor location must be safe and convenient to work at.</span></div></li>
+      <li><span class="no">๖.๑๐</span><div class="tx">ในการปลดดรอพเอาท์ฟิวส์คัทเอาท์แรงสูงของหม้อแปลงที่มีคะแปซิเตอร์แรงต่ำต่ออยู่ในวงจร หากไม่สามารถปลดคะแปซิเตอร์แรงต่ำออกจากวงจรได้หมดแนะนำให้ใช้ Load buster ร่วมในการปลดดรอพเอาท์ฟิวส์คัทเอาท์แรงสูง ซึ่งจะช่วยไม่ให้เกิดอาร์คอย่างรุนแรง<span class="e">When opening the HV drop-out fuse cutouts of a transformer with LV capacitors connected, if the capacitors cannot all be disconnected first, use a load buster to open the cutouts — this prevents severe arcing.</span></div></li>
+      <li><span class="no">–</span><div class="tx"><b>หมายเหตุ</b> — คะแปซิเตอร์เมื่อใช้ไปนาน ๆ หากพบว่าตัวถังคะแปซิเตอร์บวมออกมีน้ำมันไหลซึม มีรอยไหม้อาร์คที่บุชชิ่งหรือที่ตัวถัง แสดงว่าคะแปซิเตอร์ชุดนั้นอาจเกิดการชำรุดแล้ว หากใช้งานต่อไปอาจเกิดการระเบิดได้ จึงควรปลดสวิตช์ตัดตอนคะแปซิเตอร์ชุดนั้นออกก่อน แล้วทำการตรวจสอบคะแปซิเตอร์ หากพบว่าชำรุดให้พิจารณาเปลี่ยนใช้ของใหม่แทน<span class="e">Note — after long service, a swollen tank, oil leakage or arc burns on a bushing or the tank mean the unit may be damaged and could explode if kept in service: open its disconnecting switch first, then test it, and replace it if defective.</span></div></li>
+    </ol>
+  </section>
+
+  <section class="blk" data-tab="rules">
+    <h2>รูปที่ ๕ การประกอบคะแปซิเตอร์ผลิตภัณฑ์ ASEA · ข้อควรระวัง <span class="e">Fig. 5 Assembling ASEA capacitors · precautions</span></h2>
+    <div class="sheetmark">แผ่นที่ 7 · SHEET 7</div>
+    <div class="scroll"><svg class="chart" viewBox="0 -40 720 340" style="width:100%;height:auto;display:block;min-width:560px" role="img" aria-label="รูปที่ 5">
+      <g fill="none" stroke="var(--ink)" stroke-width="1.3">
+        <path d="M60 80 L100 60 H300 L260 80 Z" fill="var(--soft)"/><rect x="60" y="80" width="200" height="190" fill="var(--sheet)"/><path d="M260 80 L300 60 V250 L260 270"/>
+        <rect x="300" y="100" width="16" height="30"/><rect x="300" y="200" width="16" height="30"/>
+        <circle cx="78" cy="74" r="3"/><circle cx="280" cy="64" r="3"/><circle cx="116" cy="62" r="3"/><circle cx="244" cy="76" r="3"/>
+        <g stroke-width="7" stroke="var(--muted)" stroke-linecap="round"><path d="M120 120 C110 160 120 175 90 180"/><path d="M155 120 C140 170 130 182 92 186"/><path d="M190 120 C176 176 140 190 94 192"/></g>
+        <g fill="var(--sheet)"><circle cx="120" cy="118" r="9"/><circle cx="155" cy="118" r="9"/><circle cx="190" cy="118" r="9"/></g>
+        <!-- terminal box (inside) -->
+        <path d="M420 120 H680 L660 260 H440 Z" fill="var(--sheet)"/><path d="M430 128 H670"/><rect x="480" y="140" width="160" height="40" fill="var(--soft)"/>
+        <g fill="var(--sheet)"><circle cx="510" cy="160" r="9"/><circle cx="560" cy="160" r="9"/><circle cx="610" cy="160" r="9"/></g>
+        <g stroke="var(--muted)" stroke-width="6" stroke-linecap="round"><path d="M510 168 L530 196"/><path d="M560 168 L580 196"/><path d="M610 168 L630 196"/></g>
+        <path d="M480 200 V250 M560 200 V250 M630 200 V250" stroke-width="5" stroke="var(--muted)"/><path d="M472 196 h16 M552 196 h16 M622 196 h16" stroke-width="3"/>
+      </g>
+      <g font-size="11.5" font-weight="600">
+        <text x="60" y="-18">สายโค้งตัดลงเพื่อป้องกันน้ำเข้าในตัวคะแปซิเตอร์</text>
+        <text x="110" y="44">เคเบิ้ลแกลนด์</text><text x="300" y="44">สกรูรองด้วยแหวนไนล่อน</text>
+        <text x="420" y="84">หางปลาจับสาย (ทาคอมเปาด์ก่อนใช้งาน)</text><text x="540" y="113">เคเบิ้ลแกลนด์</text>
+      </g>
+      <g font-size="9.5" style="fill:var(--muted)"><text x="60" y="-6">cables loop downwards so water cannot enter the capacitor</text><text x="110" y="55">cable glands</text><text x="300" y="55">screws with nylon washers</text>
+        <text x="420" y="96">cable lugs (coat with compound before use)</text><text x="626" y="113">cable gland</text></g>
+      <path d="M100 -2 V112 M298 46 L282 60 M476 88 L508 150 M570 117 L560 196" stroke="var(--ink)" stroke-width=".7" fill="none"/>
+      <text x="360" y="294" text-anchor="middle" font-size="12.5" font-weight="600">รูปที่ ๕ การประกอบคะแปซิเตอร์ผลิตภัณฑ์ ASEA <tspan font-size="10.5" font-weight="400" style="fill:var(--muted)">· Fig. 5 assembly of ASEA capacitors</tspan></text>
+    </svg></div>
+    <ol class="reg">
+      </ol><div class="sheetmark">ข้อควรระวัง · PRECAUTIONS</div><ol class="reg"><li><span class="no">๑.</span><div class="tx">ระยะห่างส่วนที่มีไฟฟ้ากับตัวถังต้องไม่น้อยกว่า ๑.๕ ซม.<span class="e">Clearance between live parts and the tank not less than 1.5 cm.</span></div></li>
+      <li><span class="no">๒.</span><div class="tx">อย่าลืมใช้แหวนไนล่อน เวลาขันสกรูยึดฝาเข้ากับตัวถังคะแปซิเตอร์ (มีแหวนไนล่อนสำรองหนึ่งอันในถุงชิ้นส่วน)<span class="e">Do not forget the nylon washers when screwing the cover to the tank (one spare nylon washer in the parts bag).</span></div></li>
+      <li><span class="no">๓.</span><div class="tx">กรณีที่ติดตั้งใช้งานภายนอกกลางแจ้ง แนะนำให้ใช้ยางมะตอยอุดที่รูยึดสกรูบนฝาตัวถังอีกชั้นหนึ่ง เพื่อป้องกันน้ำฝนซึมไหลเข้าในตัวคะแปซิเตอร์<span class="e">Outdoors, seal the cover screw holes additionally with bitumen to stop rain water seeping into the capacitor.</span></div></li>
+    </ol>
+  </section>
+
+<!-- ===== end page content ===== -->
+
+  <div class="two">
+    <section class="blk">
+      <h2 id="notesH"></h2>
+      <ol class="notes" id="notes"></ol>
+    </section>
+    <section class="blk">
+      <h2>ค่าที่ต้องยืนยัน <span class="e">To be verified</span></h2><div class="hint" style="margin:-6px 0 10px">แบบต้นฉบับไม่ได้ระบุ อ่านจากภาพ หรืออ่านไม่ชัด<span class="e">Not stated on the original, read from the picture, or illegible</span></div>
+      <ol class="notes" id="assume"></ol>
+    </section>
+  </div>
+
+  <footer class="tb" id="tb"></footer>
+</div>
+
+<script>
+/* ===== header / tabs / notes / title block from PAGE (NAME.json) ===== */
+const PAGE = {"group": "A0700 ระบบแรงต่ำ · การติดตั้งคาปาซิเตอร์", "groupEn": "A0700 LOW VOLTAGE · CAPACITOR INSTALLATION", "nameTh": "ข้อแนะนำการติดตั้งคะแปซิเตอร์แรงต่ำในระบบของผู้ใช้ไฟเฉพาะราย", "nameEn": "Guide for L.T. capacitor installation in customer system", "assembly": "0709", "spec": "ข้อแนะนำ 7 แผ่น: ทั่วไป · P.F ≥ 0.85 · ตำแหน่ง C1 / C2 / C3 · การติดตั้ง (รวม / กลุ่ม / เฉพาะจุด) · การหาขนาด kvar · สาย ≥ 145 % ฟิวส์ ≈ 135 % C.B. ≥ 180 % · รูปที่ 1–5", "titleBlock": {"org": "การไฟฟ้าส่วนภูมิภาค · กองวิศวกรรมไฟฟ้าและเครื่องกล ฝ่ายวิศวกรรม — PROVINCIAL ELECTRICITY AUTHORITY", "scale": "— (ไม่ระบุ · not stated, text and sketches)", "date": "เขียนเสร็จ 23 ก.พ. 2527 · ผู้ว่าการลงนาม 9 มี.ค. 2527", "dwg": "SA1-015/27004", "sheet": "แผ่นที่ 1–7 / 7"}, "tabs": [["all", "ทั้งหมด", "All"], ["txt", "ทั่วไป · ตำแหน่ง", "General · positions"], ["ins", "ลักษณะการติดตั้ง", "Installation"], ["calc", "ขนาด kvar", "Sizing"], ["rules", "ข้อปฏิบัติ · ASEA", "Rules · ASEA"]], "notesHead": ["การใช้งาน", "Use"], "notes": [["ข้อแนะนำสำหรับผู้ใช้ไฟที่ต้องแก้ตัวประกอบพลังไฟฟ้าให้ไม่ต่ำกว่า 0.85 ช่วงความต้องการสูงสุด — ไม่มีบัญชีวัสดุ ไม่มีมิติ (รูปเป็นภาพลายเส้นประกอบ)", "Guidance for customers who must keep the power factor at maximum demand ≥ 0.85 — no BOM, no dimensions (figures are illustrative sketches)."], ["ลำดับความดีของตำแหน่ง: C3 (ที่โหลด) > C2 (แผงสวิตช์ย่อย) > C1 (รวมที่ตู้เมน / หม้อแปลง) · ติดที่เสานั่งร้านหม้อแปลงได้ไม่เกิน 75 kvar", "Best positions: C3 (at the load) > C2 (distribution board) > C1 (central at the main board / transformer) · on the transformer-platform pole up to 75 kvar."], ["พิกัดฟิวส์ที่ใช้จริงต่อขนาดคะแปซิเตอร์และหม้อแปลง ดูแบบ 0710", "Actual capacitor / fuse ratings per transformer: assembly 0710."]], "verify": [["ต้นฉบับเป็นภาษาไทยทั้งหมด — ภาษาอังกฤษในหน้านี้เป็นคำแปล* · ตัวเลขไทยในข้อความคงตามต้นฉบับ", "The original is entirely in Thai — the English on this page is a translation* · Thai numerals kept as printed."], ["รูปที่ 1–5 วาดใหม่แบบย่อ ไม่ตามมาตราส่วน (ต้นฉบับเป็นภาพลายเส้นไม่มีมิติ) · ส่วนประกอบอาคาร/ตู้ไม่ได้วาดครบทุกรายละเอียด", "Figures 1–5 redrawn simplified, not to scale (the original sketches carry no dimensions) · building / cubicle details not reproduced in full."], ["รูปที่ 1: เส้นประจากหม้อแปลงไปยังกล่องเส้นประและ C1 ตีความว่าเป็นตำแหน่ง C1 อีกแบบที่หม้อแปลง", "Fig. 1: the dashed branch from the transformer to a dashed box and C1 is read as the alternative C1 position at the transformer."], ["คำในต้นฉบับพิมพ์ 'เล่าคอนกรีต 6 ม.' / 'ที่เล่าต้นนั่งร้านหม้อแปลง' — อ่านเป็น 'เสา' (ลายมือ/ตัวพิมพ์เลือน)", "The sketches print 'เล่าคอนกรีต 6 ม.' / 'ที่เล่าต้นนั่งร้าน…' — read as 'เสา' (pole) (faint lettering)."], ["เครื่องคำนวณ kvar และตารางสรุปข้อ 6 จัดทำเพิ่ม ไม่มีในต้นฉบับ — Q = P(tan φ₁ − tan φ₂), I = Q/(√3·U)", "The kvar calculator and the clause-6 summary table are added, not on the original — Q = P(tan φ1 − tan φ2), I = Q/(√3·U)."], ["ลายน้ำและตราประทับบนสแกนไม่ใช่เนื้อหาแบบ", "Watermark and stamps on the scan are not drawing content."]]};
+(function(){
+  $("grp").innerHTML = PAGE.group + `<span class="e" style="text-transform:none">${PAGE.groupEn}</span>`;
+  $("nameTh").textContent = PAGE.nameTh;
+  $("nameEn").textContent = PAGE.nameEn;
+  $("asmNo").textContent = PAGE.assembly;
+  $("asmOld").textContent = PAGE.assemblyOld ? "เดิม · OLD " + PAGE.assemblyOld : "";
+  $("pgSpec").textContent = PAGE.spec || "";
+  const nh = PAGE.notesHead || ["หมายเหตุ", "Notes"];
+  $("notesH").innerHTML = `${nh[0]} <span class="e">${nh[1]}</span>`;
+  $("notes").innerHTML = (PAGE.notes || []).map(([th, en]) => `<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = (PAGE.verify || []).map(([th, en]) => `<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join("");
+  const tb = PAGE.titleBlock;
+  $("tb").innerHTML = `<div class="w6">${tb.org}</div>
+    <div><span class="k">มาตราส่วน · SCALE</span>${tb.scale}</div>
+    <div><span class="k">วันที่ · DATE</span>${tb.date}</div>
+    <div class="w2"><span class="k">ชื่อแบบ · TITLE</span>${PAGE.nameTh}<span class="e">${PAGE.nameEn}</span></div>
+    <div><span class="k">แบบเลขที่ · DWG NO.</span>${tb.dwg}</div>
+    <div><span class="k">SHEET</span>${tb.sheet}</div>`;
+  /* optional tabs: PAGE.tabs = [[key, "ไทย", "English"], …]; sections carry data-tab="key" (or "key1 key2");
+     a tab with key "all" shows everything */
+  const tabs = PAGE.tabs || [];
+  if (tabs.length) {
+    $("tabSeg").innerHTML = tabs.map(([k, th, en]) => `<button type="button" data-k="${k}" title="${en}">${th}</button>`).join("");
+    const set = k => {
+      document.querySelectorAll("#tabSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.k === k));
+      document.querySelectorAll("[data-tab]").forEach(el => el.hidden = !(k === "all" || el.dataset.tab.split(" ").includes(k)));
+    };
+    $("tabSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.k); });
+    set(tabs[0][0]);
+  }
+})();
+</script>
+</html><a id="hubBack" href="../index.html" onclick="if(history.length>1){history.back();return false}" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← คลังแบบ</a><style id="blnCss">
+svg text.bln-t{cursor:pointer}
+svg .bln-g:focus{outline:none}svg .bln-g:focus-visible circle.bln-c{stroke:#2563eb!important;stroke-width:2.4!important}
+svg circle.bln-c{cursor:pointer;transition:fill .15s}
+svg .bln-g:hover circle.bln-c,svg circle.bln-c.hov{fill:rgba(37,99,235,.18)!important}
+svg circle.bln-c.on{fill:rgba(234,88,12,.28)!important;stroke:#ea580c!important;stroke-width:2.4!important}
+svg text.bln-t.on{fill:#c2410c!important;font-weight:700}
+#blnPop{position:fixed;z-index:10000;max-width:340px;width:calc(100vw - 24px);background:var(--sheet,#fff);color:var(--ink,#111);border:1px solid var(--line,#d4d4d8);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);font:14px/1.45 "IBM Plex Sans Thai",system-ui,sans-serif;display:none;overflow:hidden}
+#blnPop .hd{display:flex;gap:10px;align-items:flex-start;padding:12px 14px 8px}
+#blnPop .no{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 15px "IBM Plex Mono",monospace}
+#blnPop .th{font-weight:600}
+#blnPop .en{color:var(--muted,#666);font-size:12.5px}
+#blnPop .x{margin-left:auto;border:0;background:none;font-size:20px;line-height:1;color:var(--muted,#666);cursor:pointer;padding:0 2px}
+#blnPop .qty{display:flex;align-items:baseline;gap:8px;padding:8px 14px;background:rgba(234,88,12,.08);border-top:1px solid var(--line,#e4e4e7);border-bottom:1px solid var(--line,#e4e4e7)}
+#blnPop .qty b{font:700 22px "IBM Plex Mono",monospace;color:#c2410c}
+#blnPop .qty .u{font-weight:600}
+#blnPop .qty .v{margin-left:auto;font-size:12px;color:var(--muted,#666)}
+#blnPop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;padding:8px 14px;font-size:13px}
+#blnPop dt{color:var(--muted,#666)}#blnPop dd{margin:0;font-family:"IBM Plex Mono",monospace}
+#blnPop .all{padding:0 14px 6px;font-size:12px;color:var(--muted,#666)}
+#blnPop .ft{padding:8px 14px 12px}
+#blnPop .ft button{border:1px solid var(--line,#d4d4d8);background:none;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;color:inherit}
+tr.bln-flash>td{animation:blnF 1.8s ease}
+@keyframes blnF{0%,60%{background:rgba(234,88,12,.25)}100%{background:transparent}}
+.bln-hint{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted,#555);background:rgba(37,99,235,.08);border-radius:14px;padding:3px 10px;margin:4px 0 6px}
+.bln-hint i{font-style:normal;width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;display:inline-grid;place-items:center;font-size:10px}
+</style>
+<div id="blnPop" role="dialog" aria-live="polite"></div>
+<script>
+(function(){
+const CIR="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳",RX=/^([0-9]{1,2}[a-zก-ฮ]?['′]?|[a-e]|[①-⑳])$/;
+const norm=s=>{s=(s||"").trim().replace(/'/g,"′");const i=CIR.indexOf(s);return i>=0?String(i+1):s;};
+let BOM={},VLAB="";
+/* BOM first-column text -> keys: "6*"->6, "4 *"->4, "6a/6b"->6a,6b, "19a/b/c"->19a,19b,19c */
+function bkeys(t){t=(t||"").replace(/[*✱\s]/g,"").replace(/'/g,"′");if(!t)return[];const ps=t.split("/");const out=[];let base="";
+  ps.forEach((p,i)=>{let m=p.match(/^(\d+)([a-z]?)(′?)$/);if(m){base=m[1];out.push(p);}else if(/^[a-z]$/.test(p)&&base)out.push(base+p);else out.push(p);});
+  return out.map(norm).filter(k=>RX.test(k));}
+function readBom(){
+  const tb=document.getElementById("bomTbl")||[...document.querySelectorAll("table")].find(t=>/วัสดุเลขที่|Mat/i.test(t.tHead?.textContent||""));
+  BOM={};VLAB="";if(!tb)return;
+  const hs=[...(tb.tHead?.rows[0]?.cells||[])];
+  const iDesc=hs.findIndex(h=>/รายละเอียด|Description/.test(h.textContent));
+  const iMat=hs.findIndex(h=>/วัสดุเลขที่|Mat/.test(h.textContent));
+  const qIdx=[];hs.forEach((h,i)=>{if(i>iDesc&&(iMat<0||i<iMat))qIdx.push(i)});
+  let cur=qIdx.find(i=>hs[i].classList.contains("on"));if(cur==null)cur=qIdx[0];
+  VLAB=qIdx.length>1?hs[cur].textContent.trim():"";
+  [...tb.tBodies].forEach(b=>[...b.rows].forEach(r=>{
+    const c=r.cells;if(c.length<3||c[0].tagName!=="TD")return;
+    const ks=bkeys(c[0].textContent);if(!ks.length)return;const n=ks[0];
+    const d=c[iDesc],en=d.querySelector(".e");const th=en?d.textContent.replace(en.textContent,"").trim():d.textContent.trim();
+    const all=qIdx.map(i=>({l:hs[i].textContent.trim(),q:(c[i]?.textContent||"").trim()}));
+    const m=c[iMat];const me=m?.querySelector(".e");
+    const o={n,th,en:en?en.textContent.trim():"",q:(c[cur]?.textContent||"").trim(),all,mat:m?(me?m.textContent.replace(me.textContent,""):m.textContent).trim():"",old:me?me.textContent.trim():"",row:r};
+    ks.forEach(k=>{if(!BOM[k])BOM[k]=Object.assign({},o,{n:k});});
+    ks.forEach(k=>{const m=k.match(/^(\d+)[a-z]$/);if(m&&!BOM[m[1]])BOM[m[1]]=Object.assign({},o,{n:m[1]});});
+  }));
+}
+const UNITS=[[/สลักเกลียว|สกรู|bolt|screw/i,"ตัว","pcs"],[/น็อต|นัต|nut/i,"ตัว","pcs"],[/แหวน|washer/i,"อัน","pcs"],[/แป้น|แผ่น|plate|board/i,"แผ่น","pcs"],[/แร็ค|rack/i,"ชุด","set"],[/มิเตอร์|meter/i,"เครื่อง","set"],[/ตู้|cabinet/i,"ตู้","set"],[/เสา|pole/i,"ต้น","pcs"],[/สาย|cable|conductor|wire/i,"ม.","m"],[/คอนเนคเตอร์|connector|แคลมป์|clamp/i,"ตัว","pcs"],[/ลูกถ้วย|insulator/i,"ลูก","pcs"],[/หลักดิน|ground rod/i,"แท่ง","pcs"],[/เหล็กฉาก|เหล็ก|angle|channel/i,"ท่อน","pcs"]];
+function qtyUnit(it){
+  const q=it.q;if(!q||q==="–"||q==="-")return {v:"–",u:"ไม่ใช้ในแบบนี้",inf:false};
+  const m=q.match(/^([\d.,/]+)\s*(.*)$/);if(m&&m[2])return {v:m[1],u:m[2],inf:false};
+  if(m){const k=UNITS.find(([re])=>re.test(it.en))||UNITS.find(([re])=>re.test(it.th));return {v:m[1],u:k?k[1]:"ชิ้น",inf:true};}
+  return {v:q,u:"",inf:false};
+}
+const pop=document.getElementById("blnPop");let curN=null;
+function mark(n){document.querySelectorAll(".bln-c,.bln-t").forEach(e=>e.classList.toggle("on",e.dataset.bn===n));}
+function show(n,ev){
+  const it=BOM[n];if(!it)return;curN=n;mark(n);
+  const qu=qtyUnit(it);const cnt=document.querySelectorAll('text.bln-t[data-bn="'+n+'"]').length;
+  pop.innerHTML='<div class="hd"><div class="no">'+n+'</div><div><div class="th">'+it.th+'</div><div class="en">'+it.en+'</div></div><button class="x" aria-label="ปิด">×</button></div>'
+   +'<div class="qty"><span>จำนวน</span><b>'+qu.v+'</b><span class="u">'+qu.u+(qu.inf?'<sup title="หน่วยนี้ระบบประมาณจากชื่อวัสดุ">*</sup>':'')+'</span>'+(VLAB?'<span class="v">แบบที่เลือก: '+VLAB+'</span>':'')+'</div>'
+   +'<dl><dt>วัสดุเลขที่</dt><dd>'+(it.mat||"–")+(it.old?' <span style="color:var(--muted)">'+it.old+'</span>':'')+'</dd>'
+   +'<dt>ในรูปนี้</dt><dd style="font-family:inherit">ชี้ไว้ '+cnt+' ตำแหน่ง (ไฮไลต์สีส้ม)</dd></dl>'
+   +(it.all.length>1?'<div class="all">ทุกแบบย่อย: '+it.all.map(a=>a.l+' = '+a.q).join(' · ')+'</div>':'')
+   +'<div class="ft"><button class="go">ดูในตารางรายการวัสดุ ↓</button></div>';
+  pop.style.display="block";
+  lastEv=ev;place();
+  if(window.P3D&&window.THREE){const v=document.createElement("div");v.className="v3";pop.querySelector(".hd").after(v);try{P3D.mount(v,it);}catch(e){v.remove();}}
+  place();
+  pop.querySelector(".x").onclick=hide;
+  pop.querySelector(".go").onclick=()=>{hide();it.row.scrollIntoView({behavior:"smooth",block:"center"});it.row.classList.remove("bln-flash");void it.row.offsetWidth;it.row.classList.add("bln-flash");};
+}
+let lastEv=null;
+/* Position the card. Phones get a bottom sheet that stays the same on-screen size even when the page is pinch-zoomed
+   (counter-scale by visualViewport.scale and pin to the visual viewport). */
+function place(){
+  if(pop.style.display!=="block")return;const vv=window.visualViewport,sc=vv?vv.scale:1,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight;
+  const W0=vw*sc;
+  if(W0<600){pop.style.maxWidth="none";pop.style.width=Math.min(W0-16,520)+"px";pop.style.maxHeight=Math.round(vh*sc*.62)+"px";pop.style.overflowY="auto";
+    pop.style.transformOrigin="0 0";pop.style.transform=sc!==1?"scale("+(1/sc)+")":"";
+    const h=pop.offsetHeight/sc,w=pop.offsetWidth/sc;pop.style.left=(ox+(vw-w)/2)+"px";pop.style.top=(oy+vh-h-8/sc)+"px";pop.style.bottom="auto";pop.classList.add("sheet");}
+  else{pop.style.transform="";pop.style.maxHeight="";pop.style.overflowY="";pop.style.width="";pop.style.maxWidth="";pop.classList.remove("sheet");
+    const W=innerWidth,H=innerHeight,r=pop.getBoundingClientRect(),ev=lastEv||{clientX:W/2,clientY:H/2};
+    let x=ev.clientX+16,y=ev.clientY+16;if(x+r.width>W-8)x=ev.clientX-r.width-16;if(y+r.height>H-8)y=Math.max(8,H-r.height-8);pop.style.left=x+"px";pop.style.top=y+"px";pop.style.bottom="auto";}
+}
+window.blnPlace=place;
+if(window.visualViewport){visualViewport.addEventListener("resize",place);visualViewport.addEventListener("scroll",place);}
+addEventListener("resize",place);
+function hide(){if(window.P3D)P3D.stop();pop.style.display="none";curN=null;mark(null);}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hide();});
+document.addEventListener("click",e=>{if(pop.style.display==="block"&&!pop.contains(e.target)&&!e.target.closest(".bln-g"))hide();});
+function wire(){
+  readBom();
+  document.querySelectorAll("svg").forEach(s=>{
+    const cs=[...s.querySelectorAll("circle")].filter(c=>c.r.baseVal.value>3);
+    s.querySelectorAll("text").forEach(t=>{
+      if(t.dataset.bn)return;const n=norm(t.textContent);if(!RX.test(t.textContent.trim())||!BOM[n])return;
+      let bb;try{bb=t.getBBox()}catch(e){return}
+      const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+      const c=cs.find(c=>Math.hypot(c.cx.baseVal.value-cx,c.cy.baseVal.value-cy)<c.r.baseVal.value);
+      if(!c)return;
+      const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+      c.parentNode.insertBefore(g,c);g.appendChild(c);g.appendChild(t);
+      c.classList.add("bln-c");t.classList.add("bln-t");c.dataset.bn=t.dataset.bn=n;
+      if(!c.getAttribute("fill")||c.getAttribute("fill")==="none")c.setAttribute("fill","rgba(0,0,0,0)");
+      g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+      g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+    });
+  });
+  /* labels that carry a circled number, e.g. "steel pipe Ø 50 ③" */
+  document.querySelectorAll("svg text").forEach(t=>{
+    if(t.dataset.bn||t.closest(".bln-g"))return;const m=t.textContent.match(/[①-⑳]/g);if(!m)return;
+    const n=norm(m[m.length-1]);if(!BOM[n])return;
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+    t.parentNode.insertBefore(g,t);g.appendChild(t);t.classList.add("bln-t");t.dataset.bn=n;t.style.textDecoration="underline dotted";
+    g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+  });
+  if(curN)mark(curN);
+}
+let tm;const mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{mo.disconnect();wire();obs();},120);});
+const obs=()=>document.querySelectorAll("svg").forEach(s=>mo.observe(s.parentElement||s,{childList:true,subtree:true}));
+function hint(){const g0=document.querySelector(".bln-g");const s=g0&&g0.ownerSVGElement;if(!s||document.querySelector(".bln-hint"))return;const h=document.createElement("div");h.className="bln-hint";h.innerHTML="<i>3</i> แตะหมายเลขในวงกลมบนรูป เพื่อดูชื่อวัสดุ จำนวน และหน่วย";(s.closest("section")||s.parentElement).insertBefore(h,(s.closest("section")||s.parentElement).querySelector("svg")?.parentElement===s.closest("section")?s:s.parentElement);}
+function init(){wire();obs();hint();const bt=document.getElementById("bomTbl");if(bt)new MutationObserver(()=>{readBom();}).observe(bt,{childList:true,subtree:true});}
+if(document.readyState==="complete")setTimeout(init,300);else addEventListener("load",()=>setTimeout(init,300));
+})();
+</script>
+<style id="p3dCss">
+#blnPop.sheet .v3{height:150px!important}
+#blnPop .v3{position:relative;height:190px;margin:0 14px 8px;border:1px solid var(--line,#e4e4e7);border-radius:10px;background:radial-gradient(circle at 50% 35%,var(--sheet,#fff),var(--soft,#f1f4f7));overflow:hidden;touch-action:none;cursor:grab}
+#blnPop .v3 canvas{display:block;width:100%!important;height:100%!important}
+#blnPop .v3 .cap{position:absolute;left:8px;bottom:6px;right:8px;font-size:11.5px;color:var(--muted,#666);pointer-events:none;display:flex;justify-content:space-between;gap:6px}
+#blnPop .v3 .cap b{font-weight:600;color:var(--ink,#222)}
+#blnPop .v3 .tg{position:absolute;top:6px;right:8px;font-size:10.5px;color:var(--muted,#777);background:var(--sheet,#fff);border:1px solid var(--line,#e4e4e7);border-radius:8px;padding:0 6px}
+</style>
+<script>
+/* P3D — generic 3D preview of one BOM item, built from its description (type + dimensions parsed from text). */
+window.P3D=(function(){
+  let R=null,scene,cam,root,raf=0,host=null,rx=.45,ry=.6,auto=true,dist=1;
+  const M={};
+  function mats(){if(M.steel)return M;const S=(c,m,r)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
+    Object.assign(M,{steel:S(0xc4cbd2,.25,.4),dark:S(0x7b838b,.25,.5),alu:S(0xdfe3e7,.2,.35),cu:S(0xc8794a,.3,.4),wood:S(0xb98a55,0,.8),woodE:S(0x9c6f3e,0,.85),
+      pvc:S(0x26292d,0,.55),grey:S(0x9aa1a8,0,.6),porc:S(0x8a4b2c,.05,.25),white:S(0xeef0f2,0,.4),glass:new THREE.MeshStandardMaterial({color:0x9fc3d9,metalness:0,roughness:.1,transparent:true,opacity:.55}),
+      conc:S(0xb3aea4,0,.95),red:S(0xc0392b,0,.5),orange:S(0xd9822b,.2,.5)});return M;}
+  const num=s=>parseFloat(String(s).replace(",","."));
+  function dims(t){
+    const r={};let m;
+    if(m=t.match(/M\s?(\d+)\s*[×x]\s*(\d+)/i)){r.d=+m[1];r.L=+m[2];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*(mm|cm|m\b|มม|ซม)?/i)){let k=/cm|ซม/.test(m[4]||"")?10:1;r.a=num(m[1])*k;r.b=num(m[2])*k;r.c=num(m[3])*k;}
+    if(m=t.match(/Ø\s?(\d+(?:[.,]\d+)?)/))r.hole=num(m[1]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)(?:\s*[–-]\s*(\d+(?:[.,]\d+)?))?\s*(?:mm²|ตร\.?มม)/)){r.mm2=num(m[1]);r.mm2s=m[2]?m[1]+"–"+m[2]:m[1];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*mm\s*wide|กว้าง\s*(\d+)/i))r.w=num(m[1]||m[2]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*(?:m|ม\.)\s*(?:long|ยาว)?\b/)&&!r.L)r.len=num(m[1]);
+    if(m=t.match(/(\d{1,2}(?:[.,]\d+)?)\s*(?:m\b|ม\.)\s*(?:concrete\s*)?pole|เสา[^\d]{0,12}(\d{1,2}(?:\.\d+)?)\s*ม/i))r.pole=num(m[1]||m[2]);
+    return r;}
+  /* ---- part builders (mm) ---- */
+  const G=()=>new THREE.Group();
+  function cyl(r1,r2,h,mat,seg){return new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg||24),mat);}
+  function box(x,y,z,mat){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),mat);}
+  function hex(d,h,mat){const m=cyl(d*.9,d*.9,h,mat,6);return m;}
+  function thread(g,d,L,y0,mat){g.add(cyl(d/2,d/2,L,mat,20).translateY(y0+L/2));for(let y=y0+d*.3;y<y0+L;y+=Math.max(2.5,d*.2)){const t=new THREE.Mesh(new THREE.TorusGeometry(d/2,Math.max(.3,d*.035),5,20),M.steel);t.rotation.x=Math.PI/2;t.position.y=y;g.add(t);}}
+  const B={
+    bolt(t,D){const d=D.d||16,L=D.L||200,g=G();g.add(hex(d,d*.65,M.steel).translateY(L+d*.32));thread(g,d,L,0,M.steel);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2.2;g.add(n);const w=box(d*3.2,d*.28,d*3.2,M.steel);w.position.y=d*2.8;g.add(w);
+      g.rotation.z=Math.PI/2;return {g,lab:`M${d} × ${L} มม.`,note:"หัวหกเหลี่ยม + แหวน + แป้นเกลียว"};},
+    eyebolt(t,D){const d=D.d||16,L=D.L||250,g=G();thread(g,d,L,0,M.steel);const e=new THREE.Mesh(new THREE.TorusGeometry(d*1.6,d*.45,10,28),M.steel);e.position.y=L+d*1.9;g.add(e);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2;g.add(n);g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวตาเดียว M${d} × ${L}`};},
+    dabolt(t,D){const d=D.d||16,L=D.L||400,g=G();thread(g,d,L,0,M.steel);[d*1.5,L-d*1.5].forEach(y=>{const n=hex(d,d*.8,M.steel);n.position.y=y;g.add(n);});g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวสองหัว M${d} × ${L}`};},
+    screw(t,D){const g=G(),L=20,d=4;g.add(cyl(d*1.1,d*.5,d*.8,M.steel).translateY(L));g.add(cyl(d/2,.3,L,M.steel).translateY(L/2));
+      for(let y=2;y<L-1;y+=1.4){const r=new THREE.Mesh(new THREE.TorusGeometry(d/2*(y/L*.6+.4),.35,4,14),M.dark);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);}g.rotation.z=Math.PI/2;return {g,lab:"สกรู 15–20 มม."};},
+    nail(t,D){const g=G();g.add(cyl(1.6,1.6,.5,M.steel).translateY(18));g.add(cyl(.5,.15,18,M.steel).translateY(9));g.rotation.z=Math.PI/2;return {g,lab:"ตะปู 15–20 มม. Ø1"};},
+    nut(t,D){const d=D.d||16,g=G();const n=hex(d,d*.8,M.steel);g.add(n);const h=cyl(d/2,d/2,d,M.dark);g.add(h);return {g,lab:`แป้นเกลียว M${d}`};},
+    sqwasher(t,D){const a=D.a||52,c=D.c||4.5,h=D.hole||18,g=G();const s=new THREE.Shape();s.moveTo(-a/2,-a/2);s.lineTo(a/2,-a/2);s.lineTo(a/2,a/2);s.lineTo(-a/2,a/2);s.lineTo(-a/2,-a/2);
+      const p=new THREE.Path();p.absarc(0,0,h/2,0,Math.PI*2,true);s.holes.push(p);const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:c,bevelEnabled:false,curveSegments:24}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);
+      return {g,lab:`${a} × ${a} × ${c} มม. รู Ø${h}`};},
+    washer(t,D){const d=D.d||16,g=G();const s=new THREE.Shape();s.absarc(0,0,d*1.1,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,d*.55,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false,curveSegments:28}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);return {g,lab:"แหวนกลม"};},
+    spring(t,D){const d=D.d||16,g=G();const tq=new THREE.Mesh(new THREE.TorusGeometry(d*.75,d*.18,8,28,Math.PI*1.9),M.steel);tq.rotation.x=Math.PI/2;g.add(tq);return {g,lab:"แหวนสปริง"};},
+    connector(t,D){const g=G();const b1=box(70,14,46,M.alu),b2=box(70,14,46,M.alu);b1.position.y=9;b2.position.y=-9;g.add(b1,b2);
+      [[-15,0],[15,0]].forEach(([z])=>{const c=cyl(5,5,320,M.pvc,16);c.rotation.z=Math.PI/2;c.position.z=z;c.position.y=0;g.add(c);});
+      const bo=cyl(5,5,50,M.steel);bo.position.y=0;g.add(bo);const h=hex(10,8,M.steel);h.position.y=20;g.add(h);
+      return {g,lab:/single bolt|สลักเดียว/i.test(t)?"พีจีคอนเนคเตอร์ 1 สลัก":"พีจีคอนเนคเตอร์ (ร่องขนาน)",note:D.mm2?`สาย ${D.mm2s} ตร.มม.`:""};},
+    tape(t,D){const w=D.w||19,g=G();const s=new THREE.Shape();s.absarc(0,0,48,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,19,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:w,bevelEnabled:false,curveSegments:40}),M.pvc);g.add(m);const c=cyl(19,19,w,M.white,32);c.rotation.x=Math.PI/2;c.position.z=w/2;g.add(c);
+      const tail=box(60,.6,w,M.pvc);tail.position.set(30,-48,w/2);g.add(tail);return {g,lab:`เทป PVC กว้าง ${w} มม.`};},
+    strap(t,D){const g=G();const r=new THREE.Mesh(new THREE.TorusGeometry(60,1,6,48),M.steel);r.scale.set(1,1,10);g.add(r);const c=box(18,10,14,M.steel);c.position.set(60,0,0);g.add(c);
+      const cab=cyl(10,10,240,M.pvc);cab.rotation.x=Math.PI/2;cab.position.x=-40;g.add(cab);return {g,lab:"เข็มขัดรัดสาย (เทปเกราะ 1 × 10 มม.)"};},
+    cable(t,D){const a=D.mm2||16,r=Math.sqrt(a/Math.PI)*1.1+1.5,g=G(),cu=/\bCu\b|ทองแดง/.test(t)&&!/\bAl\b|อะลูมิเนียม/.test(t);
+      const pts=[];for(let i=0;i<=60;i++){const u=i/60;pts.push(new THREE.Vector3(Math.cos(u*Math.PI*3.2)*60,u*60-30,Math.sin(u*Math.PI*3.2)*60));}
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),120,r,14,false),M.pvc));
+      const end=pts[60],cd=cyl(r*.62,r*.62,r*4,cu?M.cu:M.alu,14);cd.position.copy(end).add(new THREE.Vector3(0,r*2,0));g.add(cd);
+      return {g,lab:`สาย ${cu?"ทองแดง":"อะลูมิเนียม"} ${a} ตร.มม.`,note:"หุ้มฉนวน PVC · ปลายแสดงตัวนำ"};},
+    meter(t,D){const g=G();const body=box(130,180,110,M.white);body.material=M.white;body.position.y=90;g.add(body);const base=box(130,60,110,M.grey);base.position.y=-30;g.add(base);
+      const win=box(96,70,4,M.glass);win.position.set(0,120,56);g.add(win);const reg=box(70,16,2,M.pvc);reg.position.set(0,125,55);g.add(reg);
+      const disk=cyl(30,30,2,M.dark,28);disk.rotation.x=Math.PI/2;disk.position.set(0,98,55);g.add(disk);
+      for(let i=0;i<4;i++){const c=cyl(5,5,60,M.pvc,12);c.position.set(-36+i*24,-90,0);g.add(c);}
+      return {g,lab:"วัตต์อาวร์มิเตอร์",note:"ตัวเครื่อง + ฝาครอบขั้วสาย"};},
+    plate(t,D){let a=D.a||600,b=D.b||200,c=D.c||20;const g=G();const p=box(b,a,c,/wood|ไม้/i.test(t)?M.wood:M.steel);p.position.y=a/2;g.add(p);
+      [a*.12,a*.88].forEach(y=>{const h=cyl(9,9,c+2,M.pvc,16);h.rotation.x=Math.PI/2;h.position.y=y;g.add(h);});
+      return {g,lab:`แป้น ${a/10} × ${b/10} × ${c/10} ซม.`,note:/wood|ไม้/i.test(t)?"ไม้เนื้อแข็ง ไสเรียบ":""};},
+    cabinet(t,D){const g=G();const b=box(300,820,250,M.grey);b.position.y=410;g.add(b);const dr=box(280,790,6,M.steel);dr.position.set(0,410,128);g.add(dr);
+      const w=box(140,120,4,M.glass);w.position.set(0,620,132);g.add(w);const hd=box(10,60,14,M.dark);hd.position.set(120,420,136);g.add(hd);return {g,lab:"ตู้เหล็ก"};},
+    rack(t,D){const g=G(),n=/2\s*[×x]|2 ×|2 spool/.test(t)?2:(/4/.test(t)?4:1);const h=200*n+60;
+      const bk=box(10,h,60,M.steel);bk.position.set(-60,h/2,0);g.add(bk);[0,h].forEach(y=>{const a=box(120,10,60,M.steel);a.position.set(0,y,0);g.add(a);});
+      for(let i=0;i<n;i++){const y=60+i*200,sp=cyl(38,38,70,M.porc,24);sp.position.set(20,y+40,0);g.add(sp);const gr=new THREE.Mesh(new THREE.TorusGeometry(38,8,8,24),M.porc);gr.rotation.x=Math.PI/2;gr.position.set(20,y+40,0);g.add(gr);}
+      const pin=cyl(8,8,h,M.steel);pin.position.set(20,h/2,0);g.add(pin);return {g,lab:`แร็คแรงต่ำ ${n} ช่อง`,note:"พร้อมลูกถ้วยลูกรอก"};},
+    spool(t,D){const g=G();const c=cyl(38,38,75,M.porc,28);g.add(c);[-26,26].forEach(y=>{const r=new THREE.Mesh(new THREE.TorusGeometry(36,6,8,28),M.porc);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);});
+      const hole=cyl(10,10,78,M.dark,16);g.add(hole);return {g,lab:"ลูกถ้วยลูกรอกแรงต่ำ"};},
+    pinins(t,D){const g=G();[0,40,80].forEach((y,i)=>{const s=cyl(70-i*12,40-i*6,30,M.porc,28);s.position.y=y;g.add(s);});const top=cyl(28,28,40,M.porc,24);top.position.y=120;g.add(top);
+      const pin=cyl(12,12,160,M.steel,16);pin.position.y=-60;g.add(pin);return {g,lab:"ลูกถ้วยก้านตรง"};},
+    disc(t,D){const g=G();for(let i=0;i<3;i++){const p=[[0,0],[20,0],[24,-25],[125,-70],[127,-76],[78,-74],[50,-82],[28,-78],[12,-90],[0,-90]].map(([x,y])=>new THREE.Vector2(x,y));
+      const d=new THREE.Mesh(new THREE.LatheGeometry(p,36),M.porc);d.position.y=-i*146;g.add(d);const c=cyl(28,32,32,M.steel);c.position.y=-i*146-4;g.add(c);}return {g,lab:"ลูกถ้วยแขวน"};},
+    rod(t,D){const g=G(),L=2400;g.add(cyl(8,8,L,M.cu,16).translateY(L/2));const tip=cyl(8,.5,40,M.cu,16);tip.position.y=-20;g.add(tip);const cl=box(30,40,30,M.cu);cl.position.y=L-60;g.add(cl);return {g,lab:"หลักดิน 2.4 ม."};},
+    channel(t,D){const L=Math.min(D.len?D.len*1000:2400,3000),g=G(),ang=/angle|ฉาก/i.test(t);const s=new THREE.Shape();
+      if(ang){const a=D.a||65,c=D.c||6;[[0,0],[a,0],[a,c],[c,c],[c,a],[0,a]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      else{const h=D.a||100,b=D.b||50,c=7;[[0,0],[b,0],[b,c],[c,c],[c,h-c],[b,h-c],[b,h],[0,h]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:L,bevelEnabled:false}),M.steel);m.position.z=-L/2;g.add(m);g.rotation.y=Math.PI/2;
+      return {g,lab:(ang?"เหล็กฉาก":"เหล็กรางน้ำ (คอนสาย)")+(D.len?` ยาว ${D.len} ม.`:"")};},
+    pole(t,D){const g=G(),L=(D.pole||9)*1000;const p=cyl(70,130,L,M.conc,4);p.rotation.y=Math.PI/4;p.position.y=L/2;g.add(p);return {g,lab:`เสาคอนกรีต ${D.pole||9} ม.`};},
+    transformer(t,D){const g=G();const tk=cyl(220,220,700,M.grey,32);tk.position.y=350;g.add(tk);for(let i=0;i<12;i++){const f=box(8,560,90,M.grey);const a=i/12*Math.PI*2;f.position.set(Math.cos(a)*250,330,Math.sin(a)*250);f.rotation.y=-a;g.add(f);}
+      [-90,90].forEach(x=>{const b=cyl(22,30,180,M.porc);b.position.set(x,790,0);g.add(b);});return {g,lab:"หม้อแปลงจำหน่าย"};},
+    cutout(t,D){const g=G();const b=cyl(35,45,320,M.porc,20);b.rotation.z=.35;g.add(b);const tube=cyl(16,16,300,M.dark);tube.position.set(60,0,0);tube.rotation.z=.35;g.add(tube);
+      const br=box(20,20,200,M.steel);br.position.set(-40,0,0);g.add(br);return {g,lab:/arrester|กับดัก/i.test(t)?"กับดักเสิร์จ":"ฟิวส์คัตเอาต์"};},
+    generic(t,D){const g=G();const b=box(120,80,80,M.grey);g.add(b);return {g,lab:"รูปแบบทั่วไป",note:"ยังไม่มีแบบจำลองเฉพาะของวัสดุนี้"};}
+  };
+  function classify(t){const L=t.toLowerCase();
+    if(/nail|ตะปู/.test(L))return"nail";if(/screw|สกรู/.test(L))return"screw";
+    if(/eye\s*bolt|ตาเดียว|ตาไก่/.test(L))return"eyebolt";if(/double arming|สองหัว/.test(L))return"dabolt";
+    if(/\bbolt|สลักเกลียว/.test(L))return"bolt";
+    if(/washer.*(square|สี่เหลี่ยม)|แหวนสี่เหลี่ยม|square.*washer/.test(L))return"sqwasher";if(/spring|lock washer|แหวนสปริง/.test(L))return"spring";if(/washer|แหวน/.test(L))return"washer";
+    if(/\bnut\b|แป้นเกลียว|น็อต/.test(L))return"nut";
+    if(/strap|เข็มขัด/.test(L))return"strap";if(/tape|เทป/.test(L))return"tape";
+    if(/connector|คอนเนค|parallel groove/.test(L))return"connector";
+    if(/rack|แร็ค/.test(L))return"rack";if(/spool|ลูกรอก/.test(L))return"spool";
+    if(/suspension|disc|ลูกถ้วยแขวน/.test(L))return"disc";if(/pin.*insulator|insulator.*pin|ก้านตรง|line post/.test(L))return"pinins";
+    if(/transformer|หม้อแปลง/.test(L))return"transformer";if(/cutout|cut-out|fuse|arrester|ฟิวส์|กับดัก/.test(L))return"cutout";
+    if(/ground rod|หลักดิน/.test(L))return"rod";
+    if(/watthour|kwh|มิเตอร์|meter,/.test(L)&&!/plate|แป้น|board/.test(L))return"meter";
+    if(/cabinet|ตู้/.test(L))return"cabinet";if(/plate|แป้น|board/.test(L))return"plate";
+    if(/conductor|cable|\bwire\b|สาย/.test(L))return"cable";
+    if(/crossarm|คอน|channel|รางน้ำ|angle|ฉาก/.test(L))return"channel";if(/\bpole\b|เสา/.test(L))return"pole";
+    return"generic";}
+  function setup(){mats();R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setClearColor(0,0);
+    scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(30,1,1,1e6);scene.add(new THREE.HemisphereLight(0xffffff,0x5a6470,.85));
+    const d=new THREE.DirectionalLight(0xffffff,.85);d.position.set(1,1.4,1.2);scene.add(d);const d2=new THREE.DirectionalLight(0xffffff,.3);d2.position.set(-1,-.4,-1);scene.add(d2);
+    const el=R.domElement;let drag=0,px=0,py=0;
+    el.addEventListener("pointerdown",e=>{drag=1;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);e.stopPropagation();});
+    el.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.01;rx+=(e.clientY-py)*.01;rx=Math.max(-1.4,Math.min(1.4,rx));px=e.clientX;py=e.clientY;});
+    el.addEventListener("pointerup",()=>drag=0);el.addEventListener("click",e=>e.stopPropagation());
+    el.addEventListener("wheel",e=>{e.preventDefault();dist*=1+e.deltaY*.001;dist=Math.max(.4,Math.min(3,dist));},{passive:false});}
+  function loop(){raf=requestAnimationFrame(loop);if(!host||!host.isConnected){stop();return;}if(auto)ry+=.004;root.rotation.set(rx,ry,0);
+    const s=root.userData.size;cam.position.set(0,0,s*2.1*dist);cam.lookAt(0,0,0);R.render(scene,cam);}
+  function stop(){cancelAnimationFrame(raf);raf=0;}
+  function mount(el,it){
+    if(!window.THREE){el.remove();return;}if(!R)setup();stop();
+    const txt=(it.en||"")+" "+(it.th||""),D=dims(txt);let k=classify(it.en||"");if(k==="generic")k=classify(it.th||"");if(k==="generic"){el.remove();return;}const r=B[k](txt,D);
+    if(root)scene.remove(root);root=new THREE.Group();const inner=G();inner.add(r.g);
+    const bb=new THREE.Box3().setFromObject(inner),c=bb.getCenter(new THREE.Vector3()),sz=bb.getSize(new THREE.Vector3());inner.position.sub(c);root.add(inner);
+    root.userData.size=Math.max(sz.x,sz.y,sz.z);scene.add(root);rx=.38;ry=-.5;auto=true;dist=1;
+    el.innerHTML="";el.appendChild(R.domElement);const w=el.clientWidth||300,h=el.clientHeight||190;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+    const cap=document.createElement("div");cap.className="cap";cap.innerHTML="<span><b>"+r.lab+"</b>"+(r.note?" · "+r.note:"")+"</span>";el.appendChild(cap);
+    const tg=document.createElement("div");tg.className="tg";tg.textContent=(k==="generic"?"ภาพตัวแทน":"3D ตัวแทน")+" · ลากเพื่อหมุน";el.appendChild(tg);
+    host=el;loop();}
+  return {mount,classify,dims,stop};
+})();
+</script>
+<style id="hl3Css">
+#v3d .hl3bar{position:absolute;left:8px;right:8px;top:8px;display:none;align-items:center;gap:8px;background:var(--sheet,#fff);border:1px solid #ea580c;border-radius:10px;padding:6px 10px;font:13px/1.35 "IBM Plex Sans Thai",system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.15);z-index:2}
+#v3d .hl3bar .no{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 12px "IBM Plex Mono",monospace}
+#v3d .hl3bar .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#v3d .hl3bar button{flex:none;border:1px solid var(--line,#d4d4d8);background:var(--soft,#f5f7f9);border-radius:8px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer;color:inherit}
+#v3d .hl3pin{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#ea580c;color:#fff;font:700 11px "IBM Plex Mono",monospace;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(234,88,12,.25);pointer-events:none;z-index:1;animation:hl3p 1.6s ease-in-out infinite}
+@keyframes hl3p{50%{box-shadow:0 0 0 9px rgba(234,88,12,.08)}}
+#blnPop .loc{display:flex;align-items:center;gap:8px;margin:0 14px 10px;padding:8px 10px;border:1px solid #ea580c;border-radius:10px;background:rgba(234,88,12,.07);color:#c2410c;font:600 13.5px "IBM Plex Sans Thai",system-ui,sans-serif;cursor:pointer;width:calc(100% - 28px);text-align:left}
+#blnPop .loc small{font-weight:400;color:var(--muted,#666);margin-left:auto}
+#blnPop .loc.no{border-color:var(--line,#d4d4d8);background:var(--soft,#f5f7f9);color:var(--muted,#777);cursor:default}
+</style>
+<script>
+/* ===== HL3: highlight tagged parts inside the page's own 3D model ===== */
+window.HL3=(function(){
+  let on=null,saved=new Map(),ghost=null,hot=null,ret=null;
+  const box3=()=>document.getElementById("v3d");
+  function mats(){if(ghost)return;ghost=new THREE.MeshStandardMaterial({color:0x9aa3ad,transparent:true,opacity:.2,depthWrite:false,roughness:.9});
+    hot=new THREE.MeshStandardMaterial({color:0xff6a00,emissive:0xff5a00,emissiveIntensity:.55,roughness:.4,metalness:.1});}
+  const nk=t=>String(t).replace(/[*✱\s]/g,"").replace(/'/g,"′");
+  let LOOSE=false;function hasN(arr,n){n=nk(n);return arr.some(t=>{t=nk(t);return t===n||(LOOSE&&/^\d+$/.test(n)&&new RegExp("^"+n+"[a-z]$").test(t));});}
+  function tagged0(n){const out=[];if(typeof model==="undefined"||!model)return out;
+    model.traverse(o=>{if(!(o.userData&&o.userData.bn&&hasN(o.userData.bn,n)))return;let a=o.parent,dup=false;while(a){if(a.userData&&a.userData.bn&&hasN(a.userData.bn,n)){dup=true;break;}a=a.parent;}if(!dup)out.push(o);});return out;}
+  function tagged(n){LOOSE=false;let r=tagged0(n);if(!r.length){LOOSE=true;r=tagged0(n);}return r;}
+  function meshesOf(r,n){const set=[];(function walk(o){if(o!==r&&o.userData&&o.userData.bn&&!hasN(o.userData.bn,n))return;if(o.isMesh)set.push(o);o.children.forEach(walk);})(r);return set;}
+  function has(n){return tagged(n).length>0;}
+  let pins=[];
+  function drawPins(){const v=box3();v.querySelectorAll(".hl3pin").forEach(e=>e.remove());if(!on||typeof cam==="undefined")return;const W=v.clientWidth,H=v.clientHeight;
+    pins.forEach(o=>{const bb=new THREE.Box3().setFromObject(o),c=bb.getCenter(new THREE.Vector3()).project(cam);if(c.z>1)return;
+      const d=document.createElement("div");d.className="hl3pin";d.textContent=on;d.style.left=((c.x+1)/2*W)+"px";d.style.top=((1-c.y)/2*H)+"px";v.appendChild(d);});}
+  function clear(){pins=[];saved.forEach((m,o)=>o.material=m);saved.clear();on=null;const b=box3()?.querySelector(".hl3bar");if(b)b.style.display="none";}
+  function reset(){clear();if(ret){model.position.copy(ret.p);rx=ret.rx;ry=ret.ry;dist=ret.d;ret=null;}render();}
+  function show(n,it){mats();if(typeof model==="undefined"||!model)return false;clear();const roots=tagged(n);if(!roots.length)return false;
+    const hotSet=new Set();roots.forEach(r=>meshesOf(r,n).forEach(o=>hotSet.add(o)));
+    model.traverse(o=>{if(!o.isMesh&&!o.isLine)return;saved.set(o,o.material);o.material=hotSet.has(o)?hot:(o.isMesh?ghost:o.material);});
+    if(!ret)ret={p:model.position.clone(),rx,ry,d:dist};
+    /* fly to the parts: centre of their bounding box in model space */
+    pivot.updateMatrixWorld(true);const bb=new THREE.Box3();roots.forEach(r=>bb.expandByObject(r));const inv=new THREE.Matrix4().copy(pivot.matrixWorld).invert();
+    const c=bb.getCenter(new THREE.Vector3()).applyMatrix4(inv).sub(model.position),s=bb.getSize(new THREE.Vector3()).length();
+    model.position.set(-c.x,-c.y,-c.z);dist=Math.max(450,Math.min(9000,s*2.4));render();
+    on=n;pins=roots;const b=bar();b.querySelector(".no").textContent=n;b.querySelector(".tx").innerHTML="<b>"+(it?it.th:"")+"</b> · "+roots.length+" ตำแหน่ง";b.style.display="flex";render();
+    return true;}
+  function bar(){const v=box3();let b=v.querySelector(".hl3bar");if(!b){b=document.createElement("div");b.className="hl3bar";b.innerHTML='<span class="no"></span><span class="tx"></span><button type="button">ดูทั้งชุด</button>';
+      b.querySelector("button").onclick=e=>{e.stopPropagation();reset();};v.appendChild(b);}return b;}
+  /* re-apply after variant switch rebuilds the model */
+  const _b=window.build3d;if(_b)window.build3d=function(){const n=on;ret=null;clear();_b.apply(this,arguments);if(n&&has(n))setTimeout(()=>show(n,null),0);};
+  const _r=window.render;if(typeof _r==="function"){window.render=function(){_r.apply(this,arguments);drawPins();};try{render();}catch(e){}}
+  return {show,has,reset,count:n=>tagged(n).length};
+})();
+/* add a "locate in 3D" button to the item card */
+(function(){const pop=document.getElementById("blnPop");if(!pop)return;
+  new MutationObserver(()=>{if(pop.style.display!=="block"||pop.querySelector(".loc"))return;const no=pop.querySelector(".no");if(!no)return;const n=no.textContent.trim();
+    const b=document.createElement("button");b.type="button";const k=window.HL3?HL3.count(n):0;
+    if(k){b.className="loc";b.innerHTML="📍 ดูตำแหน่งในโมเดล 3 มิติของชุด<small>"+k+" ชิ้น</small>";
+      b.onclick=e=>{e.stopPropagation();const th=pop.querySelector(".th")?.textContent||"";pop.style.display="none";document.querySelectorAll(".bln-c.on,.bln-t.on").forEach(x=>x.classList.remove("on"));
+        const v=document.getElementById("v3d");v.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>HL3.show(n,{th}),350);};}
+    else if(window.HL3_BOUND){b.className="loc no";b.textContent="ชิ้นนี้ไม่ได้แสดงในโมเดล 3 มิติของชุด";}else return;
+    const q=pop.querySelector(".qty");q.parentNode.insertBefore(b,q);
+    if(window.blnPlace)blnPlace();
+  }).observe(pop,{childList:true});
+})();
+/* rebuild once so the tagged model is used */
+if(window.HL3_BOUND&&window.build3d)setTimeout(()=>{try{build3d();}catch(e){}},50);
+</script>

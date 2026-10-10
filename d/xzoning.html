@@ -1,0 +1,625 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>บันทึก การจ่ายไฟตามสภาพพื้นที่ และการต่อลงดิน กฟภ.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting sheet — title strip, variant switch, 2D elevation, details + 3D, tables, title block */
+:root{
+  --paper:#eef1f4; --sheet:#ffffff; --ink:#18212b; --muted:#5a6573; --line:#cdd4dc; --soft:#f5f7f9;
+  --accent:#7a1e6b; --accent-bg:#f6e9f3; --dim:#245f93; --weld:#c2620f; --steel:#9aa5b1; --hole:#ffffff;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:1080px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--ink);display:flex;flex-direction:column}
+.blk{padding:20px 24px;border-top:1px solid var(--line);min-width:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-family:var(--f-body);font-weight:400;font-size:13px;color:var(--muted)}
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;padding:20px 24px;align-items:start}
+.eyebrow{font-size:13px;color:var(--muted)}
+.head h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,4vw,34px);line-height:1.2;margin:4px 0 2px;text-wrap:balance}
+.head .en{font-family:var(--f-mono);font-size:16px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.asm{border:1.5px solid var(--ink);padding:8px 14px;text-align:right}
+.asm .n{font-family:var(--f-display);font-size:34px;font-weight:600;line-height:1;color:var(--accent)}
+.asm .l{font-size:12px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--soft);border-top:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+.seg button{font:500 14px var(--f-body);background:transparent;color:var(--ink);border:0;padding:7px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.seg button:focus-visible,.btn:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+.spec{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto}
+.scroll svg{display:block;min-width:720px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--ink)}
+svg .th{font-family:var(--f-body)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+.two>.blk{border-top:0}
+.two>.blk+.blk{border-left:1px solid var(--line)}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}.two>.blk+.blk{border-left:0;border-top:1px solid var(--line)}.head{grid-template-columns:1fr}.asm{justify-self:start;text-align:left}}
+#v3d{height:360px;border:1px solid var(--line);background:var(--soft);touch-action:none;cursor:grab;position:relative;border-radius:4px;overflow:hidden}
+#v3d canvas{display:block}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.btn{font:13px var(--f-body);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:center;vertical-align:middle}
+th{font-weight:500;background:var(--soft);font-size:13px}
+td.l,th.l{text-align:left}
+tr.on td{background:var(--accent-bg)}
+td.mono{font-family:var(--f-mono)}
+tfoot td{font-weight:600}
+.notes{margin:0;padding-left:1.3em;max-width:72ch;display:grid;gap:6px}
+.e{display:block;font-family:var(--f-mono);font-size:.78em;font-weight:400;color:var(--muted);letter-spacing:.02em;line-height:1.35}
+h2 .e{display:inline;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.notes li .e{margin-top:1px}
+.btn .e{font-size:10px}
+.tag{display:inline-block;font-size:11px;font-family:var(--f-mono);padding:1px 6px;border-radius:3px;background:var(--accent-bg);color:var(--accent);vertical-align:1px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px}
+.tb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1.5px solid var(--ink);font-size:13px}
+.tb>div{padding:8px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.tb .k{display:block;font-size:11px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+.tb .w2{grid-column:span 2}.tb .w3{grid-column:span 3}.tb .w6{grid-column:span 6;text-align:center;font-family:var(--f-display);font-weight:600;letter-spacing:.06em}
+@media (max-width:640px){.tb{grid-template-columns:repeat(2,minmax(0,1fr))}.tb .w2,.tb .w3,.tb .w6{grid-column:span 2}}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.links .btn{text-decoration:none;display:inline-flex;flex-direction:column;line-height:1.25;font-weight:500;border-color:var(--ink)}
+.links .btn.pri{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.links .btn.pri .e{color:inherit;opacity:.8}
+</style>
+
+<style>
+/* ===== table-page additions (head CSS comes from parts/_head.html) ===== */
+.sheet .blk>p{margin:0 0 10px;max-width:80ch}
+.lead{font-size:14px;color:var(--muted);margin:-4px 0 12px}
+.tbl{width:auto;min-width:100%}
+.tbl th{line-height:1.3}
+.tbl th .e,.tbl td .e{font-size:10.5px}
+.tbl td.num{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.tbl.stick th:first-child,.tbl.stick td:first-child{position:sticky;left:0;z-index:1;background:var(--sheet);box-shadow:1px 0 0 var(--line)}
+.tbl.stick thead th:first-child{background:var(--soft)}
+.tbl tr.on td,.tbl td.on{background:var(--accent-bg)}
+.tbl td.hl{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-bg)}
+.cap{font-size:12px;color:var(--muted);margin-top:6px}
+.scroll .chart{min-width:640px}
+.reg{list-style:none;margin:0;padding:0;display:grid;gap:14px;counter-reset:none}
+.reg>li{display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:4px 10px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+.reg>li:last-child{border-bottom:0;padding-bottom:0}
+.reg .no{font-family:var(--f-display);font-weight:600;font-size:18px;color:var(--accent);line-height:1.4}
+.reg .tx{max-width:80ch}
+.reg .tx .e{font-size:.8em;margin-top:3px}
+.sheetmark{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--ink);padding-top:4px;margin:18px 0 12px}
+.sheetmark:first-child{margin-top:0}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end;margin:0 0 12px}
+.ctl label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--muted)}
+.ctl label .e{font-size:10px}
+.ctl input,.ctl select{font:14px var(--f-body);color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:5px 8px;min-width:0}
+.ctl input[type=range]{padding:0;accent-color:var(--accent);width:220px;max-width:60vw}
+.out{display:flex;flex-wrap:wrap;gap:10px}
+.out>div{border:1px solid var(--line);border-radius:4px;padding:8px 12px;min-width:150px;background:var(--soft)}
+.out .k{display:block;font-size:12px;color:var(--muted)}
+.out .k .e{font-size:10px}
+.out .v{font-family:var(--f-display);font-size:24px;font-weight:600;color:var(--accent);line-height:1.2}
+.out .u{font-size:13px;color:var(--muted);margin-left:4px}
+.chip{display:inline-block;font:12px var(--f-mono);border:1px solid var(--line);border-radius:3px;padding:0 6px;color:var(--muted)}
+.ref{font-family:var(--f-mono);font-size:13px;white-space:nowrap}
+.seg:empty{display:none}
+[data-tab][hidden]{display:none!important}
+@media (max-width:640px){.blk{padding:16px}.head,.bar{padding-inline:16px}.reg>li{grid-template-columns:1.8em minmax(0,1fr)}}
+</style>
+<script>
+/* ===== shared helpers for table pages (available to page scripts) ===== */
+const $ = id => document.getElementById(id);
+const fmt = (n, d) => d == null ? Number(n).toLocaleString("en-US") : Number(n).toLocaleString("en-US", {minimumFractionDigits: d, maximumFractionDigits: d});
+/* piece-wise linear interpolation on sorted xs; clamps outside the range */
+function lerp(xs, ys, x){
+  if (x <= xs[0]) return ys[0];
+  for (let i = 1; i < xs.length; i++) if (x <= xs[i]) { const t = (x - xs[i-1]) / (xs[i] - xs[i-1]); return ys[i-1] + t * (ys[i] - ys[i-1]); }
+  return ys[ys.length - 1];
+}
+/* Line chart → SVG markup string.
+   o = { W, H, pad:{l,r,t,b}, x:{min,max,major,minor,label:[th,en]}, y:{…same…},
+         series:[{key, label, pts:[[x,y],…], dash?}], hi: key of highlighted series, labelEnd: true }
+   returns { svg, X, Y } — X/Y map data → px so callers can add markers. */
+function lineChart(o){
+  const p = Object.assign({l:64, r:70, t:20, b:58}, o.pad || {});
+  const W = o.W, H = o.H, x = o.x, y = o.y;
+  const X = v => +(p.l + (v - x.min) / (x.max - x.min) * (W - p.l - p.r)).toFixed(1);
+  const Y = v => +(H - p.b - (v - y.min) / (y.max - y.min) * (H - p.t - p.b)).toFixed(1);
+  let s = "";
+  const grid = (a, isX) => { for (let v = a.min; v <= a.max + 1e-9; v += a.minor || a.major) {
+    const maj = Math.abs((v - a.min) / a.major - Math.round((v - a.min) / a.major)) < 1e-6;
+    s += isX ? `<line x1="${X(v)}" y1="${Y(y.min)}" x2="${X(v)}" y2="${Y(y.max)}" stroke="var(--line)" stroke-width="${maj?1:.5}"/>`
+             : `<line x1="${X(x.min)}" y1="${Y(v)}" x2="${X(x.max)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="${maj?1:.5}"/>`;
+    if (maj) s += isX ? `<text x="${X(v)}" y="${Y(y.min)+18}" font-size="12" text-anchor="middle">${fmt(+v.toFixed(6))}</text>`
+                      : `<text x="${X(x.min)-8}" y="${Y(v)+4}" font-size="12" text-anchor="end">${fmt(+v.toFixed(6))}</text>`; } };
+  grid(x, true); grid(y, false);
+  s += `<rect x="${X(x.min)}" y="${Y(y.max)}" width="${X(x.max)-X(x.min)}" height="${Y(y.min)-Y(y.max)}" fill="none" stroke="var(--ink)" stroke-width="1.2"/>`;
+  if (x.label) s += `<text class="th" x="${(X(x.min)+X(x.max))/2}" y="${H-22}" font-size="13" text-anchor="middle">${x.label[0]}</text><text x="${(X(x.min)+X(x.max))/2}" y="${H-7}" font-size="11" text-anchor="middle" style="fill:var(--muted)">${x.label[1]}</text>`;
+  if (y.label) { const cy = (Y(y.min)+Y(y.max))/2;
+    s += `<text class="th" transform="translate(16 ${cy}) rotate(-90)" font-size="13" text-anchor="middle">${y.label[0]}</text><text transform="translate(30 ${cy}) rotate(-90)" font-size="11" text-anchor="middle" style="fill:var(--muted)">${y.label[1]}</text>`; }
+  const ends = [];
+  (o.series || []).forEach(se => {
+    const on = o.hi != null && se.key === o.hi;
+    const d = se.pts.map((q, i) => (i ? "L" : "M") + X(q[0]) + " " + Y(q[1])).join("");
+    s += `<path d="${d}" fill="none" stroke="${on ? "var(--accent)" : "var(--ink)"}" stroke-width="${on ? 2.6 : 1.2}"${se.dash ? ` stroke-dasharray="${se.dash}"` : ""}/>`;
+    const q = se.pts[se.pts.length - 1]; ends.push({ y: Y(q[1]), x: X(q[0]), label: se.label, on });
+  });
+  if (o.labelEnd !== false) {               /* end labels, pushed apart ≥ 14 px */
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i-1].y < 14) ends[i].y = ends[i-1].y + 14;
+    ends.forEach(e => s += `<text x="${e.x + 6}" y="${e.y + 4}" font-size="12" style="fill:${e.on ? "var(--accent)" : "var(--ink)"};font-weight:${e.on ? 600 : 400}">${e.label}</text>`);
+  }
+  return { svg: s, X, Y };
+}
+</script>
+<div class="sheet">
+  <header class="head">
+    <div>
+      <div class="eyebrow" id="grp"></div>
+      <h1 id="nameTh"></h1>
+      <div class="en" id="nameEn"></div>
+    </div>
+    <div class="asm"><div class="l">การประกอบเลขที่ · ASSEMBLY NO.</div><div class="n" id="asmNo"></div><div class="l" id="asmOld"></div></div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="tabSeg" role="group" aria-label="เลือกแผ่น / Select sheet"></div>
+    <div class="spec" id="pgSpec"></div>
+    <div class="links">
+      <a class="btn pri" href="../pdf/a7b9d1c57d6c.pdf" target="_blank" rel="noopener">เปิดแบบต้นฉบับ PDF<span class="e">Original drawing</span></a>
+      <a class="btn" href="../index.html" target="_blank" rel="noopener">คลังแบบทั้งหมด<span class="e">Drawing library</span></a>
+    </div>
+  </div>
+
+<!-- ===== page content (parts/tab/NAME.html) ===== -->
+  <style>.zm .reg>li{grid-template-columns:4.2em minmax(0,1fr)} .zm .reg .no{font-size:15px} @media (max-width:600px){.zm .reg>li{grid-template-columns:3.6em minmax(0,1fr);margin-left:0!important}}</style>
+  <section class="blk" data-tab="sum">
+    <h2>สรุปหลักเกณฑ์ตามพื้นที่ <span class="e">Criteria by zone — summary</span></h2>
+    <p class="lead">ตารางสรุปนี้จัดทำเพิ่ม ไม่มีในต้นฉบับ — ยึดข้อความในบันทึกเป็นหลัก · คลิกหัวคอลัมน์เพื่อเน้นพื้นที่<span class="e">This summary is added, not on the original — the memo text governs · click a column header to highlight a zone</span></p>
+    <div class="scroll"><table class="tbl" id="zt"><thead><tr><th>หัวข้อ<span class="e">Item</span></th><th data-z="1">พื้นที่ 1<span class="e">Zone 1</span></th><th data-z="2">พื้นที่ 2<span class="e">Zone 2</span></th><th data-z="3">พื้นที่ 3<span class="e">Zone 3</span></th><th data-z="4">พื้นที่ 4<span class="e">Zone 4</span></th><th data-z="5">พื้นที่ 5<span class="e">Zone 5</span></th></tr></thead><tbody><tr><td class="l">นิยาม (2.1)<span class="e">Definition (2.1)</span></td><td class="l" data-z="1">นิคม / เขต / สวนอุตสาหกรรม<span class="e">Industrial estate / zone / park</span></td><td class="l" data-z="2">เทศบาลนคร เมืองธุรกิจ เมืองสำคัญพิเศษ<span class="e">City municipality, business & special cities</span></td><td class="l" data-z="3">เทศบาลเมือง<span class="e">Town municipality</span></td><td class="l" data-z="4">เทศบาลตำบล<span class="e">Sub-district municipality</span></td><td class="l" data-z="5">ชนบท (พื้นที่อื่นๆ)<span class="e">Rural (all other)</span></td></tr><tr><td class="l">สายจำหน่ายแรงสูง (2.2.1)<span class="e">HV conductor (2.2.1)</span></td><td class="l" data-z="1">เคเบิลอากาศ<span class="e">Aerial cable</span></td><td class="l" data-z="2">เคเบิลอากาศ<span class="e">Aerial cable</span></td><td class="l" data-z="3">สายเปลือย ¹<span class="e">Bare ¹</span></td><td class="l" data-z="4">สายเปลือย ¹<span class="e">Bare ¹</span></td><td class="l" data-z="5">สายเปลือย ¹<span class="e">Bare ¹</span></td></tr><tr><td class="l">วงจรออกจากสถานีที่จ่ายพื้นที่ 1/2 ด้วย (2.2.2 ข)<span class="e">Feeder from a substation also serving zone 1/2 (2.2.2 b)</span></td><td class="l" data-z="1">เคเบิลอากาศ ถึงปลายทาง<span class="e">Aerial cable to end load</span></td><td class="l" data-z="2">เคเบิลอากาศ ถึงปลายทาง<span class="e">Aerial cable to end load</span></td><td class="l" data-z="3">เคเบิลอากาศ ≤ 5 กม. แล้วสายเปลือย<span class="e">Aerial cable ≤ 5 km, then bare</span></td><td class="l" data-z="4">เคเบิลอากาศ ≤ 5 กม. แล้วสายเปลือย<span class="e">Aerial cable ≤ 5 km, then bare</span></td><td class="l" data-z="5">เคเบิลอากาศ ≤ 5 กม. แล้วสายเปลือย<span class="e">Aerial cable ≤ 5 km, then bare</span></td></tr><tr><td class="l">ต่อลงดินหม้อแปลงสถานี (2.3.2)<span class="e">Substation transformer grounding (2.3.2)</span></td><td class="l" data-z="1">ต่อลงดินโดยตรง (เผื่อ NGR ในอนาคต · กับดักเสิร์จ Gapless 24 kV)<span class="e">Solidly grounded (future NGR · 24 kV gapless arresters)</span></td><td class="l" data-z="2">ต่อลงดินโดยตรง<span class="e">Solidly grounded</span></td><td class="l" data-z="3">ต่อลงดินโดยตรง<span class="e">Solidly grounded</span></td><td class="l" data-z="4">ต่อลงดินโดยตรง<span class="e">Solidly grounded</span></td><td class="l" data-z="5">ต่อลงดินโดยตรง<span class="e">Solidly grounded</span></td></tr><tr><td class="l">รูปแบบสายส่ง กฟภ. (2.4.1.1)<span class="e">PEA transmission (2.4.1.1)</span></td><td class="l" data-z="1">วงเปิด / วงปิด<span class="e">Open / closed loop</span></td><td class="l" data-z="2">วงเปิด / วงปิด<span class="e">Open / closed loop</span></td><td class="l" data-z="3">วงเปิด / วงปิด<span class="e">Open / closed loop</span></td><td class="l" data-z="4">เรเดียล<span class="e">Radial</span></td><td class="l" data-z="5">เรเดียล<span class="e">Radial</span></td></tr><tr><td class="l">รูปแบบจำหน่ายแรงสูง (2.4.2)<span class="e">HV distribution (2.4.2)</span></td><td class="l" data-z="1">วงเปิด ≥ 2 แหล่ง<span class="e">Open loop ≥ 2 sources</span></td><td class="l" data-z="2">วงเปิด ≥ 2 แหล่ง (วงจรเฉพาะเมือง ²)<span class="e">Open loop ≥ 2 sources (city circuits ²)</span></td><td class="l" data-z="3">วงเปิด ≥ 2 แหล่ง<span class="e">Open loop ≥ 2 sources</span></td><td class="l" data-z="4">เรเดียล<span class="e">Radial</span></td><td class="l" data-z="5">เรเดียล<span class="e">Radial</span></td></tr><tr><td class="l">ต้านทานดินเสาสายส่ง (2.3.1)<span class="e">Transmission pole footing (2.3.1)</span></td><td class="l" colspan="5" style="text-align:center">ไม่เกิน 10 โอห์ม ทุกพื้นที่ (BFR ≤ 2.5 ครั้ง / 100 วงจร-กม. / ปี)<span class="e">≤ 10 Ω, all zones (BFR ≤ 2.5 / 100 circuit-km / year)</span></td></tr></tbody></table></div>
+    <div class="cap">¹ ใช้เคเบิลอากาศแทน เมื่อต้นไม้หนาแน่นหรือระยะห่างกับสิ่งก่อสร้างไม่ปลอดภัยพอ (2.2.1 ข) · พิจารณาติดตั้งรีโคลสเซอร์ และในเขตมลภาวะ/ที่โล่ง พิจารณาสายเปลือยแทนเคเบิลอากาศ (2.2.2) · ² สำหรับพื้นที่เมืองธุรกิจ และพื้นที่เมืองสำคัญพิเศษ · สถานีที่จ่ายเฉพาะพื้นที่ 3–5 ใช้สายเปลือยตลอด (2.2.2 ก) · ผู้ใช้ไฟ: สายส่งเข้าสถานีผู้ใช้ไฟมี Line In / Line Out + Terminal Station (2.4.1.2) · ต่อผู้ใช้ไฟจากระบบจำหน่ายแบบเรเดียล · ใช้เฉพาะการก่อสร้าง/ปรับปรุงใหม่ (3.6)<span class="e">¹ Aerial cable instead where trees are dense or structure clearance is unsafe (2.2.1 b) · consider reclosers, and bare conductor instead of aerial cable in polluted / open areas (2.2.2) · ² for business and special important cities · a substation serving only zones 3–5 uses bare conductor throughout (2.2.2 a) · consumers: transmission to a consumer substation has Line In / Line Out + Terminal Station (2.4.1.2) · consumer connections from distribution are radial · new construction / renovation only (3.6)</span></div>
+  </section>
+
+  <section class="blk zm" data-tab="memo">
+    <h2>บันทึก การไฟฟ้าส่วนภูมิภาค <span class="e">PEA internal memorandum</span></h2>
+    <div class="scroll"><table class="tbl"><tbody>
+      <tr><td class="l">จาก<span class="e">From</span></td><td class="l">คณะกรรมการ ฯ<span class="e">The Committee</span></td><td class="l">ถึง<span class="e">To</span></td><td class="l">ผวก.<span class="e">Governor</span></td></tr>
+      <tr><td class="l">เลขที่<span class="e">No.</span></td><td class="mono">มฟ.(ว).1336/2544 (166/45)*</td><td class="l">วันที่<span class="e">Date</span></td><td class="mono">17 ธ.ค. 2544</td></tr>
+      <tr><td class="l">เรื่อง<span class="e">Subject</span></td><td class="l" colspan="3">การพิจารณาระบบการจ่ายไฟตามสภาพพื้นที่ และระบบการต่อลงดินของ กฟภ.<span class="e">Consideration of the power supply system by area conditions and PEA grounding system</span></td></tr>
+      <tr><td class="l">เรียน<span class="e">Attn.</span></td><td class="l" colspan="3">ผวก. ผ่าน รผก. (ว)<span class="e">Governor, through Deputy Governor (Engineering)</span></td></tr>
+    </tbody></table></div>
+    <div class="cap">ต้นฉบับเป็นภาษาไทยทั้งฉบับ — ข้อความภาษาอังกฤษในหน้านี้เป็นคำแปลสรุป ไม่ใช่ข้อความในต้นฉบับ · ถอดความภาษาไทยตามที่พิมพ์ (รวมคำสะกดเดิม)<span class="e">The original is entirely in Thai — the English on this page is a condensed translation, not original text · Thai transcribed as printed (original spellings kept)</span></div>
+
+    <div class="sheetmark">หน้า 1 · PAGE 1 — 1. เรื่องเดิม · BACKGROUND</div>
+    <p>ตามอนุมัติ ผวก. ลว. 20 เม.ย. 2544 ได้แต่งตั้งคณะกรรมการพิจารณาระบบการจ่ายไฟตามสภาพพื้นที่ (Zoning) และระบบการต่อลงดิน (Grounding) ของ กฟภ. เพื่อให้คุณภาพของไฟฟ้า (Power Quality) และความเชื่อถือได้ในระบบไฟฟ้า (Reliability) ของ กฟภ. ดีขึ้น ซึ่งมีเรื่องที่จำเป็นต้องพิจารณาอยู่ 4 เรื่อง ดังนี้ :-<span class="e">By the Governor's approval of 20 Apr 2544 (2001) a committee was appointed to consider PEA's area-based supply system (Zoning) and grounding (Grounding) to improve power quality and reliability, covering 4 topics:</span></p>
+    <ol class="reg"><li><span class="no">1.1</span><div class="tx">การจัดแบ่งพื้นที่ให้บริการตามความสำคัญของผู้ใช้ไฟ<span class="e">Division of service areas by the importance of the consumers</span></div></li><li><span class="no">1.2</span><div class="tx">แบบมาตรฐานการก่อสร้างสายระบบจำหน่ายแรงสูง ให้สอดคล้องกับพื้นที่ให้บริการ<span class="e">Construction standards for HV distribution lines to suit the service area</span></div></li><li><span class="no">1.3</span><div class="tx">การต่อลงดินสำหรับระบบสายส่งและหม้อแปลงในสถานีไฟฟ้า ให้สอดคล้องกับพื้นที่ให้บริการ<span class="e">Grounding of transmission lines and substation transformers to suit the service area</span></div></li><li><span class="no">1.4</span><div class="tx">รูปแบบการจ่ายไฟฟ้าสำหรับระบบจำหน่ายแรงสูงและสายส่ง ให้สอดคล้องกับพื้นที่ให้บริการ<span class="e">Supply configuration of HV distribution and transmission systems to suit the service area</span></div></li></ol>
+
+    <div class="sheetmark">หน้า 1–3 · PAGES 1–3 — 2. การดำเนินการและการพิจารณา · PROCEEDINGS</div>
+    <p>คณะกรรมการ ฯ ได้ประชุมหารือเกี่ยวกับเรื่องดังกล่าวข้างต้นแล้ว จำนวน 3 ครั้ง (เมื่อวันที่ 23 พ.ค. 2544 , 13 ก.ค. 2544 และ 11 ก.ย. 2544) โดยได้แต่งตั้งคณะอนุกรรมการ ฯ ขึ้นมา 3 คณะ คือ คณะอนุกรรมการพิจารณารูปแบบการจ่ายไฟของระบบจำหน่ายแรงสูงและสายส่ง คณะอนุกรรมการพิจารณาแบบมาตรฐานการก่อสร้างระบบจำหน่ายแรงสูง และคณะอนุกรรมการพิจารณาการต่อลงดินของระบบไฟฟ้า ซึ่งพอสรุปผลการดำเนินการและพิจารณาได้ดังนี้ : -<span class="e">The committee met 3 times (23 May, 13 Jul and 11 Sep 2544) and appointed 3 sub-committees — HV distribution and transmission supply configuration, HV distribution construction standards, and power system grounding — with these results:</span></p>
+    <ol class="reg"><li><span class="no">2.1</span><div class="tx">การพิจารณาจัดแบ่งพื้นที่ให้บริการตามความสำคัญของผู้ใช้ไฟนั้น เพื่อให้ระบบจำหน่ายแรงสูง ระบบการต่อลงดินสำหรบสายส่งและสถานีไฟฟ้า และรูปแบบการจ่ายไฟสำหรับระบบจำหน่ายแรงสูง และระบบสายส่ง ของ กฟภ. มีความเหมาะสม และดัชนีความเชื่อถือได้ เป็นไปตามที่ กฟภ. กำหนดจึงเห็นสมควรปรับปรุงพื้นที่ให้บริการตามแผนปฏิบัติ ฉบับที่ 9 ของ กฟภ.ใหม่ เป็นดังนี้ :-<span class="e">Division of service areas by consumer importance: so that PEA's HV distribution, transmission/substation grounding and HV distribution/transmission supply configuration are appropriate and the reliability indices meet PEA targets, the service areas of PEA Action Plan No. 9 are revised as follows:</span></div></li><li style="margin-left:22px"><span class="no">2.1.1</span><div class="tx"><b>พื้นที่ 1</b> เป็นพื้นที่อุตสาหกรรมที่ประกาศโดยกระทรวงอุตสาหกรรม ได้แก่พื้นที่นิคมอุตสาหกรรม เขตอุตสาหกรรม หรือสวนอุตสาหกรรมที่มีขอบเขตแน่นอน<span class="e"><b>Zone 1</b> — industrial areas declared by the Ministry of Industry: industrial estates, industrial zones or industrial parks with defined boundaries.</span></div></li><li style="margin-left:22px"><span class="no">2.1.2</span><div class="tx"><b>พื้นที่ 2</b> เป็นพื้นที่ในเขตปกครองขององค์กรปกครองส่วนท้องถิ่น ที่มีฐานะเป็นเทศบาลนคร พื้นที่เมืองธุรกิจ และพื้นที่เมืองสำคัญพิเศษ ซึ่งได้แก่ เทศบาลนครเชียงใหม่ เทศบาลนครนครสวรรค์ เทศบาลนครขอนแก่น เทศบาลนครอุดรธานี เทศบาลนครนครราชสีมา เทศบาลนครนครปฐม เทศบาลนครนครศรีธรรมราช เทศบาลนครยะลา เทศบาลนครหาดใหญ่ เทศบาลนครสงขลา เทศบาลตำบลหัวหิน เทศบาลตำบลชะอำ เมืองพัทยา จังหวัดภูเก็ต เกาะสมุย ฯลฯ<span class="e"><b>Zone 2</b> — areas of local administrations with city-municipality status, business cities and special important cities: Chiang Mai, Nakhon Sawan, Khon Kaen, Udon Thani, Nakhon Ratchasima, Nakhon Pathom, Nakhon Si Thammarat, Yala, Hat Yai and Songkhla city municipalities, Hua Hin and Cha-am sub-district municipalities, Pattaya City, Phuket Province, Ko Samui, etc.</span></div></li><li style="margin-left:22px"><span class="no">2.1.3</span><div class="tx"><b>พื้นที่ 3</b> เป็นพื้นที่ในเขตปกครองขององค์กรปกครองส่วนท้องถิ่นที่มีฐานะเป็นเทศบาลเมือง<span class="e"><b>Zone 3</b> — areas of local administrations with town-municipality status (เทศบาลเมือง).</span></div></li><li style="margin-left:22px"><span class="no">2.1.4</span><div class="tx"><b>พื้นที่ 4</b> เป็นพื้นที่ในเขตปกครองขององค์กรปกครองส่วนท้องถิ่นที่มีฐานะเป็นเทศบาลตำบล<span class="e"><b>Zone 4</b> — areas of local administrations with sub-district-municipality status (เทศบาลตำบล).</span></div></li><li style="margin-left:22px"><span class="no">2.1.5</span><div class="tx"><b>พื้นที่ 5</b> เป็นพื้นที่ชนบท ซึ่งได้แก่พื้นที่อื่นๆ นอกเหนือจากพื้นที่ 1, 2, 3 และ 4<span class="e"><b>Zone 5</b> — rural areas, i.e. all areas other than zones 1, 2, 3 and 4.</span></div></li><li><span class="no">2.2</span><div class="tx">การพิจารณาแบบมาตรฐานการก่อสร้างระบบจำหน่ายแรงสูงนั้น เนื่องจากปัจจุบันระบบจำหน่ายแรงสูงของ กฟภ. ใช้สายเปลือย สายหุ้มฉนวนแบบไม่เต็มพิกัด (PIC) เคเบิลอากาศ (SAC) และเคเบิลใต้ดิน เป็นสายระบบจำหน่ายแรงสูง ซึ่งจากผลการใช้งานพบว่า การใช้สายเปลือยทำให้เกิดกระแสไฟฟ้าดับบ่อยครั้ง เนื่องจากเกิดกระแสไฟฟ้าลัดวงจรลงดินจากสาเหตุต้นไม้ และสัตว์แตะสายไฟ ส่วนการใช้สายหุ้มฉนวนแบบไม่เต็มพิกัดนั้น ก็มีปัญหาอื่นๆตามมา คือ เกิด Partial Discharge และสายขาดเนื่องจากฟ้าผ่าบ่อยครั้ง สำหรับการใช้เคเบิลอากาศและเคเบิลใต้ดินจะมีความเชื่อถือได้สูงกว่า โดยเคเบิลใต้ดินจะมีความเชื่อถือได้สูงสุด แต่ก็มีค่าใช้จ่ายในการลงทุนสูงตามด้วย ดังนั้น คณะกรรมการ ฯ จึงเห็นสมควรกำหนดแนวทางในการพิจารณาออกแบบระบบจำหน่ายแรงสูง ของ กฟภ. เป็น 2 กรณี ดังนี้ :-<span class="e">HV distribution construction standards: PEA currently uses bare conductor, partially insulated conductor (PIC), spaced aerial cable (SAC) and underground cable. Bare conductor causes frequent outages from earth faults by trees and animals; PIC brings other problems — partial discharge and frequent conductor breakage from lightning. Aerial and underground cables are more reliable, underground cable the most, but at a higher investment cost. The committee therefore sets design guidelines for PEA HV distribution in 2 cases:</span></div></li><li style="margin-left:22px"><span class="no">2.2.1</span><div class="tx">กรณีก่อสร้างระบบจำหน่ายแรงสูงในเขตพื้นที่บริการ<span class="e">Case 1 — HV distribution built within a service area</span></div></li><li style="margin-left:44px"><span class="no">ก)</span><div class="tx">สำหรับระบบจำหน่ายแรงสูงที่อยู่ในพื้นที่ 1 หรือ พื้นที่ 2 ให้ใช้เคเบิลอากาศเป็นสายระบบจำหน่ายแรงสูง<span class="e">a) In zone 1 or zone 2, use aerial cable for HV distribution.</span></div></li><li style="margin-left:44px"><span class="no">ข)</span><div class="tx">สำหรับระบบจำหน่ายแรงสูงที่อยู่ในเขตพื้นที่ 3, พื้นที่ 4 และพื้นที่ 5 ให้ใช้สายเปลือยเป็นสายระบบจำหน่ายแรงสูง โดยหากเป็นบริเวณที่มีต้นไม้อยู่หนาแน่น หรือเมื่อก่อสร้างระบบจำหน่ายแรงสูงแล้ว จะมีระยะห่างระหว่างสายระบบจำหน่ายแรงสูงกับสิ่งก่อสร้างไม่ปลอดภัยเพียงพอ ก็ให้ใช้เคเบิลอากาศ เป็นสายระบบจำหน่ายแรงสูงแทนสายเปลือย<span class="e">b) In zones 3, 4 and 5, use bare conductor; where trees are dense, or where the clearance between the HV line and structures would not be safe enough, use aerial cable instead of bare conductor.</span></div></li><li style="margin-left:22px"><span class="no">2.2.2</span><div class="tx">กรณีก่อสร้างระบบจำหน่ายแรงสูงออกจากสถานีไฟฟ้า<span class="e">Case 2 — HV distribution leaving a substation</span></div></li><li style="margin-left:44px"><span class="no">ก)</span><div class="tx">สำหรับสถานีไฟฟ้าที่มีการจ่ายกระแสไฟฟ้าไปเฉพาะพื้นที่ 1 หรือ พื้นที่ 2 ให้ใช้เคเบิลอากาศเป็นสายระบบจำหน่ายแรงสูง แต่สำหรับสถานีไฟฟ้าที่มีการจ่ายกระแสไฟฟ้าไปเฉพาะพื้นที่ 3 หรือ พื้นที่ 4 หรือ พื้นที่ 5 ให้ใช้สายเปลือยเป็นสายระบบจำหน่ายแรงสูง ตั้งแต่สถานีไฟฟ้าไปจนถึงโหลดปลายทาง<span class="e">a) A substation supplying only zone 1 or zone 2: aerial cable; a substation supplying only zone 3, 4 or 5: bare conductor, from the substation to the end load.</span></div></li><li style="margin-left:44px"><span class="no">ข)</span><div class="tx">สำหรับสถานีไฟฟ้าที่มีการจ่ายกระแสไฟฟ้าไปยังพื้นที่ 1 หรือ พื้นที่ 2 และ มีบางวงจรจ่ายกระแสไฟฟ้าไปยังพื้นที่ 3 พื้นที่ 4 หรือ พื้นที่ 5 ด้วย เห็นควรกำหนดให้วงจรที่จ่ายกระแสไฟฟ้าไปยังพื้นที่ 1 หรือ พื้นที่ 2 ใช้เคเบิลอากาศเป็นสายระบบจำหน่ายแรงสูง ตั้งแต่สถานีไฟฟ้าไปจนถึงโหลดปลายทาง ส่วนวงจรที่จ่ายกระแสไฟฟ้าไปให้พื้นที่ 3 พื้นที่ 4 หรือ พื้นที่ 5 ให้ใช้เคเบิลอากาศเป็นสายระบบจำหน่ายแรงสูง ตั้งแต่สถานีไฟฟ้าออกไปเป็นรัศมี 5 กม. โดยส่วนของระบบจำหน่ายแรงสูงที่อยู่ห่างจากสถานีไฟฟ้าเป็นรัศมีเกินกว่า 5 กม. ให้ใช้สายเปลือย<span class="e">b) A substation supplying zone 1 or 2 with some circuits to zone 3, 4 or 5: circuits to zone 1 or 2 use aerial cable from the substation to the end load; circuits to zone 3, 4 or 5 use aerial cable within a 5 km radius of the substation and bare conductor beyond 5 km.</span></div></li><li style="margin-left:44px"><span class="no"></span><div class="tx">ทั้งนี้เห็นควรให้พิจารณาติดตั้งรีโคลสเซอร์ ตามอนุมัติ ผวก. ลว. 24 ก.ย. 2540 เพื่อลดผลกระทบเกี่ยวกับความเชื่อถือได้ในการใช้สายเปลือยดังกล่าวเพิ่มเติมและในเขตที่มีปัญหามลภาวะหรือเป็นที่โล่งให้พิจารณาใช้สายเปลือยแทนการใช้เคเบิลอากาศ<span class="e">Reclosers should also be considered (per Governor's approval of 24 Sep 2540 / 1997) to reduce the reliability impact of bare conductor; in polluted or open areas consider bare conductor instead of aerial cable.</span></div></li></ol>
+    <div class="sheetmark">หน้า 3–5 · PAGES 3–5</div>
+    <ol class="reg"><li><span class="no">2.3</span><div class="tx">การพิจารณาการต่อลงดินสำหรับระบบสายส่งและหม้อแปลงในสถานีไฟฟ้า คณะกรรมการ ฯ ได้พิจารณาแล้วดังนี้:-<span class="e">Grounding of transmission lines and substation transformers — the committee considered:</span></div></li><li style="margin-left:22px"><span class="no">2.3.1</span><div class="tx">สำหรับการต่อลงดินในระบบสายส่งนั้น คณะกรรมการ ฯ เห็นสมควรกำหนดค่าความต้านทานดินของเสาแต่ละต้นควรมีค่าได้ไม่เกิน 10 โอห์ม เนื่องจากจากการวิเคราะห์ผลกระทบของฟ้าผ่าต่อสายส่ง (Lightning Performance) พบว่า จะทำให้ค่า Back Flash Rate(BFR) มีค่าไม่เกิน 2.5 ครั้งต่อ 100 วงจร-กม.ต่อปี ซึ่งถือว่าอยู่ในเกณฑ์พอใช้ หากมีค่าความต้านทานดิน เกิน 10 โอห์ม ก็จะยิ่งทำให้ค่า Back Flash Rate สูงขึ้นไปอีก<span class="e">Transmission line grounding: the footing resistance of each pole should not exceed 10 Ω — lightning-performance analysis shows this keeps the Back Flash Rate (BFR) at or below 2.5 per 100 circuit-km per year, considered fair; above 10 Ω the BFR rises further.</span></div></li><li style="margin-left:22px"><span class="no">2.3.2</span><div class="tx">สำหรับการต่อลงดินของหม้อแปลงที่สถานีไฟฟ้านั้น คณะกรรมการ ฯ ได้พิจารณาแล้ว เห็นสมควรกำหนดวิธีการต่อลงดินที่หม้อแปลงตามพื้นที่ให้บริการดังนี้ :<span class="e">Substation transformer grounding by service area:</span></div></li><li style="margin-left:44px"><span class="no">ก)</span><div class="tx">กรณีพื้นที่ 1 ในชั้นต้นนี้ เห็นสมควรให้ออกแบบสถานีไฟฟ้าโดยให้ต่อลงดินหม้อแปลงไฟฟ้าแบบต่อลงดินโดยตรง (Solidly Ground) ก่อน โดยสำหรับผู้ใช้ไฟในระบบจำหน่ายแรงสูง 22 kV ที่ติดตั้งใหม่ รวมทั้งระบบจำหน่ายแรงสูงของ กฟภ. ให้ดำเนินการติดตั้งกับดักเสิร์จแบบ Gapless 24 kV เผื่อไว้ ในกรณีที่มีการเปลี่ยนแปลงแบบการต่อลงดินเป็นแบบต่อผ่านตัวต้านทาน (Neutral Grounding Resistor) ในอนาคตไว้ด้วย ทั้งนี้ หากมีผู้ใช้ไฟประเภทโรงงานอุตสาหกรรม ที่มีการใช้อุปกรณ์ไฟฟ้าที่ไวต่อผลกระทบจาก Voltage Dip เป็นจำนวนมาก ก็อาจเปลี่ยนแบบการต่อลงดินของหม้อแปลงไฟฟ้า เป็นแบบต่อผ่านตัวต้านทานในอนาคตต่อไป<span class="e">a) Zone 1: initially design substations with solidly grounded transformers; new 22 kV HV consumers and PEA HV distribution shall install 24 kV gapless surge arresters, allowing a future change to neutral-grounding-resistor (NGR) grounding; if many industrial consumers with voltage-dip-sensitive equipment exist, transformer grounding may later be changed to resistance grounding.</span></div></li><li style="margin-left:44px"><span class="no">ข)</span><div class="tx">กรณีพื้นที่ 2, พื้นที่ 3, พื้นที่ 4 และพื้นที่ 5 เห็นสมควรให้ออกแบบสถานีไฟฟ้า โดยให้ต่อลงดินหม้อแปลงไฟฟ้า แบบต่อลงดินโดยตรงเนื่องจากโดยทั่วไปผู้ใช้ไฟในบริเวณดังกล่าว จะไม่ได้รับผลกระทบเกี่ยวกับการใช้อุปกรณ์ไฟฟ้าจากสาเหตุเกิด Voltage Dip<span class="e">b) Zones 2, 3, 4 and 5: design substations with solidly grounded transformers, since consumers there are generally not affected by voltage dips.</span></div></li><li><span class="no">2.4</span><div class="tx">การพิจารณารูปแบบการจ่ายไฟสำหรับระบบจำหน่ายแรงสูงและสายส่งได้มีการพิจารณาทั้งในส่วนของ กฟภ. และ ผู้ใช้ไฟ ซึ่งการจัดรูปแบบการจ่ายไฟนั้นจะเป็นการช่วยลดค่า SAIDI ของระบบให้ลดลง โดยเฉพาะรูปแบบการจ่ายไฟแบบตาข่าย(Network Circuit) เนื่องจากหากเกิดปัญหาขึ้นที่จุดใดจุดหนึ่งในระบบ ก็จะสามารถจ่ายไฟจากวงจรอื่นมาช่วยได้ แต่รูปแบบการจ่ายไฟดังกล่าวมีความซับซ้อนและยุ่งยากทั้งในการออกแบบ การปฏิบัติงาน การบำรุงรักษา รวมทั้งต้องใช้เงินลงทุนสูงมาก ดังนั้นรูปแบบการจ่ายไฟที่เหมาะสมในการนำมาใช้คือ แบบวง(Loop Circuit) และ แบบเรเดียล (Radial Circuit) แต่ต้องพิจารณาความเหมาะสมหลายด้านประกอบกัน ซึ่งคณะกรรมการฯ ได้พิจารณากำหนดรูปแบบการจ่ายไฟเป็นดังนี้ :-<span class="e">Supply configuration for HV distribution and transmission, for both PEA and consumers: configuration helps reduce SAIDI, especially the network circuit (supply from other circuits on a fault), but that is complex and difficult to design, operate and maintain and very costly; the suitable configurations are loop and radial circuits, chosen on several grounds, as follows:</span></div></li><li style="margin-left:22px"><span class="no">2.4.1</span><div class="tx">การจัดรูปแบบการจ่ายไฟระบบสายส่ง<span class="e">Transmission supply configuration</span></div></li><li style="margin-left:44px"><span class="no">2.4.1.1</span><div class="tx">สำหรับ กฟภ.<span class="e">For PEA</span></div></li><li style="margin-left:66px"><span class="no">ก)</span><div class="tx">พื้นที่ 1 หรือ พื้นที่ 2 หรือพื้นที่ 3 ให้กำหนดรูปแบบการจ่ายไฟระบบสายส่งเป็นแบบวงเปิดหรือวงปิด(Open or Close loop circuit)<span class="e">a) Zone 1, 2 or 3: open or closed loop circuit.</span></div></li><li style="margin-left:66px"><span class="no">ข)</span><div class="tx">พื้นที่ 4 หรือ พื้นที่ 5 ให้กำหนดรูปแบบการจ่ายไฟระบบสายส่งเป็นแบบเรเดียล<span class="e">b) Zone 4 or 5: radial.</span></div></li><li style="margin-left:44px"><span class="no">2.4.1.2</span><div class="tx">สำหรับ ผู้ใช้ไฟ — เห็นควรให้ออกแบบระบบสายส่งที่จ่ายไฟให้กับสถานีไฟฟ้าของผู้ใช้ไฟให้มีสายป้อนเข้า(Line In) และสายจ่ายออก (Line Out) และให้ผู้ใช้ไฟออกแบบติดตั้งอุปกรณ์ป้องกันสายป้อนเข้าและสายจ่ายออก (Terminal Station) เพิ่มเติมก่อนจ่ายไฟเข้าอุปกรณ์ป้องกันสถานีไฟฟ้าของผู้ใช้ไฟ(Transformer Bay) ทั้งนี้เห็นควรให้คำนึงถึงความพร้อมของ กฟภ. และ ผู้ใช้ไฟ<span class="e">For consumers — the transmission line supplying a consumer substation should have a Line In and a Line Out, and the consumer should add line-in/line-out protection (Terminal Station) ahead of the substation protection (Transformer Bay), considering the readiness of PEA and the consumer.</span></div></li><li style="margin-left:66px"><span class="no"></span><div class="tx">อนึ่ง ขณะนี้โครงการความร่วมมือทางวิชาการระหว่าง กฟภ. กับ มหาวิทยาลัยเกษตรศาสตร์ ได้มีการศึกษาเกี่ยวกับแนวทางหรือข้อเสนอแนะอื่นๆในการออกแบบระบบสายส่งสำหรับผู้ใช้ไฟ ซึ่งอาจจะไม่จำเป็นต้องเป็นแบบสายป้อนเข้าและสายจ่ายออกทั้งหมด จะทำให้สามารถลดค่าใช้จ่ายในกรณีที่ต้องการให้ระบบสายส่งย่อยที่จ่ายไฟให้กับสถานีไฟฟ้าของผู้ใช้ไฟต้องเป็นแบบสายป้อนเข้าและสายจ่ายออก<span class="e">A PEA–Kasetsart University academic cooperation project is studying other approaches for consumer transmission design that may not all need line-in/line-out, reducing cost where sub-transmission to consumer substations would otherwise require it.</span></div></li><li style="margin-left:22px"><span class="no">2.4.2</span><div class="tx">การจัดรูปแบบการจ่ายไฟระบบจำหน่ายแรงสูง<span class="e">HV distribution supply configuration</span></div></li><li style="margin-left:44px"><span class="no">2.4.2.1</span><div class="tx">พื้นที่ 1 พื้นที่ 2 หรือ พื้นที่ 3 ให้กำหนดรูปแบบการจ่ายไฟระบบจำหน่ายแรงสูงเป็นแบบวงเปิด โดยรับไฟอย่างน้อยจากสองแหล่ง สำหรับพื้นที่เมืองธุรกิจ และ พื้นที่เมืองสำคัญพิเศษให้ออกแบบเป็นวงจรเฉพาะเมือง<span class="e">Zone 1, 2 or 3: open loop fed from at least two sources; business cities and special important cities are designed with dedicated city circuits.</span></div></li><li style="margin-left:44px"><span class="no">2.4.2.2</span><div class="tx">พื้นที่ 4 หรือ พื้นที่ 5 ให้กำหนดรูปแบบการจ่ายไฟระบบจำหน่ายแรงสูงเป็นแบบเรเดียล<span class="e">Zone 4 or 5: radial.</span></div></li><li style="margin-left:66px"><span class="no"></span><div class="tx">ทั้งนี้การออกแบบระบบจำหน่ายแรงสูง เพื่อจ่ายไฟให้ผู้ใช้ไฟ ยังคงให้ออกแบบต่อเชื่อมจากระบบจำหน่ายของ กฟภ. ดังกล่าว ข้างต้นไปยังผู้ใช้ไฟ เป็นแบบเรเดียล ตามที่ถือปฏิบัติอยู่<span class="e">HV distribution to supply a consumer is still connected radially from the PEA system above to the consumer, as currently practised.</span></div></li></ol>
+
+    <div class="sheetmark">หน้า 5–6 · PAGES 5–6 — 3. ข้อเสนอแนะ · RECOMMENDATIONS</div>
+    <p>จากการดำเนินการและการพิจารณาดังกล่าวข้างต้น คณะกรรมการฯ ได้พิจารณาแล้วเพื่อให้ระบบจำหน่ายแรงสูง ระบบการต่อลงดินสำหรับระบบสายส่งและหม้อแปลงในสถานีไฟฟ้า และรูปแบบการจ่ายไฟสำหรับระบบจำหน่ายแรงสูงและระบบสายส่ง ของ กฟภ. สอดคล้องตามสภาพพื้นที่ให้บริการจึงเห็นควรขออนุมัติดังนี้<span class="e">So that PEA's HV distribution, transmission/substation-transformer grounding and supply configuration suit the service area, the committee requests approval of:</span></p>
+    <ol class="reg"><li><span class="no">3.1</span><div class="tx">การจัดแบ่งพื้นที่ให้บริการตามความสำคัญของผู้ใช้ไฟ เห็นควรให้แบ่งพื้นที่ให้บริการออกเป็น 5 พื้นที่ตามข้อ 2.1 เพื่อเป็นบรรทัดฐานในการกำหนดรูปแบบการจ่ายไฟสำหรับระบบจำหน่ายแรงสูงและระบบสายส่ง ออกแบบมาตรฐานการก่อสร้างของระบบจำหน่ายแรงสูง และ ระบบการต่อลงดินสำหรับระบบสายส่งและหม้อแปลงในสถานีไฟฟ้าของ กฟภ.<span class="e">Divide service areas into the 5 zones of clause 2.1 as the basis for supply configuration of HV distribution and transmission, HV distribution construction standards, and grounding of PEA transmission lines and substation transformers.</span></div></li><li><span class="no">3.2</span><div class="tx">มาตรฐานการก่อสร้างระบบจำหน่ายแรงสูงให้สอดคล้องกับพื้นที่ให้บริการ เห็นควรกำหนดหลักเกณฑ์เป็น 2 กรณีตามข้อ 2.2 เพื่อความเหมาะสมในการลงทุน<span class="e">HV distribution construction standards per service area: the 2 cases of clause 2.2, for appropriate investment.</span></div></li><li><span class="no">3.3</span><div class="tx">สำหรับการต่อลงดินของระบบสายส่ง เห็นควรกำหนดหลักเกณฑ์ตามข้อ 2.3.1 ทั้งนี้ให้ กมฟ. ร่วมกับ กวจ. พิจารณาออกแบบการต่อลงดินของระบบสายส่ง 115 kV เพื่อให้ได้ความต้านทานดินของเสาแต่ละต้นไม่เกิน 10 โอห์ม หรือ แนวทางอื่นๆ ในการแก้ปัญหาการ Flashover<span class="e">Transmission grounding per clause 2.3.1; กมฟ. with กวจ. to design 115 kV line grounding for a footing resistance of each pole not exceeding 10 Ω, or other ways to solve flashover.</span></div></li><li><span class="no">3.4</span><div class="tx">สำหรับการต่อลงดินของหม้อแปลงในสถานีไฟฟ้า เห็นควรกำหนดหลักเกณฑ์ตามข้อ 2.3.2 ทั้งนี้เห็นควรให้ กวจ. และ กองที่เกี่ยวข้องติดตามผลการใช้งานระบบการต่อลงดินของหม้อแปลงในสถานีไฟฟ้าแบบต่อผ่านความต้านทานลงดินทั้ง 30 สถานี ที่ กฟภ.กำลังจะนำมาใช้งานในพื้นที่นิคมอุตสาหกรรม เพื่อเป็นข้อมูลในการกำหนดหลักเกณฑ์การใช้งานระบบดังกล่าวต่อไป<span class="e">Substation transformer grounding per clause 2.3.2; กวจ. and related divisions to monitor the 30 resistance-grounded substations PEA is about to use in industrial estates, as data for future criteria.</span></div></li><li><span class="no">3.5</span><div class="tx">สำหรับการจัดรูปแบบการจ่ายไฟสำหรับระบบสายส่งและสายจำหน่าย เห็นควรกำหนดหลักเกณฑ์ตามข้อ 2.4 ทั้งนี้เห็นควรให้ กอฟ, กอส.1, กอส.2, กจฟ. และ กผฟ. ร่วมกันพิจารณาออกแบบระบบการจ่ายไฟสำหรับระบบจำหน่ายและระบบสายส่ง รวมทั้งพิจารณาระบบป้องกันในสถานีไฟฟ้า ในกรณีที่มีการเปลี่ยนรูปแบบการจ่ายไฟเป็นแบบวงเปิดหรือปิด<span class="e">Supply configuration of transmission and distribution per clause 2.4; กอฟ, กอส.1, กอส.2, กจฟ. and กผฟ. to jointly design the distribution and transmission supply systems and substation protection where configuration changes to open or closed loop.</span></div></li><li><span class="no">3.6</span><div class="tx">หลักเกณฑ์ดังกล่าวข้างต้น ให้ใช้เฉพาะการก่อสร้างหรือการปรับปรุงใหม่เท่านั้น<span class="e">These criteria apply to new construction or renovation only.</span></div></li></ol>
+    <p>จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ พร้อมนี้ได้แนบรายงานการประชุมของคณะกรรมการฯ และข้อมูลที่เกี่ยวข้องมาเพื่อประกอบการพิจารณาด้วยแล้ว<span class="e">Submitted for approval; the committee's meeting minutes and related data are attached.</span></p>
+  </section>
+
+  <section class="blk" data-tab="memo">
+    <h2>การอนุมัติ และคณะกรรมการ <span class="e">Approval and committee</span></h2>
+    <ol class="reg">
+      <li><span class="no">—</span><div class="tx">ลายมือ "อนุมัติตาม คณะ กก. เสนอ" ลงนาม 16 ม.ค. 45* (หน้า 6)<span class="e">Handwritten "approved as proposed by the committee", signed 16 Jan 2545 (2002)* (page 6)</span></div></li>
+      <li><span class="no">—</span><div class="tx">ตราประทับ 17 ธ.ค. 2544 ข้างลายมือชื่อประธาน · ลายมือ "ผมฟ." ตรา 17 ม.ค. 2545 · ลายมือส่งต่อ "คุณกิตติศักดิ์ … 21 ม.ค. 2545"* (หน้า 6)<span class="e">Stamp 17 Dec 2544 beside the chairman's signature · handwritten "ผมฟ." with stamp 17 Jan 2545 · forwarding note to "Khun Kittisak … 21 Jan 2545"* (page 6)</span></div></li>
+    </ol>
+    <div class="scroll"><table class="tbl"><thead><tr><th>ชื่อ<span class="e">Name</span></th><th>ตำแหน่ง<span class="e">Position</span></th><th>หน้าที่<span class="e">Role</span></th></tr></thead><tbody><tr><td class="l">นายสมศักดิ์ นิติศฤงคาริน</td><td class="mono">อฝ.มภ.</td><td class="l">ประธานกรรมการฯ</td></tr><tr><td class="l">นายศุภากร ศรีทองกิติกูล</td><td class="mono">อก.กก.2</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายบุญลือ อึ๊งบำรุงพันธุ์</td><td class="mono">รก.จฟ.</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายสาคร พยัคฆเรือง</td><td class="mono">รก.อค.</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายกนก สิกขมาน</td><td class="mono">ชก.วจ</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายวิชอบ เนียมสอน</td><td class="mono">ชก.อฟ.</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายณรงค์ ตันติฉายากร</td><td class="mono">ชก.ผฟ.</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายมนตรี ผดุงใจ</td><td class="mono">ชก.กก.1</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายนิพนธ์ อุบลธรรม</td><td class="mono">วศก.9, กกก.3</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายอนุโลม อุตมะพันธุ์</td><td class="mono">วศก.8, กอส.2</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายประจักษ์ อุดหนุน</td><td class="mono">วศก.8, กคก.</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายสมศักดิ์ สาระโภค</td><td class="mono">วศก.8, กอส.1</td><td class="l">กรรมการฯ</td></tr><tr><td class="l">นายวิลาศ งามแสงรุ่งสาโรจน์</td><td class="mono">อก.มฟ.</td><td class="l">กรรมการฯ และ เลขานุการฯ</td></tr></tbody></table></div>
+    <div class="cap">ลงนามครบทุกท่านในต้นฉบับ (หน้า 6–7) · ชื่อไฟล์ท้ายหน้า "C:\KITTISAK\New Zoning and Grounding.doc" ไม่ใช่เนื้อหา<span class="e">All members signed on the original (pages 6–7) · footer file name "C:\KITTISAK\New Zoning and Grounding.doc" is not content</span></div>
+  </section>
+
+  <script>
+  (function(){
+    let cur = null;
+    const hl = z => { cur = cur === z ? null : z; document.querySelectorAll("#zt [data-z]").forEach(c => c.classList.toggle("on", c.dataset.z === cur)); };
+    document.querySelectorAll("#zt th[data-z]").forEach(th => { th.style.cursor = "pointer"; th.addEventListener("click", () => hl(th.dataset.z)); });
+  })();
+  </script>
+
+<!-- ===== end page content ===== -->
+
+  <div class="two">
+    <section class="blk">
+      <h2 id="notesH"></h2>
+      <ol class="notes" id="notes"></ol>
+    </section>
+    <section class="blk">
+      <h2>ค่าที่ต้องยืนยัน <span class="e">To be verified</span></h2><div class="hint" style="margin:-6px 0 10px">แบบต้นฉบับไม่ได้ระบุ อ่านจากภาพ หรืออ่านไม่ชัด<span class="e">Not stated on the original, read from the picture, or illegible</span></div>
+      <ol class="notes" id="assume"></ol>
+    </section>
+  </div>
+
+  <footer class="tb" id="tb"></footer>
+</div>
+
+<script>
+/* ===== header / tabs / notes / title block from PAGE (NAME.json) ===== */
+const PAGE = {"group": "A0100 ระบบแรงต่ำ · รายละเอียดทั่วไป", "groupEn": "A0100 LOW VOLTAGE · GENERAL DETAILS", "nameTh": "การพิจารณาระบบการจ่ายไฟตามสภาพพื้นที่ และระบบการต่อลงดินของ กฟภ.", "nameEn": "Consideration of power supply system by area conditions (zoning) and PEA grounding system", "assembly": "—", "spec": "บันทึกคณะกรรมการ ถึง ผวก. 17 ธ.ค. 2544 · แบ่ง 5 พื้นที่ · สายจำหน่ายแรงสูงตามพื้นที่ · ต้านทานดินเสาสายส่ง ≤ 10 Ω · หม้อแปลงสถานีต่อลงดินโดยตรง · วงเปิด/เรเดียล · อนุมัติ 16 ม.ค. 2545 · 7 หน้า", "titleBlock": {"org": "การไฟฟ้าส่วนภูมิภาค · บันทึก คณะกรรมการพิจารณาระบบการจ่ายไฟตามสภาพพื้นที่และระบบการต่อลงดิน — PROVINCIAL ELECTRICITY AUTHORITY", "scale": "— (เอกสารข้อความ · text memo)", "date": "17 ธ.ค. 2544 · อนุมัติ 16 ม.ค. 2545*", "dwg": "บันทึกเลขที่ มฟ.(ว).1336/2544 (166/45)*", "sheet": "7 หน้า · 7 pages"}, "tabs": [["all", "ทั้งหมด", "All"], ["sum", "สรุป", "Summary"], ["memo", "บันทึก", "Memo"]], "notesHead": ["การใช้งาน", "Use"], "notes": [["เอกสารนี้เป็นบันทึกข้อความ (ไม่มีเลขที่การประกอบ) — หลักเกณฑ์ใช้เฉพาะการก่อสร้างหรือการปรับปรุงใหม่ (ข้อ 3.6)", "This is a memorandum (no assembly number) — the criteria apply to new construction or renovation only (clause 3.6)."], ["ตารางสรุปตามพื้นที่จัดทำเพิ่มเพื่อความสะดวก หากต่างจากข้อความในบันทึก ให้ยึดบันทึก", "The zone summary table is added for convenience; the memo text governs if they differ."], ["รายชื่อเทศบาลในพื้นที่ 2 เป็นรายชื่อ ณ ปี 2544 และลงท้าย \"ฯลฯ\" — ตรวจสถานะเทศบาลปัจจุบันก่อนใช้", "The zone 2 list is as of 2544 (2001) and ends with \"etc.\" — check current municipal status before use."]], "verify": [["เลขที่บันทึกเขียนด้วยลายมือ อ่านได้ \"มฟ.(ว).1336/2544 (166/45)\" — ตัวเลขหลักแรกอาจเป็น 9", "The handwritten memo number reads \"มฟ.(ว).1336/2544 (166/45)\" — the first digit may be 9."], ["วันที่ลายมือ \"17 ธ.ค. 2544\" อ่านจากตัวย่อเดือนที่เขียนเหมือน \"S.A.\" · วันที่อนุมัติ \"16 ม.ค. 45\" และข้อความ \"อนุมัติตาม คณะ กก. เสนอ\" อ่านจากลายมือ · ผู้ลงนามอนุมัติไม่ได้ระบุชื่อ", "The date \"17 Dec 2544\" is read from a handwritten month abbreviation resembling \"S.A.\" · the approval \"16 Jan 45\" and \"approved as proposed by the committee\" are read from handwriting · the approver is not named."], ["ข้อความภาษาอังกฤษทั้งหมดเป็นคำแปลสรุป (ต้นฉบับไม่มีภาษาอังกฤษ ยกเว้นศัพท์ในวงเล็บ)", "All English is a condensed translation (the original has no English except the bracketed terms)."], ["ถอดความตามที่พิมพ์ รวมคำสะกดเดิม เช่น \"สำหรบสายส่ง\" (ข้อ 2.1)", "Transcribed as printed, including original spellings such as \"สำหรบสายส่ง\" (clause 2.1)."], ["ตัวย่อหน่วยงาน (กมฟ., กวจ., กอฟ, กอส.1, กอส.2, กจฟ., กผฟ., อฝ.มภ. ฯลฯ) คงไว้ตามต้นฉบับ ไม่ได้ขยายความ", "Division abbreviations (กมฟ., กวจ., กอฟ, กอส.1, กอส.2, กจฟ., กผฟ., อฝ.มภ., …) are kept as printed, not expanded."], ["หัวกลุ่ม A0100 ตามรายการกลุ่ม — เอกสารนี้เกี่ยวกับระบบจำหน่ายแรงสูง/สายส่ง ไม่ใช่แรงต่ำ", "Header group A0100 follows the group list — the memo concerns HV distribution / transmission, not LV."]]};
+(function(){
+  $("grp").innerHTML = PAGE.group + `<span class="e" style="text-transform:none">${PAGE.groupEn}</span>`;
+  $("nameTh").textContent = PAGE.nameTh;
+  $("nameEn").textContent = PAGE.nameEn;
+  $("asmNo").textContent = PAGE.assembly;
+  $("asmOld").textContent = PAGE.assemblyOld ? "เดิม · OLD " + PAGE.assemblyOld : "";
+  $("pgSpec").textContent = PAGE.spec || "";
+  const nh = PAGE.notesHead || ["หมายเหตุ", "Notes"];
+  $("notesH").innerHTML = `${nh[0]} <span class="e">${nh[1]}</span>`;
+  $("notes").innerHTML = (PAGE.notes || []).map(([th, en]) => `<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = (PAGE.verify || []).map(([th, en]) => `<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join("");
+  const tb = PAGE.titleBlock;
+  $("tb").innerHTML = `<div class="w6">${tb.org}</div>
+    <div><span class="k">มาตราส่วน · SCALE</span>${tb.scale}</div>
+    <div><span class="k">วันที่ · DATE</span>${tb.date}</div>
+    <div class="w2"><span class="k">ชื่อแบบ · TITLE</span>${PAGE.nameTh}<span class="e">${PAGE.nameEn}</span></div>
+    <div><span class="k">แบบเลขที่ · DWG NO.</span>${tb.dwg}</div>
+    <div><span class="k">SHEET</span>${tb.sheet}</div>`;
+  /* optional tabs: PAGE.tabs = [[key, "ไทย", "English"], …]; sections carry data-tab="key" (or "key1 key2");
+     a tab with key "all" shows everything */
+  const tabs = PAGE.tabs || [];
+  if (tabs.length) {
+    $("tabSeg").innerHTML = tabs.map(([k, th, en]) => `<button type="button" data-k="${k}" title="${en}">${th}</button>`).join("");
+    const set = k => {
+      document.querySelectorAll("#tabSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.k === k));
+      document.querySelectorAll("[data-tab]").forEach(el => el.hidden = !(k === "all" || el.dataset.tab.split(" ").includes(k)));
+    };
+    $("tabSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.k); });
+    set(tabs[0][0]);
+  }
+})();
+</script>
+</html><a id="hubBack" href="../index.html" onclick="if(history.length>1){history.back();return false}" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← คลังแบบ</a><style id="blnCss">
+svg text.bln-t{cursor:pointer}
+svg .bln-g:focus{outline:none}svg .bln-g:focus-visible circle.bln-c{stroke:#2563eb!important;stroke-width:2.4!important}
+svg circle.bln-c{cursor:pointer;transition:fill .15s}
+svg .bln-g:hover circle.bln-c,svg circle.bln-c.hov{fill:rgba(37,99,235,.18)!important}
+svg circle.bln-c.on{fill:rgba(234,88,12,.28)!important;stroke:#ea580c!important;stroke-width:2.4!important}
+svg text.bln-t.on{fill:#c2410c!important;font-weight:700}
+#blnPop{position:fixed;z-index:10000;max-width:340px;width:calc(100vw - 24px);background:var(--sheet,#fff);color:var(--ink,#111);border:1px solid var(--line,#d4d4d8);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);font:14px/1.45 "IBM Plex Sans Thai",system-ui,sans-serif;display:none;overflow:hidden}
+#blnPop .hd{display:flex;gap:10px;align-items:flex-start;padding:12px 14px 8px}
+#blnPop .no{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 15px "IBM Plex Mono",monospace}
+#blnPop .th{font-weight:600}
+#blnPop .en{color:var(--muted,#666);font-size:12.5px}
+#blnPop .x{margin-left:auto;border:0;background:none;font-size:20px;line-height:1;color:var(--muted,#666);cursor:pointer;padding:0 2px}
+#blnPop .qty{display:flex;align-items:baseline;gap:8px;padding:8px 14px;background:rgba(234,88,12,.08);border-top:1px solid var(--line,#e4e4e7);border-bottom:1px solid var(--line,#e4e4e7)}
+#blnPop .qty b{font:700 22px "IBM Plex Mono",monospace;color:#c2410c}
+#blnPop .qty .u{font-weight:600}
+#blnPop .qty .v{margin-left:auto;font-size:12px;color:var(--muted,#666)}
+#blnPop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;padding:8px 14px;font-size:13px}
+#blnPop dt{color:var(--muted,#666)}#blnPop dd{margin:0;font-family:"IBM Plex Mono",monospace}
+#blnPop .all{padding:0 14px 6px;font-size:12px;color:var(--muted,#666)}
+#blnPop .ft{padding:8px 14px 12px}
+#blnPop .ft button{border:1px solid var(--line,#d4d4d8);background:none;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;color:inherit}
+tr.bln-flash>td{animation:blnF 1.8s ease}
+@keyframes blnF{0%,60%{background:rgba(234,88,12,.25)}100%{background:transparent}}
+.bln-hint{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted,#555);background:rgba(37,99,235,.08);border-radius:14px;padding:3px 10px;margin:4px 0 6px}
+.bln-hint i{font-style:normal;width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;display:inline-grid;place-items:center;font-size:10px}
+</style>
+<div id="blnPop" role="dialog" aria-live="polite"></div>
+<script>
+(function(){
+const CIR="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳",RX=/^([0-9]{1,2}[a-zก-ฮ]?['′]?|[a-e]|[①-⑳])$/;
+const norm=s=>{s=(s||"").trim().replace(/'/g,"′");const i=CIR.indexOf(s);return i>=0?String(i+1):s;};
+let BOM={},VLAB="";
+/* BOM first-column text -> keys: "6*"->6, "4 *"->4, "6a/6b"->6a,6b, "19a/b/c"->19a,19b,19c */
+function bkeys(t){t=(t||"").replace(/[*✱\s]/g,"").replace(/'/g,"′");if(!t)return[];const ps=t.split("/");const out=[];let base="";
+  ps.forEach((p,i)=>{let m=p.match(/^(\d+)([a-z]?)(′?)$/);if(m){base=m[1];out.push(p);}else if(/^[a-z]$/.test(p)&&base)out.push(base+p);else out.push(p);});
+  return out.map(norm).filter(k=>RX.test(k));}
+function readBom(){
+  const tb=document.getElementById("bomTbl")||[...document.querySelectorAll("table")].find(t=>/วัสดุเลขที่|Mat/i.test(t.tHead?.textContent||""));
+  BOM={};VLAB="";if(!tb)return;
+  const hs=[...(tb.tHead?.rows[0]?.cells||[])];
+  const iDesc=hs.findIndex(h=>/รายละเอียด|Description/.test(h.textContent));
+  const iMat=hs.findIndex(h=>/วัสดุเลขที่|Mat/.test(h.textContent));
+  const qIdx=[];hs.forEach((h,i)=>{if(i>iDesc&&(iMat<0||i<iMat))qIdx.push(i)});
+  let cur=qIdx.find(i=>hs[i].classList.contains("on"));if(cur==null)cur=qIdx[0];
+  VLAB=qIdx.length>1?hs[cur].textContent.trim():"";
+  [...tb.tBodies].forEach(b=>[...b.rows].forEach(r=>{
+    const c=r.cells;if(c.length<3||c[0].tagName!=="TD")return;
+    const ks=bkeys(c[0].textContent);if(!ks.length)return;const n=ks[0];
+    const d=c[iDesc],en=d.querySelector(".e");const th=en?d.textContent.replace(en.textContent,"").trim():d.textContent.trim();
+    const all=qIdx.map(i=>({l:hs[i].textContent.trim(),q:(c[i]?.textContent||"").trim()}));
+    const m=c[iMat];const me=m?.querySelector(".e");
+    const o={n,th,en:en?en.textContent.trim():"",q:(c[cur]?.textContent||"").trim(),all,mat:m?(me?m.textContent.replace(me.textContent,""):m.textContent).trim():"",old:me?me.textContent.trim():"",row:r};
+    ks.forEach(k=>{if(!BOM[k])BOM[k]=Object.assign({},o,{n:k});});
+    ks.forEach(k=>{const m=k.match(/^(\d+)[a-z]$/);if(m&&!BOM[m[1]])BOM[m[1]]=Object.assign({},o,{n:m[1]});});
+  }));
+}
+const UNITS=[[/สลักเกลียว|สกรู|bolt|screw/i,"ตัว","pcs"],[/น็อต|นัต|nut/i,"ตัว","pcs"],[/แหวน|washer/i,"อัน","pcs"],[/แป้น|แผ่น|plate|board/i,"แผ่น","pcs"],[/แร็ค|rack/i,"ชุด","set"],[/มิเตอร์|meter/i,"เครื่อง","set"],[/ตู้|cabinet/i,"ตู้","set"],[/เสา|pole/i,"ต้น","pcs"],[/สาย|cable|conductor|wire/i,"ม.","m"],[/คอนเนคเตอร์|connector|แคลมป์|clamp/i,"ตัว","pcs"],[/ลูกถ้วย|insulator/i,"ลูก","pcs"],[/หลักดิน|ground rod/i,"แท่ง","pcs"],[/เหล็กฉาก|เหล็ก|angle|channel/i,"ท่อน","pcs"]];
+function qtyUnit(it){
+  const q=it.q;if(!q||q==="–"||q==="-")return {v:"–",u:"ไม่ใช้ในแบบนี้",inf:false};
+  const m=q.match(/^([\d.,/]+)\s*(.*)$/);if(m&&m[2])return {v:m[1],u:m[2],inf:false};
+  if(m){const k=UNITS.find(([re])=>re.test(it.en))||UNITS.find(([re])=>re.test(it.th));return {v:m[1],u:k?k[1]:"ชิ้น",inf:true};}
+  return {v:q,u:"",inf:false};
+}
+const pop=document.getElementById("blnPop");let curN=null;
+function mark(n){document.querySelectorAll(".bln-c,.bln-t").forEach(e=>e.classList.toggle("on",e.dataset.bn===n));}
+function show(n,ev){
+  const it=BOM[n];if(!it)return;curN=n;mark(n);
+  const qu=qtyUnit(it);const cnt=document.querySelectorAll('text.bln-t[data-bn="'+n+'"]').length;
+  pop.innerHTML='<div class="hd"><div class="no">'+n+'</div><div><div class="th">'+it.th+'</div><div class="en">'+it.en+'</div></div><button class="x" aria-label="ปิด">×</button></div>'
+   +'<div class="qty"><span>จำนวน</span><b>'+qu.v+'</b><span class="u">'+qu.u+(qu.inf?'<sup title="หน่วยนี้ระบบประมาณจากชื่อวัสดุ">*</sup>':'')+'</span>'+(VLAB?'<span class="v">แบบที่เลือก: '+VLAB+'</span>':'')+'</div>'
+   +'<dl><dt>วัสดุเลขที่</dt><dd>'+(it.mat||"–")+(it.old?' <span style="color:var(--muted)">'+it.old+'</span>':'')+'</dd>'
+   +'<dt>ในรูปนี้</dt><dd style="font-family:inherit">ชี้ไว้ '+cnt+' ตำแหน่ง (ไฮไลต์สีส้ม)</dd></dl>'
+   +(it.all.length>1?'<div class="all">ทุกแบบย่อย: '+it.all.map(a=>a.l+' = '+a.q).join(' · ')+'</div>':'')
+   +'<div class="ft"><button class="go">ดูในตารางรายการวัสดุ ↓</button></div>';
+  pop.style.display="block";
+  lastEv=ev;place();
+  if(window.P3D&&window.THREE){const v=document.createElement("div");v.className="v3";pop.querySelector(".hd").after(v);try{P3D.mount(v,it);}catch(e){v.remove();}}
+  place();
+  pop.querySelector(".x").onclick=hide;
+  pop.querySelector(".go").onclick=()=>{hide();it.row.scrollIntoView({behavior:"smooth",block:"center"});it.row.classList.remove("bln-flash");void it.row.offsetWidth;it.row.classList.add("bln-flash");};
+}
+let lastEv=null;
+/* Position the card. Phones get a bottom sheet that stays the same on-screen size even when the page is pinch-zoomed
+   (counter-scale by visualViewport.scale and pin to the visual viewport). */
+function place(){
+  if(pop.style.display!=="block")return;const vv=window.visualViewport,sc=vv?vv.scale:1,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight;
+  const W0=vw*sc;
+  if(W0<600){pop.style.maxWidth="none";pop.style.width=Math.min(W0-16,520)+"px";pop.style.maxHeight=Math.round(vh*sc*.62)+"px";pop.style.overflowY="auto";
+    pop.style.transformOrigin="0 0";pop.style.transform=sc!==1?"scale("+(1/sc)+")":"";
+    const h=pop.offsetHeight/sc,w=pop.offsetWidth/sc;pop.style.left=(ox+(vw-w)/2)+"px";pop.style.top=(oy+vh-h-8/sc)+"px";pop.style.bottom="auto";pop.classList.add("sheet");}
+  else{pop.style.transform="";pop.style.maxHeight="";pop.style.overflowY="";pop.style.width="";pop.style.maxWidth="";pop.classList.remove("sheet");
+    const W=innerWidth,H=innerHeight,r=pop.getBoundingClientRect(),ev=lastEv||{clientX:W/2,clientY:H/2};
+    let x=ev.clientX+16,y=ev.clientY+16;if(x+r.width>W-8)x=ev.clientX-r.width-16;if(y+r.height>H-8)y=Math.max(8,H-r.height-8);pop.style.left=x+"px";pop.style.top=y+"px";pop.style.bottom="auto";}
+}
+window.blnPlace=place;
+if(window.visualViewport){visualViewport.addEventListener("resize",place);visualViewport.addEventListener("scroll",place);}
+addEventListener("resize",place);
+function hide(){if(window.P3D)P3D.stop();pop.style.display="none";curN=null;mark(null);}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hide();});
+document.addEventListener("click",e=>{if(pop.style.display==="block"&&!pop.contains(e.target)&&!e.target.closest(".bln-g"))hide();});
+function wire(){
+  readBom();
+  document.querySelectorAll("svg").forEach(s=>{
+    const cs=[...s.querySelectorAll("circle")].filter(c=>c.r.baseVal.value>3);
+    s.querySelectorAll("text").forEach(t=>{
+      if(t.dataset.bn)return;const n=norm(t.textContent);if(!RX.test(t.textContent.trim())||!BOM[n])return;
+      let bb;try{bb=t.getBBox()}catch(e){return}
+      const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+      const c=cs.find(c=>Math.hypot(c.cx.baseVal.value-cx,c.cy.baseVal.value-cy)<c.r.baseVal.value);
+      if(!c)return;
+      const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+      c.parentNode.insertBefore(g,c);g.appendChild(c);g.appendChild(t);
+      c.classList.add("bln-c");t.classList.add("bln-t");c.dataset.bn=t.dataset.bn=n;
+      if(!c.getAttribute("fill")||c.getAttribute("fill")==="none")c.setAttribute("fill","rgba(0,0,0,0)");
+      g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+      g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+    });
+  });
+  /* labels that carry a circled number, e.g. "steel pipe Ø 50 ③" */
+  document.querySelectorAll("svg text").forEach(t=>{
+    if(t.dataset.bn||t.closest(".bln-g"))return;const m=t.textContent.match(/[①-⑳]/g);if(!m)return;
+    const n=norm(m[m.length-1]);if(!BOM[n])return;
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+    t.parentNode.insertBefore(g,t);g.appendChild(t);t.classList.add("bln-t");t.dataset.bn=n;t.style.textDecoration="underline dotted";
+    g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+  });
+  if(curN)mark(curN);
+}
+let tm;const mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{mo.disconnect();wire();obs();},120);});
+const obs=()=>document.querySelectorAll("svg").forEach(s=>mo.observe(s.parentElement||s,{childList:true,subtree:true}));
+function hint(){const g0=document.querySelector(".bln-g");const s=g0&&g0.ownerSVGElement;if(!s||document.querySelector(".bln-hint"))return;const h=document.createElement("div");h.className="bln-hint";h.innerHTML="<i>3</i> แตะหมายเลขในวงกลมบนรูป เพื่อดูชื่อวัสดุ จำนวน และหน่วย";(s.closest("section")||s.parentElement).insertBefore(h,(s.closest("section")||s.parentElement).querySelector("svg")?.parentElement===s.closest("section")?s:s.parentElement);}
+function init(){wire();obs();hint();const bt=document.getElementById("bomTbl");if(bt)new MutationObserver(()=>{readBom();}).observe(bt,{childList:true,subtree:true});}
+if(document.readyState==="complete")setTimeout(init,300);else addEventListener("load",()=>setTimeout(init,300));
+})();
+</script>
+<style id="p3dCss">
+#blnPop.sheet .v3{height:150px!important}
+#blnPop .v3{position:relative;height:190px;margin:0 14px 8px;border:1px solid var(--line,#e4e4e7);border-radius:10px;background:radial-gradient(circle at 50% 35%,var(--sheet,#fff),var(--soft,#f1f4f7));overflow:hidden;touch-action:none;cursor:grab}
+#blnPop .v3 canvas{display:block;width:100%!important;height:100%!important}
+#blnPop .v3 .cap{position:absolute;left:8px;bottom:6px;right:8px;font-size:11.5px;color:var(--muted,#666);pointer-events:none;display:flex;justify-content:space-between;gap:6px}
+#blnPop .v3 .cap b{font-weight:600;color:var(--ink,#222)}
+#blnPop .v3 .tg{position:absolute;top:6px;right:8px;font-size:10.5px;color:var(--muted,#777);background:var(--sheet,#fff);border:1px solid var(--line,#e4e4e7);border-radius:8px;padding:0 6px}
+</style>
+<script>
+/* P3D — generic 3D preview of one BOM item, built from its description (type + dimensions parsed from text). */
+window.P3D=(function(){
+  let R=null,scene,cam,root,raf=0,host=null,rx=.45,ry=.6,auto=true,dist=1;
+  const M={};
+  function mats(){if(M.steel)return M;const S=(c,m,r)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
+    Object.assign(M,{steel:S(0xc4cbd2,.25,.4),dark:S(0x7b838b,.25,.5),alu:S(0xdfe3e7,.2,.35),cu:S(0xc8794a,.3,.4),wood:S(0xb98a55,0,.8),woodE:S(0x9c6f3e,0,.85),
+      pvc:S(0x26292d,0,.55),grey:S(0x9aa1a8,0,.6),porc:S(0x8a4b2c,.05,.25),white:S(0xeef0f2,0,.4),glass:new THREE.MeshStandardMaterial({color:0x9fc3d9,metalness:0,roughness:.1,transparent:true,opacity:.55}),
+      conc:S(0xb3aea4,0,.95),red:S(0xc0392b,0,.5),orange:S(0xd9822b,.2,.5)});return M;}
+  const num=s=>parseFloat(String(s).replace(",","."));
+  function dims(t){
+    const r={};let m;
+    if(m=t.match(/M\s?(\d+)\s*[×x]\s*(\d+)/i)){r.d=+m[1];r.L=+m[2];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*(mm|cm|m\b|มม|ซม)?/i)){let k=/cm|ซม/.test(m[4]||"")?10:1;r.a=num(m[1])*k;r.b=num(m[2])*k;r.c=num(m[3])*k;}
+    if(m=t.match(/Ø\s?(\d+(?:[.,]\d+)?)/))r.hole=num(m[1]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)(?:\s*[–-]\s*(\d+(?:[.,]\d+)?))?\s*(?:mm²|ตร\.?มม)/)){r.mm2=num(m[1]);r.mm2s=m[2]?m[1]+"–"+m[2]:m[1];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*mm\s*wide|กว้าง\s*(\d+)/i))r.w=num(m[1]||m[2]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*(?:m|ม\.)\s*(?:long|ยาว)?\b/)&&!r.L)r.len=num(m[1]);
+    if(m=t.match(/(\d{1,2}(?:[.,]\d+)?)\s*(?:m\b|ม\.)\s*(?:concrete\s*)?pole|เสา[^\d]{0,12}(\d{1,2}(?:\.\d+)?)\s*ม/i))r.pole=num(m[1]||m[2]);
+    return r;}
+  /* ---- part builders (mm) ---- */
+  const G=()=>new THREE.Group();
+  function cyl(r1,r2,h,mat,seg){return new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg||24),mat);}
+  function box(x,y,z,mat){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),mat);}
+  function hex(d,h,mat){const m=cyl(d*.9,d*.9,h,mat,6);return m;}
+  function thread(g,d,L,y0,mat){g.add(cyl(d/2,d/2,L,mat,20).translateY(y0+L/2));for(let y=y0+d*.3;y<y0+L;y+=Math.max(2.5,d*.2)){const t=new THREE.Mesh(new THREE.TorusGeometry(d/2,Math.max(.3,d*.035),5,20),M.steel);t.rotation.x=Math.PI/2;t.position.y=y;g.add(t);}}
+  const B={
+    bolt(t,D){const d=D.d||16,L=D.L||200,g=G();g.add(hex(d,d*.65,M.steel).translateY(L+d*.32));thread(g,d,L,0,M.steel);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2.2;g.add(n);const w=box(d*3.2,d*.28,d*3.2,M.steel);w.position.y=d*2.8;g.add(w);
+      g.rotation.z=Math.PI/2;return {g,lab:`M${d} × ${L} มม.`,note:"หัวหกเหลี่ยม + แหวน + แป้นเกลียว"};},
+    eyebolt(t,D){const d=D.d||16,L=D.L||250,g=G();thread(g,d,L,0,M.steel);const e=new THREE.Mesh(new THREE.TorusGeometry(d*1.6,d*.45,10,28),M.steel);e.position.y=L+d*1.9;g.add(e);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2;g.add(n);g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวตาเดียว M${d} × ${L}`};},
+    dabolt(t,D){const d=D.d||16,L=D.L||400,g=G();thread(g,d,L,0,M.steel);[d*1.5,L-d*1.5].forEach(y=>{const n=hex(d,d*.8,M.steel);n.position.y=y;g.add(n);});g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวสองหัว M${d} × ${L}`};},
+    screw(t,D){const g=G(),L=20,d=4;g.add(cyl(d*1.1,d*.5,d*.8,M.steel).translateY(L));g.add(cyl(d/2,.3,L,M.steel).translateY(L/2));
+      for(let y=2;y<L-1;y+=1.4){const r=new THREE.Mesh(new THREE.TorusGeometry(d/2*(y/L*.6+.4),.35,4,14),M.dark);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);}g.rotation.z=Math.PI/2;return {g,lab:"สกรู 15–20 มม."};},
+    nail(t,D){const g=G();g.add(cyl(1.6,1.6,.5,M.steel).translateY(18));g.add(cyl(.5,.15,18,M.steel).translateY(9));g.rotation.z=Math.PI/2;return {g,lab:"ตะปู 15–20 มม. Ø1"};},
+    nut(t,D){const d=D.d||16,g=G();const n=hex(d,d*.8,M.steel);g.add(n);const h=cyl(d/2,d/2,d,M.dark);g.add(h);return {g,lab:`แป้นเกลียว M${d}`};},
+    sqwasher(t,D){const a=D.a||52,c=D.c||4.5,h=D.hole||18,g=G();const s=new THREE.Shape();s.moveTo(-a/2,-a/2);s.lineTo(a/2,-a/2);s.lineTo(a/2,a/2);s.lineTo(-a/2,a/2);s.lineTo(-a/2,-a/2);
+      const p=new THREE.Path();p.absarc(0,0,h/2,0,Math.PI*2,true);s.holes.push(p);const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:c,bevelEnabled:false,curveSegments:24}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);
+      return {g,lab:`${a} × ${a} × ${c} มม. รู Ø${h}`};},
+    washer(t,D){const d=D.d||16,g=G();const s=new THREE.Shape();s.absarc(0,0,d*1.1,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,d*.55,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false,curveSegments:28}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);return {g,lab:"แหวนกลม"};},
+    spring(t,D){const d=D.d||16,g=G();const tq=new THREE.Mesh(new THREE.TorusGeometry(d*.75,d*.18,8,28,Math.PI*1.9),M.steel);tq.rotation.x=Math.PI/2;g.add(tq);return {g,lab:"แหวนสปริง"};},
+    connector(t,D){const g=G();const b1=box(70,14,46,M.alu),b2=box(70,14,46,M.alu);b1.position.y=9;b2.position.y=-9;g.add(b1,b2);
+      [[-15,0],[15,0]].forEach(([z])=>{const c=cyl(5,5,320,M.pvc,16);c.rotation.z=Math.PI/2;c.position.z=z;c.position.y=0;g.add(c);});
+      const bo=cyl(5,5,50,M.steel);bo.position.y=0;g.add(bo);const h=hex(10,8,M.steel);h.position.y=20;g.add(h);
+      return {g,lab:/single bolt|สลักเดียว/i.test(t)?"พีจีคอนเนคเตอร์ 1 สลัก":"พีจีคอนเนคเตอร์ (ร่องขนาน)",note:D.mm2?`สาย ${D.mm2s} ตร.มม.`:""};},
+    tape(t,D){const w=D.w||19,g=G();const s=new THREE.Shape();s.absarc(0,0,48,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,19,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:w,bevelEnabled:false,curveSegments:40}),M.pvc);g.add(m);const c=cyl(19,19,w,M.white,32);c.rotation.x=Math.PI/2;c.position.z=w/2;g.add(c);
+      const tail=box(60,.6,w,M.pvc);tail.position.set(30,-48,w/2);g.add(tail);return {g,lab:`เทป PVC กว้าง ${w} มม.`};},
+    strap(t,D){const g=G();const r=new THREE.Mesh(new THREE.TorusGeometry(60,1,6,48),M.steel);r.scale.set(1,1,10);g.add(r);const c=box(18,10,14,M.steel);c.position.set(60,0,0);g.add(c);
+      const cab=cyl(10,10,240,M.pvc);cab.rotation.x=Math.PI/2;cab.position.x=-40;g.add(cab);return {g,lab:"เข็มขัดรัดสาย (เทปเกราะ 1 × 10 มม.)"};},
+    cable(t,D){const a=D.mm2||16,r=Math.sqrt(a/Math.PI)*1.1+1.5,g=G(),cu=/\bCu\b|ทองแดง/.test(t)&&!/\bAl\b|อะลูมิเนียม/.test(t);
+      const pts=[];for(let i=0;i<=60;i++){const u=i/60;pts.push(new THREE.Vector3(Math.cos(u*Math.PI*3.2)*60,u*60-30,Math.sin(u*Math.PI*3.2)*60));}
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),120,r,14,false),M.pvc));
+      const end=pts[60],cd=cyl(r*.62,r*.62,r*4,cu?M.cu:M.alu,14);cd.position.copy(end).add(new THREE.Vector3(0,r*2,0));g.add(cd);
+      return {g,lab:`สาย ${cu?"ทองแดง":"อะลูมิเนียม"} ${a} ตร.มม.`,note:"หุ้มฉนวน PVC · ปลายแสดงตัวนำ"};},
+    meter(t,D){const g=G();const body=box(130,180,110,M.white);body.material=M.white;body.position.y=90;g.add(body);const base=box(130,60,110,M.grey);base.position.y=-30;g.add(base);
+      const win=box(96,70,4,M.glass);win.position.set(0,120,56);g.add(win);const reg=box(70,16,2,M.pvc);reg.position.set(0,125,55);g.add(reg);
+      const disk=cyl(30,30,2,M.dark,28);disk.rotation.x=Math.PI/2;disk.position.set(0,98,55);g.add(disk);
+      for(let i=0;i<4;i++){const c=cyl(5,5,60,M.pvc,12);c.position.set(-36+i*24,-90,0);g.add(c);}
+      return {g,lab:"วัตต์อาวร์มิเตอร์",note:"ตัวเครื่อง + ฝาครอบขั้วสาย"};},
+    plate(t,D){let a=D.a||600,b=D.b||200,c=D.c||20;const g=G();const p=box(b,a,c,/wood|ไม้/i.test(t)?M.wood:M.steel);p.position.y=a/2;g.add(p);
+      [a*.12,a*.88].forEach(y=>{const h=cyl(9,9,c+2,M.pvc,16);h.rotation.x=Math.PI/2;h.position.y=y;g.add(h);});
+      return {g,lab:`แป้น ${a/10} × ${b/10} × ${c/10} ซม.`,note:/wood|ไม้/i.test(t)?"ไม้เนื้อแข็ง ไสเรียบ":""};},
+    cabinet(t,D){const g=G();const b=box(300,820,250,M.grey);b.position.y=410;g.add(b);const dr=box(280,790,6,M.steel);dr.position.set(0,410,128);g.add(dr);
+      const w=box(140,120,4,M.glass);w.position.set(0,620,132);g.add(w);const hd=box(10,60,14,M.dark);hd.position.set(120,420,136);g.add(hd);return {g,lab:"ตู้เหล็ก"};},
+    rack(t,D){const g=G(),n=/2\s*[×x]|2 ×|2 spool/.test(t)?2:(/4/.test(t)?4:1);const h=200*n+60;
+      const bk=box(10,h,60,M.steel);bk.position.set(-60,h/2,0);g.add(bk);[0,h].forEach(y=>{const a=box(120,10,60,M.steel);a.position.set(0,y,0);g.add(a);});
+      for(let i=0;i<n;i++){const y=60+i*200,sp=cyl(38,38,70,M.porc,24);sp.position.set(20,y+40,0);g.add(sp);const gr=new THREE.Mesh(new THREE.TorusGeometry(38,8,8,24),M.porc);gr.rotation.x=Math.PI/2;gr.position.set(20,y+40,0);g.add(gr);}
+      const pin=cyl(8,8,h,M.steel);pin.position.set(20,h/2,0);g.add(pin);return {g,lab:`แร็คแรงต่ำ ${n} ช่อง`,note:"พร้อมลูกถ้วยลูกรอก"};},
+    spool(t,D){const g=G();const c=cyl(38,38,75,M.porc,28);g.add(c);[-26,26].forEach(y=>{const r=new THREE.Mesh(new THREE.TorusGeometry(36,6,8,28),M.porc);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);});
+      const hole=cyl(10,10,78,M.dark,16);g.add(hole);return {g,lab:"ลูกถ้วยลูกรอกแรงต่ำ"};},
+    pinins(t,D){const g=G();[0,40,80].forEach((y,i)=>{const s=cyl(70-i*12,40-i*6,30,M.porc,28);s.position.y=y;g.add(s);});const top=cyl(28,28,40,M.porc,24);top.position.y=120;g.add(top);
+      const pin=cyl(12,12,160,M.steel,16);pin.position.y=-60;g.add(pin);return {g,lab:"ลูกถ้วยก้านตรง"};},
+    disc(t,D){const g=G();for(let i=0;i<3;i++){const p=[[0,0],[20,0],[24,-25],[125,-70],[127,-76],[78,-74],[50,-82],[28,-78],[12,-90],[0,-90]].map(([x,y])=>new THREE.Vector2(x,y));
+      const d=new THREE.Mesh(new THREE.LatheGeometry(p,36),M.porc);d.position.y=-i*146;g.add(d);const c=cyl(28,32,32,M.steel);c.position.y=-i*146-4;g.add(c);}return {g,lab:"ลูกถ้วยแขวน"};},
+    rod(t,D){const g=G(),L=2400;g.add(cyl(8,8,L,M.cu,16).translateY(L/2));const tip=cyl(8,.5,40,M.cu,16);tip.position.y=-20;g.add(tip);const cl=box(30,40,30,M.cu);cl.position.y=L-60;g.add(cl);return {g,lab:"หลักดิน 2.4 ม."};},
+    channel(t,D){const L=Math.min(D.len?D.len*1000:2400,3000),g=G(),ang=/angle|ฉาก/i.test(t);const s=new THREE.Shape();
+      if(ang){const a=D.a||65,c=D.c||6;[[0,0],[a,0],[a,c],[c,c],[c,a],[0,a]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      else{const h=D.a||100,b=D.b||50,c=7;[[0,0],[b,0],[b,c],[c,c],[c,h-c],[b,h-c],[b,h],[0,h]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:L,bevelEnabled:false}),M.steel);m.position.z=-L/2;g.add(m);g.rotation.y=Math.PI/2;
+      return {g,lab:(ang?"เหล็กฉาก":"เหล็กรางน้ำ (คอนสาย)")+(D.len?` ยาว ${D.len} ม.`:"")};},
+    pole(t,D){const g=G(),L=(D.pole||9)*1000;const p=cyl(70,130,L,M.conc,4);p.rotation.y=Math.PI/4;p.position.y=L/2;g.add(p);return {g,lab:`เสาคอนกรีต ${D.pole||9} ม.`};},
+    transformer(t,D){const g=G();const tk=cyl(220,220,700,M.grey,32);tk.position.y=350;g.add(tk);for(let i=0;i<12;i++){const f=box(8,560,90,M.grey);const a=i/12*Math.PI*2;f.position.set(Math.cos(a)*250,330,Math.sin(a)*250);f.rotation.y=-a;g.add(f);}
+      [-90,90].forEach(x=>{const b=cyl(22,30,180,M.porc);b.position.set(x,790,0);g.add(b);});return {g,lab:"หม้อแปลงจำหน่าย"};},
+    cutout(t,D){const g=G();const b=cyl(35,45,320,M.porc,20);b.rotation.z=.35;g.add(b);const tube=cyl(16,16,300,M.dark);tube.position.set(60,0,0);tube.rotation.z=.35;g.add(tube);
+      const br=box(20,20,200,M.steel);br.position.set(-40,0,0);g.add(br);return {g,lab:/arrester|กับดัก/i.test(t)?"กับดักเสิร์จ":"ฟิวส์คัตเอาต์"};},
+    generic(t,D){const g=G();const b=box(120,80,80,M.grey);g.add(b);return {g,lab:"รูปแบบทั่วไป",note:"ยังไม่มีแบบจำลองเฉพาะของวัสดุนี้"};}
+  };
+  function classify(t){const L=t.toLowerCase();
+    if(/nail|ตะปู/.test(L))return"nail";if(/screw|สกรู/.test(L))return"screw";
+    if(/eye\s*bolt|ตาเดียว|ตาไก่/.test(L))return"eyebolt";if(/double arming|สองหัว/.test(L))return"dabolt";
+    if(/\bbolt|สลักเกลียว/.test(L))return"bolt";
+    if(/washer.*(square|สี่เหลี่ยม)|แหวนสี่เหลี่ยม|square.*washer/.test(L))return"sqwasher";if(/spring|lock washer|แหวนสปริง/.test(L))return"spring";if(/washer|แหวน/.test(L))return"washer";
+    if(/\bnut\b|แป้นเกลียว|น็อต/.test(L))return"nut";
+    if(/strap|เข็มขัด/.test(L))return"strap";if(/tape|เทป/.test(L))return"tape";
+    if(/connector|คอนเนค|parallel groove/.test(L))return"connector";
+    if(/rack|แร็ค/.test(L))return"rack";if(/spool|ลูกรอก/.test(L))return"spool";
+    if(/suspension|disc|ลูกถ้วยแขวน/.test(L))return"disc";if(/pin.*insulator|insulator.*pin|ก้านตรง|line post/.test(L))return"pinins";
+    if(/transformer|หม้อแปลง/.test(L))return"transformer";if(/cutout|cut-out|fuse|arrester|ฟิวส์|กับดัก/.test(L))return"cutout";
+    if(/ground rod|หลักดิน/.test(L))return"rod";
+    if(/watthour|kwh|มิเตอร์|meter,/.test(L)&&!/plate|แป้น|board/.test(L))return"meter";
+    if(/cabinet|ตู้/.test(L))return"cabinet";if(/plate|แป้น|board/.test(L))return"plate";
+    if(/conductor|cable|\bwire\b|สาย/.test(L))return"cable";
+    if(/crossarm|คอน|channel|รางน้ำ|angle|ฉาก/.test(L))return"channel";if(/\bpole\b|เสา/.test(L))return"pole";
+    return"generic";}
+  function setup(){mats();R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setClearColor(0,0);
+    scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(30,1,1,1e6);scene.add(new THREE.HemisphereLight(0xffffff,0x5a6470,.85));
+    const d=new THREE.DirectionalLight(0xffffff,.85);d.position.set(1,1.4,1.2);scene.add(d);const d2=new THREE.DirectionalLight(0xffffff,.3);d2.position.set(-1,-.4,-1);scene.add(d2);
+    const el=R.domElement;let drag=0,px=0,py=0;
+    el.addEventListener("pointerdown",e=>{drag=1;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);e.stopPropagation();});
+    el.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.01;rx+=(e.clientY-py)*.01;rx=Math.max(-1.4,Math.min(1.4,rx));px=e.clientX;py=e.clientY;});
+    el.addEventListener("pointerup",()=>drag=0);el.addEventListener("click",e=>e.stopPropagation());
+    el.addEventListener("wheel",e=>{e.preventDefault();dist*=1+e.deltaY*.001;dist=Math.max(.4,Math.min(3,dist));},{passive:false});}
+  function loop(){raf=requestAnimationFrame(loop);if(!host||!host.isConnected){stop();return;}if(auto)ry+=.004;root.rotation.set(rx,ry,0);
+    const s=root.userData.size;cam.position.set(0,0,s*2.1*dist);cam.lookAt(0,0,0);R.render(scene,cam);}
+  function stop(){cancelAnimationFrame(raf);raf=0;}
+  function mount(el,it){
+    if(!window.THREE){el.remove();return;}if(!R)setup();stop();
+    const txt=(it.en||"")+" "+(it.th||""),D=dims(txt);let k=classify(it.en||"");if(k==="generic")k=classify(it.th||"");if(k==="generic"){el.remove();return;}const r=B[k](txt,D);
+    if(root)scene.remove(root);root=new THREE.Group();const inner=G();inner.add(r.g);
+    const bb=new THREE.Box3().setFromObject(inner),c=bb.getCenter(new THREE.Vector3()),sz=bb.getSize(new THREE.Vector3());inner.position.sub(c);root.add(inner);
+    root.userData.size=Math.max(sz.x,sz.y,sz.z);scene.add(root);rx=.38;ry=-.5;auto=true;dist=1;
+    el.innerHTML="";el.appendChild(R.domElement);const w=el.clientWidth||300,h=el.clientHeight||190;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+    const cap=document.createElement("div");cap.className="cap";cap.innerHTML="<span><b>"+r.lab+"</b>"+(r.note?" · "+r.note:"")+"</span>";el.appendChild(cap);
+    const tg=document.createElement("div");tg.className="tg";tg.textContent=(k==="generic"?"ภาพตัวแทน":"3D ตัวแทน")+" · ลากเพื่อหมุน";el.appendChild(tg);
+    host=el;loop();}
+  return {mount,classify,dims,stop};
+})();
+</script>
+<style id="hl3Css">
+#v3d .hl3bar{position:absolute;left:8px;right:8px;top:8px;display:none;align-items:center;gap:8px;background:var(--sheet,#fff);border:1px solid #ea580c;border-radius:10px;padding:6px 10px;font:13px/1.35 "IBM Plex Sans Thai",system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.15);z-index:2}
+#v3d .hl3bar .no{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 12px "IBM Plex Mono",monospace}
+#v3d .hl3bar .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#v3d .hl3bar button{flex:none;border:1px solid var(--line,#d4d4d8);background:var(--soft,#f5f7f9);border-radius:8px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer;color:inherit}
+#v3d .hl3pin{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#ea580c;color:#fff;font:700 11px "IBM Plex Mono",monospace;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(234,88,12,.25);pointer-events:none;z-index:1;animation:hl3p 1.6s ease-in-out infinite}
+@keyframes hl3p{50%{box-shadow:0 0 0 9px rgba(234,88,12,.08)}}
+#blnPop .loc{display:flex;align-items:center;gap:8px;margin:0 14px 10px;padding:8px 10px;border:1px solid #ea580c;border-radius:10px;background:rgba(234,88,12,.07);color:#c2410c;font:600 13.5px "IBM Plex Sans Thai",system-ui,sans-serif;cursor:pointer;width:calc(100% - 28px);text-align:left}
+#blnPop .loc small{font-weight:400;color:var(--muted,#666);margin-left:auto}
+#blnPop .loc.no{border-color:var(--line,#d4d4d8);background:var(--soft,#f5f7f9);color:var(--muted,#777);cursor:default}
+</style>
+<script>
+/* ===== HL3: highlight tagged parts inside the page's own 3D model ===== */
+window.HL3=(function(){
+  let on=null,saved=new Map(),ghost=null,hot=null,ret=null;
+  const box3=()=>document.getElementById("v3d");
+  function mats(){if(ghost)return;ghost=new THREE.MeshStandardMaterial({color:0x9aa3ad,transparent:true,opacity:.2,depthWrite:false,roughness:.9});
+    hot=new THREE.MeshStandardMaterial({color:0xff6a00,emissive:0xff5a00,emissiveIntensity:.55,roughness:.4,metalness:.1});}
+  const nk=t=>String(t).replace(/[*✱\s]/g,"").replace(/'/g,"′");
+  let LOOSE=false;function hasN(arr,n){n=nk(n);return arr.some(t=>{t=nk(t);return t===n||(LOOSE&&/^\d+$/.test(n)&&new RegExp("^"+n+"[a-z]$").test(t));});}
+  function tagged0(n){const out=[];if(typeof model==="undefined"||!model)return out;
+    model.traverse(o=>{if(!(o.userData&&o.userData.bn&&hasN(o.userData.bn,n)))return;let a=o.parent,dup=false;while(a){if(a.userData&&a.userData.bn&&hasN(a.userData.bn,n)){dup=true;break;}a=a.parent;}if(!dup)out.push(o);});return out;}
+  function tagged(n){LOOSE=false;let r=tagged0(n);if(!r.length){LOOSE=true;r=tagged0(n);}return r;}
+  function meshesOf(r,n){const set=[];(function walk(o){if(o!==r&&o.userData&&o.userData.bn&&!hasN(o.userData.bn,n))return;if(o.isMesh)set.push(o);o.children.forEach(walk);})(r);return set;}
+  function has(n){return tagged(n).length>0;}
+  let pins=[];
+  function drawPins(){const v=box3();v.querySelectorAll(".hl3pin").forEach(e=>e.remove());if(!on||typeof cam==="undefined")return;const W=v.clientWidth,H=v.clientHeight;
+    pins.forEach(o=>{const bb=new THREE.Box3().setFromObject(o),c=bb.getCenter(new THREE.Vector3()).project(cam);if(c.z>1)return;
+      const d=document.createElement("div");d.className="hl3pin";d.textContent=on;d.style.left=((c.x+1)/2*W)+"px";d.style.top=((1-c.y)/2*H)+"px";v.appendChild(d);});}
+  function clear(){pins=[];saved.forEach((m,o)=>o.material=m);saved.clear();on=null;const b=box3()?.querySelector(".hl3bar");if(b)b.style.display="none";}
+  function reset(){clear();if(ret){model.position.copy(ret.p);rx=ret.rx;ry=ret.ry;dist=ret.d;ret=null;}render();}
+  function show(n,it){mats();if(typeof model==="undefined"||!model)return false;clear();const roots=tagged(n);if(!roots.length)return false;
+    const hotSet=new Set();roots.forEach(r=>meshesOf(r,n).forEach(o=>hotSet.add(o)));
+    model.traverse(o=>{if(!o.isMesh&&!o.isLine)return;saved.set(o,o.material);o.material=hotSet.has(o)?hot:(o.isMesh?ghost:o.material);});
+    if(!ret)ret={p:model.position.clone(),rx,ry,d:dist};
+    /* fly to the parts: centre of their bounding box in model space */
+    pivot.updateMatrixWorld(true);const bb=new THREE.Box3();roots.forEach(r=>bb.expandByObject(r));const inv=new THREE.Matrix4().copy(pivot.matrixWorld).invert();
+    const c=bb.getCenter(new THREE.Vector3()).applyMatrix4(inv).sub(model.position),s=bb.getSize(new THREE.Vector3()).length();
+    model.position.set(-c.x,-c.y,-c.z);dist=Math.max(450,Math.min(9000,s*2.4));render();
+    on=n;pins=roots;const b=bar();b.querySelector(".no").textContent=n;b.querySelector(".tx").innerHTML="<b>"+(it?it.th:"")+"</b> · "+roots.length+" ตำแหน่ง";b.style.display="flex";render();
+    return true;}
+  function bar(){const v=box3();let b=v.querySelector(".hl3bar");if(!b){b=document.createElement("div");b.className="hl3bar";b.innerHTML='<span class="no"></span><span class="tx"></span><button type="button">ดูทั้งชุด</button>';
+      b.querySelector("button").onclick=e=>{e.stopPropagation();reset();};v.appendChild(b);}return b;}
+  /* re-apply after variant switch rebuilds the model */
+  const _b=window.build3d;if(_b)window.build3d=function(){const n=on;ret=null;clear();_b.apply(this,arguments);if(n&&has(n))setTimeout(()=>show(n,null),0);};
+  const _r=window.render;if(typeof _r==="function"){window.render=function(){_r.apply(this,arguments);drawPins();};try{render();}catch(e){}}
+  return {show,has,reset,count:n=>tagged(n).length};
+})();
+/* add a "locate in 3D" button to the item card */
+(function(){const pop=document.getElementById("blnPop");if(!pop)return;
+  new MutationObserver(()=>{if(pop.style.display!=="block"||pop.querySelector(".loc"))return;const no=pop.querySelector(".no");if(!no)return;const n=no.textContent.trim();
+    const b=document.createElement("button");b.type="button";const k=window.HL3?HL3.count(n):0;
+    if(k){b.className="loc";b.innerHTML="📍 ดูตำแหน่งในโมเดล 3 มิติของชุด<small>"+k+" ชิ้น</small>";
+      b.onclick=e=>{e.stopPropagation();const th=pop.querySelector(".th")?.textContent||"";pop.style.display="none";document.querySelectorAll(".bln-c.on,.bln-t.on").forEach(x=>x.classList.remove("on"));
+        const v=document.getElementById("v3d");v.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>HL3.show(n,{th}),350);};}
+    else if(window.HL3_BOUND){b.className="loc no";b.textContent="ชิ้นนี้ไม่ได้แสดงในโมเดล 3 มิติของชุด";}else return;
+    const q=pop.querySelector(".qty");q.parentNode.insertBefore(b,q);
+    if(window.blnPlace)blnPlace();
+  }).observe(pop,{childList:true});
+})();
+/* rebuild once so the tagged model is used */
+if(window.HL3_BOUND&&window.build3d)setTimeout(()=>{try{build3d();}catch(e){}},50);
+</script>

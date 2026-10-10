@@ -1,0 +1,943 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>5691 การต่อลงดิน 19</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting sheet — title strip, variant switch, 2D elevation, details + 3D, tables, title block */
+:root{
+  --paper:#eef1f4; --sheet:#ffffff; --ink:#18212b; --muted:#5a6573; --line:#cdd4dc; --soft:#f5f7f9;
+  --accent:#7a1e6b; --accent-bg:#f6e9f3; --dim:#245f93; --weld:#c2620f; --steel:#9aa5b1; --hole:#ffffff;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:1080px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--ink);display:flex;flex-direction:column}
+.blk{padding:20px 24px;border-top:1px solid var(--line);min-width:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-family:var(--f-body);font-weight:400;font-size:13px;color:var(--muted)}
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;padding:20px 24px;align-items:start}
+.eyebrow{font-size:13px;color:var(--muted)}
+.head h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,4vw,34px);line-height:1.2;margin:4px 0 2px;text-wrap:balance}
+.head .en{font-family:var(--f-mono);font-size:16px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.asm{border:1.5px solid var(--ink);padding:8px 14px;text-align:right}
+.asm .n{font-family:var(--f-display);font-size:34px;font-weight:600;line-height:1;color:var(--accent)}
+.asm .l{font-size:12px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--soft);border-top:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+.seg button{font:500 14px var(--f-body);background:transparent;color:var(--ink);border:0;padding:7px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.seg button:focus-visible,.btn:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+.spec{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto}
+.scroll svg{display:block;min-width:720px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--ink)}
+svg .th{font-family:var(--f-body)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+.two>.blk{border-top:0}
+.two>.blk+.blk{border-left:1px solid var(--line)}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}.two>.blk+.blk{border-left:0;border-top:1px solid var(--line)}.head{grid-template-columns:1fr}.asm{justify-self:start;text-align:left}}
+#v3d{height:360px;border:1px solid var(--line);background:var(--soft);touch-action:none;cursor:grab;position:relative;border-radius:4px;overflow:hidden}
+#v3d canvas{display:block}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.btn{font:13px var(--f-body);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:center;vertical-align:middle}
+th{font-weight:500;background:var(--soft);font-size:13px}
+td.l,th.l{text-align:left}
+tr.on td{background:var(--accent-bg)}
+td.mono{font-family:var(--f-mono)}
+tfoot td{font-weight:600}
+.notes{margin:0;padding-left:1.3em;max-width:72ch;display:grid;gap:6px}
+.e{display:block;font-family:var(--f-mono);font-size:.78em;font-weight:400;color:var(--muted);letter-spacing:.02em;line-height:1.35}
+h2 .e{display:inline;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.notes li .e{margin-top:1px}
+.btn .e{font-size:10px}
+.tag{display:inline-block;font-size:11px;font-family:var(--f-mono);padding:1px 6px;border-radius:3px;background:var(--accent-bg);color:var(--accent);vertical-align:1px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px}
+.tb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1.5px solid var(--ink);font-size:13px}
+.tb>div{padding:8px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.tb .k{display:block;font-size:11px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+.tb .w2{grid-column:span 2}.tb .w3{grid-column:span 3}.tb .w6{grid-column:span 6;text-align:center;font-family:var(--f-display);font-weight:600;letter-spacing:.06em}
+@media (max-width:640px){.tb{grid-template-columns:repeat(2,minmax(0,1fr))}.tb .w2,.tb .w3,.tb .w6{grid-column:span 2}}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.links .btn{text-decoration:none;display:inline-flex;flex-direction:column;line-height:1.25;font-weight:500;border-color:var(--ink)}
+.links .btn.pri{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.links .btn.pri .e{color:inherit;opacity:.8}
+</style>
+
+<div class="sheet">
+  <header class="head">
+    <div>
+      <div class="eyebrow" id="grp"></div>
+      <h1 id="nameTh"></h1>
+      <div class="en" id="nameEn"></div>
+    </div>
+    <div class="asm"><div class="l">การประกอบเลขที่ · ASSEMBLY NO.</div><div class="n" id="asmNo"></div><div class="l" id="asmOld"></div></div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="varSeg" role="group" aria-label="เลือกรุ่น / Select variant"></div>
+    <div class="spec" id="varSpec"></div>
+    <div class="links">
+      <a class="btn pri" href="../pdf/6391ebe7c6f9.pdf" target="_blank" rel="noopener">เปิดแบบต้นฉบับ PDF<span class="e">Original drawing</span></a>
+      <a class="btn" href="../index.html" target="_blank" rel="noopener">คลังแบบทั้งหมด<span class="e">Drawing library</span></a>
+    </div>
+  </div>
+
+  <section class="blk">
+    <h2>รูปด้านและแปลน <span class="e">Elevation and plan</span></h2><div class="hint" style="margin:-6px 0 10px">เลือกแบบ A–D ด้านบน · แบบ A, B อยู่แผ่นที่ 1 · แบบ C, D อยู่แผ่นที่ 2<span class="e">Pick type A–D above · types A, B on sheet 1 · C, D on sheet 2</span></div>
+    <div class="scroll"><svg id="elev" viewBox="0 0 1240 910" role="img" aria-label="รูปด้านและแปลน"></svg></div>
+    <div class="legend"><span><i style="background:var(--ink)"></i>ฐานคอนกรีต / เสา / เสาเข็ม · Concrete, pole, piles</span><span><i style="background:var(--weld)"></i>สายดิน · Ground wire</span><span><i style="background:var(--steel)"></i>กราวด์ร็อด · Ground rod</span><span><i style="background:var(--dim)"></i>เส้นบอกระยะ / Dimension</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>รายละเอียดชิ้นส่วน <span class="e">Component details</span></h2>
+      <div class="scroll"><svg id="detail" viewBox="0 0 560 480" role="img" aria-label="รายละเอียดชิ้นส่วน" style="min-width:420px"></svg></div>
+    </section>
+    <section class="blk">
+      <h2>โมเดล 3 มิติ <span class="e">3D model</span></h2>
+      <div id="v3d" aria-label="โมเดล 3 มิติ หมุนได้"></div>
+      <div class="tools"><button class="btn" data-v="iso">มุมเอียง<span class="e">Isometric</span></button><button class="btn" data-v="front">ด้านหน้า<span class="e">Elevation</span></button><button class="btn" data-v="top">แปลน<span class="e">Plan</span></button><button class="btn" data-v="ground">หลักดิน<span class="e">Electrode</span></button><button class="btn" data-v="full">ทั้งหมด<span class="e">Full depth</span></button></div>
+      <div class="hint">ลากเพื่อหมุน เลื่อนลูกกลิ้งเพื่อซูม<span class="e">Drag to rotate, scroll to zoom</span></div>
+    </section>
+  </div>
+
+  <section class="blk">
+    <h2>ตารางมิติ <span class="e">Dimensions · mm</span></h2>
+    <div class="scroll"><table id="dimTbl"></table></div>
+  </section>
+
+  <section class="blk">
+    <h2>รายการวัสดุ <span class="e">Bill of materials · per set</span></h2>
+    <div class="scroll"><table id="bomTbl"></table></div>
+    <div class="hint">รายการ 1–3 ตามบัญชีวัสดุในแบบ (วัสดุเลขที่ในวงเล็บ = เลขเดิม) · น้ำหนักเหล็กเป็นค่าประมาณ* · ไม่รวมเสาคอนกรีต 22 ม. เสาเข็ม และคอนกรีตฐานราก<span class="e">Items 1–3 as the drawing's bill of material (bracketed = old mat. no.) · steel masses approximate* · 22 m pole, piles and foundation concrete not included</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>ขั้นตอนติดตั้งและหมายเหตุ <span class="e">Installation and notes</span></h2>
+      <ol class="notes" id="fab"></ol>
+    </section>
+    <section class="blk">
+      <h2>ค่าที่ต้องยืนยัน <span class="e">To be verified</span></h2><div class="hint" style="margin:-6px 0 10px">แบบต้นฉบับไม่ได้ระบุ หรืออ่านจากภาพ<span class="e">Not stated on the original, or read from the picture</span></div>
+      <ol class="notes" id="assume"></ol>
+    </section>
+  </div>
+
+  <footer class="tb" id="tb"></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ===== ข้อมูลอุปกรณ์ — แบบ 5691 รายละเอียดที่ 19 การต่อลงดิน ===== */
+const PART = {
+  assembly: "5691",
+  nameTh: "รายละเอียดที่ 19 การต่อลงดิน",
+  nameEn: "DETAIL NO. 19 · GROUNDING",
+  group: "A5660 ระบบ 115 kV · การต่อลงดิน",
+  groupEn: "A5660 115 kV SUBTRANSMISSION · GROUNDING",
+  titleBlock: { org: "การไฟฟ้าส่วนภูมิภาค · กองวิศวกรรมไฟฟ้าและเครื่องกล ฝ่ายวิศวกรรม — PROVINCIAL ELECTRICITY AUTHORITY", scale: "1 : 40 (รูปตัด A–A 1 : 50)", date: "15 ธ.ค. 2523 · อนุมัติ 12 ก.พ. 2524", dwg: "SAI-015/23089", sheet: "แผ่นที่ 1–2 / 2" },
+  /* หน่วย มม. x = แนวนอนในรูปด้าน, z = แนวลึกของแปลน (ลงล่างในแปลน), v = ระดับจากผิวดิน (+ ขึ้น) */
+  base: { top: 1000, bot: -1300, butt: -1000, pole: 450, sockT: 650, sockB: 520,
+          pileB: 450, pileLen: 8500, rod16: 1000, rodA: 60, rodT: 5, rodLen: 2000, rodTop: -100 },
+  variants: [
+    { label: "D-19A · เข็ม 2", code: "D-19A", type: "A", sheet: 1,
+      block: { W: 2000, D: 1000 }, piles: [[-600,0],[600,0]], pileTop: -300, leadPile: 0,
+      q: { rod: 0, clamp: 4, wire: 2 } },
+    { label: "D-19B · ร็อด", code: "D-19B", type: "B", sheet: 1,
+      ped: { W: 1000, D: 1000 }, slab: { W: 3000, D: 1000 }, rod: { x: 1000, z: 0 },
+      q: { rod: 1, clamp: 2, wire: 2 } },
+    { label: "D-19C · เข็ม 3", code: "D-19C", type: "C", sheet: 2,
+      poly: [[-230,-965],[230,-965],[1100,548],[940,898],[-940,898],[-1100,548]],
+      piles: [[0,-550],[-600,475],[600,475]], pileTop: -1100, leadPile: 0,
+      q: { rod: 0, clamp: 4, wire: 2 } },
+    { label: "D-19D · ร็อด", code: "D-19D", type: "D", sheet: 2,
+      ped: { W: 1000, D: 1000 }, slab: { W: 2200, D: 1000 }, rod: { x: 800, z: 0 },
+      q: { rod: 1, clamp: 2, wire: 2 } }
+  ],
+  fabrication: [
+    ["ใช้กับเสาคอนกรีต 22 ม. ตั้งในหลุมเสาของฐานคอนกรีตส่วนผสม 1 : 2 : 4 ส่วนบนฐานสูงจากระดับดิน 1,000 มม. โคนเสาอยู่สูงจากก้นฐาน 300 มม. (ฝังในฐาน 2,000 มม.)", "For a 22 m concrete pole set in the socket of a 1 : 2 : 4 concrete foundation; foundation top 1,000 mm above ground, pole butt 300 mm above the foundation bottom (2,000 mm in the foundation)."],
+    ["แบบ A: ฐาน 2,300 มม. วางบนเสาเข็มคอนกรีตรูป I ยาว 8.5 ม. 2 ต้น ที่ปลายเสาเข็มต้นหนึ่งมีกราวด์ร็อด Ø16 มม. ยาว 1.00 ม. ต่อสายดินจากเสาลงเสาเข็มด้วยลวดเหล็กตีเกลียว 50/7 ตร.มม. 2 ม. และยูแคล้มป์ 4 ตัว", "Type A: 2,300 mm foundation on two 8.5 m I-section concrete piles; one pile tip carries a Ø16 mm × 1.00 m ground rod. Bond the pole to that pile with 2 m of 50/7 mm² steel strand and four U-bolt clips."],
+    ["แบบ B: ตอม่อ 1,000 × 1,000 มม. สูง 1,000 มม. เหนือดิน บนฐานแผ่ 3,000 × 1,000 มม. หนา 1,300 มม. ใต้ดิน ตอกกราวด์ร็อดเหล็กฉาก 60 × 60 × 5 มม. ยาว 2,000 มม. ห่างแนวเสา 1,000 มม. ต่อสายดินจากเสาด้วยลวด 50/7 ตร.มม. 2 ม. ยูแคล้มป์ 2 ตัว", "Type B: 1,000 × 1,000 mm pedestal 1,000 mm above ground on a 3,000 × 1,000 mm footing 1,300 mm deep; drive the 60 × 60 × 5 mm × 2,000 mm angle ground rod 1,000 mm from the pole axis; bond with 2 m of 50/7 mm² strand and two U-bolt clips."],
+    ["แบบ C: ฐานรูปสามเหลี่ยมตัดมุม (รูปตัด A–A) บนเสาเข็มรูป I 3 ต้น หัวเสาเข็มฝังในฐาน 200 มม. ห่างจากโคนเสา 100 มม. ต่อสายดินลงเสาเข็มต้นกลางเช่นเดียวกับแบบ A", "Type C: truncated-triangle foundation (section A–A) on three I-piles, pile heads 200 mm into the foundation and 100 mm below the pole butt; bond to the centre pile as in type A."],
+    ["แบบ D: ตอม่อ 1,000 × 1,000 มม. บนฐานแผ่ใต้ดินหนา 1,300 มม. ต่อลงกราวด์ร็อดเหล็กฉากเช่นเดียวกับแบบ B · ทิศทางแนวสายตามลูกศรในแปลน", "Type D: 1,000 × 1,000 mm pedestal on a 1,300 mm deep footing, bonded to an angle ground rod as in type B; line direction as the plan arrow."],
+    ["ยึดลวดสายดินด้วยยูแคล้มป์ 1 ตัว M8 (ไวร์โรปคลิป) จุดต่อละ 2 ตัว ขันให้แน่นก่อนเทคอนกรีตหุ้ม", "Join the ground wire with single U-bolt M8 clamps (wire rope clips), two per joint, tightened before the concrete is placed."]
+  ],
+  assumptions: [
+    ["ขนาดฐานแบบ A ≈ 2,000 มม. (วัดจากภาพ) และความลึกแปลน 1,000 มม. — แบบ A ไม่มีแปลน", "Type A width ≈ 2,000 mm (scaled) and plan depth 1,000 mm assumed; type A has no plan on the drawing."],
+    ["ระยะเสาเข็มแบบ A ±600 มม. จากแนวเสา, หัวเสาเข็มต่ำกว่าดิน 300 มม. (ฝังในฐาน 1,000 มม.), หน้าตัดเสาเข็มและเสา ≈ 450 มม. วัดจากภาพ", "Type A piles at ±600 mm from the pole axis, heads 300 mm below ground (1,000 mm into the foundation); pile and pole sections ≈ 450 mm; all scaled."],
+    ["หลุมเสา (socket) กว้างบน ≈ 650 ล่าง ≈ 520 มม. วัดจากภาพ", "Pole socket ≈ 650 mm wide at the top, ≈ 520 mm at the bottom; scaled."],
+    ["รูปตัด A–A แบบ C (มาตราส่วน 1 : 50) ไม่มีมิติ: ฐานกว้าง ≈ 2,200 ลึก ≈ 1,860 มม. เสาเข็มที่ (0, −550) และ (±600, +475) จากแนวเสา วัดจากภาพ", "Type C section A–A (1 : 50) has no dimensions: ≈ 2,200 wide × ≈ 1,860 mm deep, piles at (0, −550) and (±600, +475) from the pole axis; scaled."],
+    ["แบบ D ไม่มีมิติในแปลน: ฐานแผ่ ≈ 2,200 × 1,000 มม. และกราวด์ร็อดห่างแนวเสา ≈ 800 มม. วัดจากภาพ (ต่างจากแบบ B ที่ระบุ 3,000)", "Type D plan is undimensioned: footing ≈ 2,200 × 1,000 mm and rod ≈ 800 mm from the pole axis, scaled (type B is dimensioned 3,000)."],
+    ["แบบ B: ตำแหน่งกราวด์ร็อดอ่านจากเครื่องหมาย + กลางช่องขวาของแปลน (≈ 1,000 มม. จากแนวเสา) ไม่มีมิติกำกับ", "Type B rod position read from the + at the centre of the right-hand plan cell (≈ 1,000 mm from the pole axis); not dimensioned."],
+    ["หัวกราวด์ร็อดแบบ B/D ต่ำกว่าดิน ≈ 100 มม. และตามรูปอยู่ภายในแนวฐานแผ่ (ทะลุก้นฐาน) แสดงตามแบบ — ให้ตอกก่อนเทคอนกรีต", "B/D rod head ≈ 100 mm below ground and, as drawn, inside the footing outline (passing its bottom); shown as drawn — drive it before pouring."],
+    ["แบบ A/C: เส้นประในเสาเข็มตีความเป็นสายดินที่หล่อมากับเสาเข็มต่อถึงกราวด์ร็อด Ø16 ที่ปลาย; แบบ C ไม่ได้เขียนป้ายกราวด์ร็อดแต่แสดงรูปเหมือนแบบ A", "Types A/C: the dashed line in the pile is read as a conductor cast in the pile, ending at the Ø16 tip rod; type C's rod is unlabelled but drawn as in type A."],
+    ["ตำแหน่งสายดินและยูแคล้มป์ในรูปเป็นแผนภาพ วัดจากภาพ · ความยาวเสาเข็มแสดงย่อ (มีเส้นตัด)", "Ground wire and clamp positions are schematic, scaled from the picture · piles are shown broken."],
+    ["น้ำหนัก: เหล็กฉาก 60×60×5 = 4.55 กก./ม. ลวด 50 ตร.มม. ≈ 0.40 กก./ม. (ค่าทั่วไป) · ปริมาตรคอนกรีตคิดรวม ไม่หักหลุมเสาและเสาเข็ม", "Masses: L60×60×5 4.55 kg/m, 50 mm² strand ≈ 0.40 kg/m (typical) · concrete volumes gross, socket and piles not deducted."],
+    ["เลขที่แบบอ่านได้ SAI-015/23089 (ตัวอักษรต้นอาจเป็น SAL) · ไม่มีเลขการประกอบเดิม", "Drawing no. read as SAI-015/23089 (prefix could be SAL) · no old assembly no."]
+  ]
+};
+const BS = PART.base;
+function iPath(cx,cy,b,h,vert){
+  const f=b*.22, w=b*.18; const P = vert
+    ? [[-b/2,-h/2],[-b/2+f,-h/2],[-b/2+f,-w],[b/2-f,-w],[b/2-f,-h/2],[b/2,-h/2],[b/2,h/2],[b/2-f,h/2],[b/2-f,w],[-b/2+f,w],[-b/2+f,h/2],[-b/2,h/2]]
+    : [[-b/2,-h/2],[b/2,-h/2],[b/2,-h/2+f],[w,-h/2+f],[w,h/2-f],[b/2,h/2-f],[b/2,h/2],[-b/2,h/2],[-b/2,h/2-f],[-w,h/2-f],[-w,-h/2+f],[-b/2,-h/2+f]];
+  return "M"+P.map(([x,y])=>`${cx+x} ${cy+y}`).join(" L")+" Z"; }
+const halfW = p => p.block ? p.block.W/2 : p.slab ? p.slab.W/2 : 1100;
+/* เส้นทางสายดิน (x, v) */
+function wirePath(p){
+  if (p.type==="A") return { w:[[-225,880],[-280,990],[-320,900],[-335,300],[-345,0],[-350,-150]], cl:[[-312,820],[-318,720],[-345,-40],[-348,-130]],
+      lead:[[-350,-150],[-420,-450],[-600,-800],[-600,-8800]] };
+  if (p.type==="C") return { w:[[-225,880],[-290,990],[-330,900],[-345,0],[-350,-750],[-345,-950]], cl:[[-322,820],[-326,720],[-350,-800],[-348,-900]],
+      lead:[[-345,-950],[-200,-1250],[-60,-1500],[-60,-8800]] };
+  const rx = p.rod.x;
+  return { w:[[225,880],[300,990],[330,880],[360,400],[400,0],[520,-180],[rx-60,-170],[rx-10,-110]], cl:[[322,800],[332,700]], lead:null };
+}
+
+function drawElev(){
+  const p = PART.variants[cur], B = BS; AR = "ar";
+  const k = .1, cx = 330, gy = 300, cut = -2600, tip0 = -7300;
+  const Y = v => v >= cut ? gy - v*k : gy - cut*k + 46 + (tip0 - v)*k;
+  const X = x => cx + x*k, ink = 'stroke="var(--ink)" stroke-width="1.6"';
+  let s = MK("ar");
+  s += `<text class="th" x="30" y="24" font-size="13" font-weight="600">รูปด้าน ${p.code}</text><text x="${30+86}" y="24" font-size="11" style="fill:var(--muted)">ELEVATION · TYPE ${p.type} · แผ่นที่ ${p.sheet}</text>`;
+  const hw = halfW(p);
+  /* ดิน */
+  const gL = X(-hw)-110, gR = X(hw)+90;
+  s += `<line x1="${gL}" y1="${gy}" x2="${X(-hw)}" y2="${gy}" stroke="var(--ink)"/><line x1="${X(hw)}" y1="${gy}" x2="${gR}" y2="${gy}" stroke="var(--ink)"/>`;
+  for(let x=gL+6;x<gR;x+=10){ if(x>X(-hw)-2&&x<X(hw)+8) continue; s += `<line x1="${x}" y1="${gy+1}" x2="${x-6}" y2="${gy+7}" stroke="var(--muted)" stroke-width=".8"/>`; }
+  s += `<text class="th" x="${gR}" y="${gy+22}" font-size="12" text-anchor="end">ระดับดิน</text><text x="${gR}" y="${gy+36}" font-size="10" text-anchor="end" style="fill:var(--muted)">GROUND LEVEL</text>`;
+  /* เสาเข็ม (วาดก่อนฐาน) */
+  if (p.piles){
+    const seen = {};
+    p.piles.forEach(([px],i)=>{ if (seen[px]) return; seen[px]=1;
+      const b = B.pileB*k, x0 = X(px)-b/2;
+      s += `<rect x="${x0}" y="${Y(p.pileTop)}" width="${b}" height="${Y(cut)-Y(p.pileTop)}" fill="var(--soft)" fill-opacity=".5" ${ink}/>`;
+      s += `<path d="M${x0+b*.3} ${Y(p.pileTop)+4} V${Y(cut)} M${x0+b*.7} ${Y(p.pileTop)+4} V${Y(cut)}" stroke="var(--muted)" stroke-width=".7" stroke-dasharray="5 3"/>`;
+      /* ปลายเสาเข็ม */
+      const tt = -8200, te = -8800;
+      s += `<path d="M${x0} ${Y(tip0)} V${Y(tt)} L${X(px)-9} ${Y(te)} H${X(px)+9} L${x0+b} ${Y(tt)} V${Y(tip0)}" fill="var(--soft)" fill-opacity=".5" ${ink}/>`;
+      s += `<line x1="${x0}" y1="${Y(tt)}" x2="${x0+b}" y2="${Y(tt)}" stroke="var(--ink)" stroke-width=".8"/>`;
+      s += `<path d="M${x0-12} ${Y(cut)+12} l${b+24} -10 M${x0-12} ${Y(tip0)-8} l${b+24} -10" stroke="var(--ink)" stroke-width="1"/>`; });
+    const lp = p.piles[p.leadPile][0];
+    s += `<path d="M${X(lp)-3} ${Y(-8800)} V${Y(-9800)+10} L${X(lp)} ${Y(-9800)} L${X(lp)+3} ${Y(-9800)+10} V${Y(-8800)} Z" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>`;
+  }
+  /* ฐานคอนกรีต */
+  const conc = `fill="var(--soft)" fill-opacity=".55" ${ink}`;
+  if (p.ped){
+    const pw = p.ped.W/2, sw = p.slab.W/2;
+    s += `<path d="M${X(-pw)} ${Y(B.top)} H${X(pw)} V${Y(0)} H${X(sw)} V${Y(B.bot)} H${X(-sw)} V${Y(0)} H${X(-pw)} Z" ${conc}/>`;
+  } else {
+    s += `<rect x="${X(-hw)}" y="${Y(B.top)}" width="${2*hw*k}" height="${(B.top-B.bot)*k}" ${conc}/>`;
+    if (p.poly) [-940,940].forEach(x=>{ s += `<line x1="${X(x)}" y1="${Y(B.top)}" x2="${X(x)}" y2="${Y(B.bot)}" stroke="var(--ink)" stroke-width=".9"/>`; });
+    if (p.piles) p.piles.forEach(([px])=>{ s += `<line x1="${X(px)-B.pileB*k/2}" y1="${Y(p.pileTop)}" x2="${X(px)+B.pileB*k/2}" y2="${Y(p.pileTop)}" stroke="var(--ink)" stroke-width=".9" stroke-dasharray="4 3"/>`; });
+  }
+  /* หลุมเสาและเสา */
+  s += `<path d="M${X(-B.sockT/2)} ${Y(B.top)} L${X(-B.sockB/2)} ${Y(B.butt)} H${X(B.sockB/2)} L${X(B.sockT/2)} ${Y(B.top)}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1"/>`;
+  const pt = 2300, hp = B.pole/2;
+  s += `<rect x="${X(-hp)}" y="${Y(pt)}" width="${B.pole*k}" height="${(pt-B.butt)*k}" fill="var(--sheet)" ${ink}/>`;
+  s += `<path d="M${X(-90)} ${Y(pt)+3} V${Y(B.butt)-3} M${X(90)} ${Y(pt)+3} V${Y(B.butt)-3}" stroke="var(--muted)" stroke-width=".7" stroke-dasharray="5 3"/>`;
+  s += `<path d="M${X(-hp)-10} ${Y(pt)} H${X(hp)+10}" stroke="var(--ink)"/><path d="M${X(0)-6} ${Y(pt)+6} l12 -12" stroke="var(--ink)" stroke-width="1.2"/>`;
+  /* หลักดินเหล็กฉาก */
+  if (p.rod){
+    const rx = X(p.rod.x), t = B.rodTop, e = B.rodTop - B.rodLen;
+    s += `<path d="M${rx-3} ${Y(t)} V${Y(e)-12} L${rx} ${Y(e)} L${rx+3} ${Y(e)-12} V${Y(t)} Z" fill="var(--steel)" stroke="var(--ink)" stroke-width="1.2"/>`;
+  }
+  /* สายดิน */
+  const W = wirePath(p), pl = a => a.map(([x,v],i)=>`${i?"L":"M"}${X(x)} ${Y(v)}`).join(" ");
+  s += `<path d="${pl(W.w)}" fill="none" stroke="var(--weld)" stroke-width="2" stroke-linejoin="round"/>`;
+  if (W.lead) s += `<path d="${pl(W.lead.slice(0,3))} L${X(W.lead[3][0])} ${Y(cut)} M${X(W.lead[3][0])} ${Y(tip0)} V${Y(-8800)}" fill="none" stroke="var(--weld)" stroke-width="1.4" stroke-dasharray="8 3 2 3"/>`;
+  W.cl.forEach(([x,v])=>{ s += `<path d="M${X(x)} ${Y(v)-5} l4 5 l-4 5 l-4 -5 Z" fill="var(--ink)"/>`; });
+  /* ป้ายกำกับ */
+  const lx = X(hw) + 60;
+  s += lead(X(hp)+2, Y(1800), lx, Y(1800), "เสาคอนกรีต 22 ม.", "CONCRETE POLE 22 m");
+  s += lead(X(p.ped ? p.ped.W/2 : hw)-6, Y(B.top)+8, lx, Y(1300), "คอนกรีต 1 : 2 : 4", "CONCRETE");
+  const c0 = W.cl[0];
+  s += lead(X(c0[0]), Y(c0[1]), lx, Y(600), "(2) ยูแคล้มป์ 1 ตัว M8 × "+p.q.clamp, "U-BOLT CLAMP M8 (WIRE ROPE CLIP)");
+  const wm = W.w[3];
+  s += lead(X(wm[0]), Y(wm[1]), lx, Y(-550), "(3) ลวดเหล็กตีเกลียว 50/7 ตร.มม. "+p.q.wire+" ม.", "STEEL STRAND 50/7 mm², TIS 404");
+  if (p.rod) s += lead(X(p.rod.x)+3, Y(-1800), lx, Y(-2000), "(1) กราวด์ร็อด L60 × 60 × 5 ยาว 2,000", "ROD, GROUND 60×60×5 mm, 2,000 mm");
+  if (p.piles){
+    s += lead(X(p.piles[p.piles.length-1][0])+B.pileB*k/2, Y(-2000), lx, Y(-2000), "เสาเข็มคอนกรีต รูป I-8.5 ม. × "+p.piles.length, "I-8.5 m CONCRETE PILE");
+    const lp = p.piles[p.leadPile][0];
+    s += lead(X(lp)+3, Y(-9500), X(lp)+70, Y(-9450), "กราวด์ร็อด Ø16 มม. ยาว 1.00 ม."+(p.type==="C"?"*":""), "GROUND ROD Ø16 mm, 1.00 m");
+    s += lead(X(lp)-30, Y(-1900), X(lp)-90, Y(-2250), "สายดินในเสาเข็ม*", "CONDUCTOR IN PILE*", "end");
+  }
+  /* มิติ (ซ้าย) */
+  const d1 = X(-hw)-70, d2 = X(-hw)-30;
+  [B.top, 0, B.bot].forEach(v=>{ s += ext(X(-hw)-4, Y(v), d1-6, Y(v)); });
+  s += dl(d1, Y(B.top), d1, Y(B.bot), "", 0, 0) + `<text x="${d1-6}" y="${Y(-750)+4}" font-size="13" text-anchor="end" style="fill:var(--dim)">2,300</text>`;
+  s += dl(d2, Y(B.top), d2, Y(0), "", 0, 0) + `<text x="${d2-5}" y="${Y(500)+4}" font-size="12" text-anchor="end" style="fill:var(--dim)">1,000</text>`;
+  if (p.type==="C"){
+    s += ext(X(-hw)-4, Y(B.butt), d2+8, Y(B.butt)) + ext(X(-hw)-4, Y(p.pileTop), d2+8, Y(p.pileTop));
+    s += dl(d2, Y(0), d2, Y(B.butt), "", 0, 0) + `<text x="${d2-5}" y="${Y(-500)+4}" font-size="12" text-anchor="end" style="fill:var(--dim)">1,000</text>`;
+    s += `<line x1="${d2}" y1="${Y(B.butt)}" x2="${d2}" y2="${Y(B.bot)}" stroke="var(--dim)"/>`;
+    s += `<text x="${d2+5}" y="${Y(-1050)+4}" font-size="10" style="fill:var(--dim)">100</text><text x="${d2+5}" y="${Y(-1220)+6}" font-size="10" style="fill:var(--dim)">200</text>`;
+  } else {
+    s += dl(d2, Y(0), d2, Y(B.bot), "", 0, 0) + `<text x="${d2-5}" y="${Y(-650)+4}" font-size="12" text-anchor="end" style="fill:var(--dim)">1,300</text>`;
+  }
+  /* 300 ใต้โคนเสา */
+  const d3 = X(B.sockB/2)+22;
+  if (p.type!=="C"){ s += ext(X(B.sockB/2)+3, Y(B.butt), d3+6, Y(B.butt)) + dl(d3, Y(B.butt), d3, Y(B.bot), "", 0, 0) + `<text x="${d3+5}" y="${Y(-1150)+4}" font-size="12" style="fill:var(--dim)">300</text>`; }
+  /* ความกว้าง (ล่าง) */
+  if (p.ped){
+    const yb = Y(B.bot) + (p.rod ? 30 : 30);
+    s += ext(X(-hw), Y(B.bot)+4, X(-hw), yb+6) + ext(X(hw), Y(B.bot)+4, X(hw), yb+6);
+    s += dl(X(-hw), yb, X(hw), yb, "", 0, 0) + `<text x="${X(0)}" y="${yb+16}" font-size="13" text-anchor="middle" style="fill:var(--dim)">${fmt(p.slab.W)}${p.type==="D"?"*":""}</text>`;
+    s += ext(X(-p.ped.W/2), Y(B.top)-4, X(-p.ped.W/2), Y(B.top)-30) + ext(X(p.ped.W/2), Y(B.top)-4, X(p.ped.W/2), Y(B.top)-30);
+    s += dl(X(-p.ped.W/2), Y(B.top)-24, X(p.ped.W/2), Y(B.top)-24, "1,000", X(0)-36, Y(B.top)-30);
+    const yr = Y(-2100)+22;
+    s += ext(X(0), Y(B.bot)+40, X(0), yr+6) + ext(X(p.rod.x), Y(-2100)+4, X(p.rod.x), yr+6);
+    s += dl(X(0), yr, X(p.rod.x), yr, fmt(p.rod.x)+"*", X(p.rod.x/2), yr+16);
+    s += `<text x="${X(p.rod.x)+8}" y="${Y(-1650)}" font-size="10" style="fill:var(--dim)">หัวร็อด −100*</text><text x="${X(p.rod.x)+8}" y="${Y(-1650)+13}" font-size="9" style="fill:var(--muted)">ROD HEAD BELOW GL</text>`;
+  } else {
+    const yb = Y(B.top) - 26;
+    s += ext(X(-hw), Y(B.top)-4, X(-hw), yb-6) + ext(X(hw), Y(B.top)-4, X(hw), yb-6);
+    s += dl(X(-hw), yb, X(-B.pole/2)-6, yb, "", 0, 0) + dl(X(B.pole/2)+6, yb, X(hw), yb, "", 0, 0) + `<text x="${X(-hw)+14}" y="${yb-6}" font-size="12" style="fill:var(--dim)">≈ ${fmt(2*hw)}*</text>`;
+    const yp = Y(cut) - 14, ps = [...new Set(p.piles.map(q=>q[0]))].sort((a,b)=>a-b);
+    for (let i=0;i<ps.length-1;i++){ s += dl(X(ps[i]), yp, X(ps[i+1]), yp, "", 0, 0) + `<text x="${X((ps[i]+ps[i+1])/2)}" y="${yp-5}" font-size="11" text-anchor="middle" style="fill:var(--dim)">${fmt(ps[i+1]-ps[i])}*</text>`; }
+  }
+  const ny = p.piles ? 880 : 590;
+  $("elev").setAttribute("viewBox", `0 0 1240 ${ny+30}`);
+  s += `<text class="th" x="30" y="${ny}" font-size="12" style="fill:var(--muted)">มาตราส่วนจริงทั้งสองทิศ · เสาเข็มแสดงย่อ (ยาวจริง 8.5 ม.) · เส้นส้ม = สายดิน · ◆ = ยูแคล้มป์ · * วัดจากภาพ / ไม่ได้ระบุ</text><text x="30" y="${ny+16}" font-size="11" style="fill:var(--muted)">True scale both ways · piles broken (8.5 m) · orange = ground wire · ◆ = U-bolt clip · * scaled / not stated</text>`;
+  s += drawPlan(p);
+  $("elev").innerHTML = s;
+}
+
+function drawPlan(p){
+  const B = BS, k = .125, cx = 975, cy = p.type==="C" ? 300 : 260;
+  const X = x => cx + x*k, Z = z => cy + z*k;
+  let s = "";
+  const ttl = p.type==="C" ? ["รูปตัด A–A (1 : 50)","SECTION A–A · drawn at plan scale"] : p.type==="A" ? ["แปลน*","PLAN · NOT ON DRAWING, ASSUMED"] : ["แปลน","PLAN"];
+  s += `<text class="th" x="${cx-200}" y="24" font-size="13" font-weight="600">${ttl[0]}</text><text x="${cx-200}" y="40" font-size="11" style="fill:var(--muted)">${ttl[1]}</text>`;
+  const conc = `fill="var(--soft)" fill-opacity=".55" stroke="var(--ink)" stroke-width="1.4"`;
+  if (p.poly) s += `<path d="M${p.poly.map(([x,z])=>`${X(x)} ${Z(z)}`).join(" L")} Z" ${conc} stroke-dasharray="10 4"/>`;
+  else {
+    const w = p.ped ? p.slab.W : p.block.W, d = p.ped ? p.slab.D : p.block.D;
+    s += `<rect x="${X(-w/2)}" y="${Z(-d/2)}" width="${w*k}" height="${d*k}" ${conc} ${p.type==="A"?'stroke-dasharray="6 4"':""}/>`;
+    if (p.ped) [-500,500].forEach(x=>{ s += `<line x1="${X(x)}" y1="${Z(-d/2)}" x2="${X(x)}" y2="${Z(d/2)}" stroke="var(--ink)" stroke-width="1"/>`; });
+  }
+  if (p.piles) p.piles.forEach(([x,z])=>{ s += `<path d="${iPath(X(x),Z(z),B.pileB*k,B.pileB*k,false)}" fill="none" stroke="var(--ink)" stroke-width=".9" stroke-dasharray="4 3"/>`; });
+  s += `<path d="${iPath(X(0),Z(0),B.pole*k,B.pole*k,false)}" fill="url(#hatar)" stroke="var(--ink)" stroke-width="1.4"/>`;
+  /* สายดินในแปลน */
+  if (p.rod){
+    const rx = X(p.rod.x), rz = Z(p.rod.z);
+    s += `<path d="M${X(B.pole/2)} ${Z(B.pole/2)-2} C${X(B.pole/2+250)} ${Z(B.pole/2)-4} ${rx-60} ${rz+4} ${rx} ${rz}" fill="none" stroke="var(--weld)" stroke-width="1.8"/>`;
+    s += `<path d="M${rx-7} ${rz} h14 M${rx} ${rz-7} v14" stroke="var(--ink)" stroke-width="2"/>`;
+  } else {
+    const [lx,lz] = p.piles[p.leadPile];
+    s += `<path d="M${X(-B.pole/2)} ${Z(-B.pole/2)+8} C${X(-B.pole/2-160)} ${Z(-B.pole/2)} ${X(lx-160)} ${Z(lz)+40} ${X(lx)} ${Z(lz)}" fill="none" stroke="var(--weld)" stroke-width="1.8"/>`;
+    s += `<circle cx="${X(lx)}" cy="${Z(lz)}" r="3" fill="var(--weld)"/>`;
+  }
+  /* ทิศทางแนวสาย */
+  const up = p.type!=="D", ay = p.type==="C" ? Z(-965)-10 : Z(-500)-10;
+  if (up) s += `<path d="M${X(0)} ${ay} V${ay-46}" stroke="var(--ink)" stroke-width="1.2" marker-end="url(#ar)"/><text class="th" x="${X(0)+10}" y="${ay-34}" font-size="11">ทิศทางแนวสายไฟ</text><text x="${X(0)+10}" y="${ay-20}" font-size="10" style="fill:var(--muted)">LINE DIRECTION</text>`;
+  else { const by = Z(500)+66; s += `<path d="M${X(0)} ${Z(500)+16} V${by}" stroke="var(--ink)" stroke-width="1.2" marker-end="url(#ar)"/><text class="th" x="${X(0)+10}" y="${by-14}" font-size="11">ทิศทางแนวสายไฟ</text><text x="${X(0)+10}" y="${by}" font-size="10" style="fill:var(--muted)">LINE DIRECTION</text>`; }
+  /* มิติแปลน */
+  if (p.type==="B"){
+    const yb = Z(500)+28;
+    [-1500,-500,500,1500].forEach(x=>{ s += ext(X(x), Z(500)+4, X(x), yb+6); });
+    [[-1500,-500],[-500,500],[500,1500]].forEach(([a,b])=>{ s += dl(X(a), yb, X(b), yb, "1,000", X((a+b)/2), yb+16); });
+    const xr = X(1500)+28;
+    s += ext(X(1500)+4, Z(-500), xr+6, Z(-500)) + ext(X(1500)+4, Z(500), xr+6, Z(500));
+    s += dl(xr, Z(-500), xr, Z(500), "", 0, 0) + `<text x="${xr+5}" y="${Z(0)+4}" font-size="12" style="fill:var(--dim)">1,000</text>`;
+    const xl = X(-1500)-24;
+    s += ext(X(-1500)-4, Z(-500), xl-6, Z(-500)) + ext(X(-1500)-4, Z(500), xl-6, Z(500));
+    s += dl(xl, Z(-500), xl, Z(0), "", 0, 0) + dl(xl, Z(0), xl, Z(500), "", 0, 0) + `<text x="${xl-4}" y="${Z(-250)+4}" font-size="11" text-anchor="end" style="fill:var(--dim)">500</text><text x="${xl-4}" y="${Z(250)+4}" font-size="11" text-anchor="end" style="fill:var(--dim)">500</text>`;
+  } else if (p.type==="D" || p.type==="A"){
+    const w = p.ped ? p.slab.W : p.block.W, yb = Z(-500)-14;
+    s += dl(X(-w/2), yb, X(w/2), yb, "", 0, 0) + `<text x="${X(-w/2)+6}" y="${yb-5}" font-size="11" style="fill:var(--dim)">≈ ${fmt(w)}*</text>`;
+    const xr = X(w/2)+20;
+    s += dl(xr, Z(-500), xr, Z(500), "", 0, 0) + `<text x="${xr+5}" y="${Z(0)+4}" font-size="11" style="fill:var(--dim)">1,000*</text>`;
+  } else {
+    const yb = Z(898)+24;
+    s += ext(X(-1100), Z(548)+4, X(-1100), yb+6) + ext(X(1100), Z(548)+4, X(1100), yb+6);
+    s += dl(X(-1100), yb, X(1100), yb, "≈ 2,200*", X(0), yb+16);
+    const xr = X(1100)+22;
+    s += ext(X(230)+4, Z(-965), xr+6, Z(-965)) + ext(X(940)+4, Z(898), xr+6, Z(898));
+    s += dl(xr, Z(-965), xr, Z(898), "", 0, 0) + `<text x="${xr+5}" y="${Z(0)+4}" font-size="11" style="fill:var(--dim)">≈ 1,860*</text>`;
+  }
+  const ty = p.type==="C" ? Z(898)+70 : Z(500)+(p.type==="D"?100:72);
+  const nt = { A:["แบบ A ไม่มีแปลน — แสดงตามที่สมมติ*","Type A has no plan; assumed outline*"],
+               B:["+ = กราวด์ร็อด · ตอม่อ 1,000 × 1,000 อยู่กลาง","+ = ground rod · pedestal 1,000 × 1,000 central"],
+               C:["เสาเข็ม I 3 ต้น (กรอบประ) · สายดินลงเสาเข็มต้นบน","3 I-piles (dashed) · wire bonded to the upper pile"],
+               D:["แปลนแบบ D ไม่มีมิติในแบบ*","Type D plan undimensioned on the drawing*"] }[p.type];
+  s += `<text class="th" x="${cx-200}" y="${ty}" font-size="12" style="fill:var(--muted)">${nt[0]}</text><text x="${cx-200}" y="${ty+15}" font-size="11" style="fill:var(--muted)">${nt[1]}</text>`;
+  return s;
+}
+
+function drawDetail(){
+  const p = PART.variants[cur]; AR = "ar2";
+  let s = MK("ar2");
+  /* วงกลมรายละเอียดยูแคล้มป์ */
+  const cx = 120, cy = 130, r = 78;
+  s += `<text class="th" x="20" y="24" font-size="13" font-weight="600">จุดต่อสายดิน (2)</text><text x="20" y="40" font-size="11" style="fill:var(--muted)">WIRE JOINT · 2 CLIPS · SCHEMATIC</text>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.4"/>`;
+  s += `<line x1="${cx-62}" y1="${cy+62}" x2="${cx+50}" y2="${cy-50}" stroke="var(--weld)" stroke-width="4"/><line x1="${cx-50}" y1="${cy+50}" x2="${cx+62}" y2="${cy-62}" stroke="var(--ink)" stroke-width="3"/>`;
+  [[-18,18],[22,-22]].forEach(([dx,dy])=>{ s += `<g transform="translate(${cx+dx} ${cy+dy}) rotate(-45)"><path d="M-12 8 V-4 a12 12 0 0 1 24 0 V8" fill="none" stroke="var(--ink)" stroke-width="2.6"/><rect x="-17" y="6" width="34" height="7" fill="var(--steel)" stroke="var(--ink)"/></g>`; });
+  s += `<text class="th" x="${cx}" y="${cy+r+22}" font-size="12" text-anchor="middle">ยูแคล้มป์ M8 · 2 ตัว/จุด</text><text x="${cx}" y="${cy+r+37}" font-size="10" text-anchor="middle" style="fill:var(--muted)">orange = wire · black = pole lead</text>`;
+  /* ยูแคล้มป์ */
+  const ux = 330, uy = 80;
+  s += `<text class="th" x="${ux-30}" y="24" font-size="13" font-weight="600">ยูแคล้มป์ 1 ตัว M8</text><text x="${ux-30}" y="40" font-size="11" style="fill:var(--muted)">CLAMP, SINGLE U-BOLT (WIRE ROPE CLIP)</text>`;
+  s += `<path d="M${ux} ${uy+90} V${uy+36} a34 34 0 0 1 68 0 V${uy+90}" fill="none" stroke="var(--ink)" stroke-width="5"/>`;
+  s += `<rect x="${ux-16}" y="${uy+64}" width="100" height="16" rx="3" fill="var(--steel)" stroke="var(--ink)"/>`;
+  [ux,ux+68].forEach(x=>{ s += `<rect x="${x-9}" y="${uy+82}" width="18" height="10" fill="var(--ink)"/>`; });
+  s += `<circle cx="${ux+22}" cy="${uy+50}" r="9" fill="var(--weld)" stroke="var(--ink)"/><circle cx="${ux+46}" cy="${uy+50}" r="9" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/>`;
+  s += dl(ux, uy+112, ux+68, uy+112, "M8", ux+34, uy+128);
+  s += `<text x="${ux+100}" y="${uy+44}" font-size="10" style="fill:var(--muted)">ลวด 2 เส้น</text><text x="${ux+100}" y="${uy+57}" font-size="10" style="fill:var(--muted)">2 strands</text>`;
+  /* หลักดิน */
+  const ay = 330;
+  if (p.rod){
+    const ax = 300, a = 60*1.5, t = 5*1.5;
+    s += `<text class="th" x="${ax-30}" y="${ay-30}" font-size="13" font-weight="600">(1) กราวด์ร็อด</text><text x="${ax-30}" y="${ay-14}" font-size="11" style="fill:var(--muted)">ROD, GROUND L60×60×5 · 2,000</text>`;
+    s += `<path d="M${ax} ${ay} h${t} v${a-t} h${a-t} v${t} h${-a} Z" fill="url(#hatar2)" stroke="var(--ink)" stroke-width="1.4"/>`;
+    s += dl(ax, ay+a+14, ax+a, ay+a+14, "60", ax+a/2, ay+a+30) + dl(ax-14, ay, ax-14, ay+a, "", 0, 0) + `<text x="${ax-18}" y="${ay+a/2+4}" font-size="12" text-anchor="end" style="fill:var(--dim)">60</text>`;
+    s += `<text x="${ax+a+8}" y="${ay+a-6}" font-size="11" style="fill:var(--dim)">t = 5</text>`;
+  } else {
+    const ax = 330;
+    s += `<text class="th" x="${ax-60}" y="${ay-30}" font-size="13" font-weight="600">ปลายเสาเข็ม + กราวด์ร็อด</text><text x="${ax-60}" y="${ay-14}" font-size="11" style="fill:var(--muted)">PILE TIP + GROUND ROD Ø16 · 1.00 m</text>`;
+    s += `<path d="M${ax-40} ${ay} V${ay+30} L${ax-8} ${ay+70} H${ax+8} L${ax+40} ${ay+30} V${ay}" fill="var(--soft)" stroke="var(--ink)" stroke-width="1.4"/>`;
+    s += `<path d="M${ax} ${ay} V${ay+70}" stroke="var(--weld)" stroke-width="1.4" stroke-dasharray="6 3 2 3"/>`;
+    s += `<path d="M${ax-3} ${ay+70} V${ay+120} L${ax} ${ay+128} L${ax+3} ${ay+120} V${ay+70} Z" fill="var(--steel)" stroke="var(--ink)"/>`;
+    s += dl(ax+24, ay+70, ax+24, ay+128, "", 0, 0) + `<text x="${ax+30}" y="${ay+104}" font-size="11" style="fill:var(--dim)">1,000</text>`;
+  }
+  /* หน้าตัดเสาเข็ม / เสา */
+  const ix = 110, iy = 360, b = 70;
+  s += `<text class="th" x="20" y="${ay-30}" font-size="13" font-weight="600">หน้าตัดรูป I*</text><text x="20" y="${ay-14}" font-size="11" style="fill:var(--muted)">POLE / PILE I-SECTION · APPROX.</text>`;
+  s += `<path d="${iPath(ix,iy,b,b,false)}" fill="url(#hatar2)" stroke="var(--ink)" stroke-width="1.4"/>`;
+  s += dl(ix-b/2, iy+b/2+16, ix+b/2, iy+b/2+16, "≈ 450", ix, iy+b/2+32);
+  $("detail").innerHTML = s;
+}
+
+function concVol(p){
+  const B = BS, H = (B.top-B.bot)/1e3;
+  if (p.ped) return p.ped.W*p.ped.D*B.top/1e9 + p.slab.W*p.slab.D*(-B.bot)/1e9;
+  if (p.block) return p.block.W*p.block.D/1e6*H;
+  let a = 0; const P = p.poly; for (let i=0;i<P.length;i++){ const [x1,z1]=P[i],[x2,z2]=P[(i+1)%P.length]; a += x1*z2-x2*z1; }
+  return Math.abs(a)/2/1e6*H;
+}
+function tables(){
+  const p = PART.variants[cur];
+  const fp = v => v.ped ? `ตอม่อ 1,000 × 1,000 + ฐาน ${fmt(v.slab.W)}${v.type==="D"?"*":""} × 1,000${v.type==="D"?"*":""}` : v.block ? `≈ ${fmt(v.block.W)}* × ${fmt(v.block.D)}*` : "สามเหลี่ยมตัดมุม ≈ 2,200 × 1,860*";
+  const el = v => v.rod ? `L60×60×5 × 2,000 · ห่างแนวเสา ${fmt(v.rod.x)}*` : `Ø16 × 1,000 ปลายเสาเข็ม`;
+  $("dimTbl").innerHTML = `<thead><tr><th>แบบ<span class="e">Type</span></th><th>เหนือดิน<span class="e">Above GL</span></th><th>ใต้ดิน<span class="e">Below GL</span></th><th>สูงรวม<span class="e">Total</span></th><th>ใต้โคนเสา<span class="e">Below butt</span></th><th>แปลนฐาน<span class="e">Plan</span></th><th>เสาเข็ม<span class="e">Piles</span></th><th>หลักดิน<span class="e">Electrode</span></th></tr></thead><tbody>
+    ${PART.variants.map((v,i)=>`<tr class="${i===cur?"on":""}"><td class="mono">${v.code}</td><td class="mono">1,000</td><td class="mono">1,300</td><td class="mono">2,300</td><td class="mono">${v.type==="C"?"100 + 200":"300"}</td><td>${fp(v)}</td><td class="mono">${v.piles?"I-8.5 ม. × "+v.piles.length:"–"}</td><td class="mono">${el(v)}</td></tr>`).join("")}</tbody>`;
+  const wR = 4.55*2, wW = .40;
+  const tot = p.q.rod*wR + p.q.wire*wW;
+  const vol = concVol(p);
+  $("bomTbl").innerHTML = `<thead><tr><th>ลำดับ<span class="e">Item</span></th><th class="l">รายการ<span class="e">Description</span></th><th>A</th><th>B</th><th>C</th><th>D</th><th>ใช้ (${p.type})<span class="e">This type</span></th><th>วัสดุเลขที่<span class="e">Mat. no.</span></th><th>น้ำหนัก<span class="e">kg each</span></th></tr></thead><tbody>
+    <tr><td>1</td><td class="l">กราวด์ร็อด 60 × 60 × 5 มม. ยาว 2,000 มม.<span class="e">Rod, ground 60 × 60 × 5 mm, 2,000 mm long</span></td><td class="mono">–</td><td class="mono">1</td><td class="mono">–</td><td class="mono">1</td><td class="mono">${p.q.rod||"–"}</td><td class="mono">01220002 (1228)</td><td class="mono">${wR.toFixed(2)}*</td></tr>
+    <tr><td>2</td><td class="l">ยูแคล้มป์ 1 ตัว M8 (ไวร์โรปคลิป)<span class="e">Clamp, single U-bolt, M8 (wire rope clip)</span></td><td class="mono">4</td><td class="mono">2</td><td class="mono">4</td><td class="mono">2</td><td class="mono">${p.q.clamp}</td><td class="mono">01230000 (0165)</td><td class="mono">–</td></tr>
+    <tr><td>3</td><td class="l">ลวดเหล็กตีเกลียว 50/7 ตร.มม. มอก. 404<span class="e">Wire, steel stranded 50/7 mm², TIS 404</span></td><td class="mono">2 ม.</td><td class="mono">2 ม.</td><td class="mono">2 ม.</td><td class="mono">2 ม.</td><td class="mono">${p.q.wire} ม. · m</td><td class="mono">01100004 (0183)</td><td class="mono">0.40/m*</td></tr></tbody>
+    <tfoot><tr><td colspan="8" class="l">น้ำหนักเหล็กโดยประมาณ แบบ ${p.type}<span class="e">Approx. steel mass, type ${p.type}</span></td><td class="mono">${tot.toFixed(1)} kg</td></tr>
+    <tr><td colspan="8" class="l">อ้างอิง: คอนกรีต 1 : 2 : 4 ฐานแบบ ${p.type} (รวม ไม่หักหลุมเสา)${p.piles?" · เสาเข็ม I-8.5 ม. × "+p.piles.length:""}<span class="e">Reference: foundation concrete, gross${p.piles?" · I-8.5 m piles × "+p.piles.length:""}</span></td><td class="mono">≈ ${vol.toFixed(2)} m³</td></tr></tfoot>`;
+  $("varSpec").textContent = `${p.code} · ${p.piles?"เสาเข็ม I-8.5 ม. × "+p.piles.length+" + Ø16":"กราวด์ร็อด L60×60×5"} · ยูแคล้มป์ × ${p.q.clamp} · ลวด 50/7 ${p.q.wire} ม.`;
+}
+
+/* ===== 3D ===== */
+function rodMesh(a,b,r,mat){ const d=new THREE.Vector3().subVectors(b,a); const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),12),mat||MAT.steel);
+  m.position.copy(a).addScaledVector(d,.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d.normalize()); return m; }
+function iMember(b,len,yTop,x,z,mat){
+  const f=b*.22, w=b*.18, s=new THREE.Shape(), P=[[-b/2,-b/2],[b/2,-b/2],[b/2,-b/2+f],[w,-b/2+f],[w,b/2-f],[b/2,b/2-f],[b/2,b/2],[-b/2,b/2],[-b/2,b/2-f],[-w,b/2-f],[-w,-b/2+f],[-b/2,-b/2+f]];
+  s.moveTo(...P[0]); P.slice(1).forEach(q=>s.lineTo(...q)); s.lineTo(...P[0]);
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:len,bevelEnabled:false}),mat);
+  m.rotation.x = Math.PI/2; m.position.set(x,yTop,z); return m; }
+function concMesh(geo, g, x, y, z){ const m = new THREE.Mesh(geo, MAT.concrete); m.position.set(x,y,z); m.renderOrder = 2; g.add(m);
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({color:0x5a5448})); e.position.set(x,y,z); g.add(e); }
+function makeModel(p){
+  const g = new THREE.Group(), B = BS;
+  const cu = new THREE.MeshStandardMaterial({color:0xb87333, metalness:.5, roughness:.4});
+  const poleMat = new THREE.MeshStandardMaterial({color:0xb8b2a4, roughness:.85});
+  /* ฐาน */
+  if (p.ped){
+    concMesh(new THREE.BoxGeometry(p.ped.W, B.top, p.ped.D), g, 0, B.top/2, 0);
+    concMesh(new THREE.BoxGeometry(p.slab.W, -B.bot, p.slab.D), g, 0, B.bot/2, 0);
+  } else if (p.block){
+    concMesh(new THREE.BoxGeometry(p.block.W, B.top-B.bot, p.block.D), g, 0, (B.top+B.bot)/2, 0);
+  } else {
+    const sh = new THREE.Shape(); p.poly.forEach(([x,z],i)=> i ? sh.lineTo(x,-z) : sh.moveTo(x,-z));
+    const geo = new THREE.ExtrudeGeometry(sh,{depth:B.top-B.bot,bevelEnabled:false}); geo.rotateX(-Math.PI/2); geo.translate(0,B.bot,0);
+    concMesh(geo, g, 0, 0, 0);
+  }
+  /* เสา 22 ม. (แสดงส่วนล่าง) */
+  g.add(iMember(B.pole, 2600-B.butt, 2600, 0, 0, poleMat));
+  /* เสาเข็ม */
+  if (p.piles) p.piles.forEach(([x,z],i)=>{
+    const body = (p.pileTop - (-8200));
+    g.add(iMember(B.pileB, body, p.pileTop, x, z, MAT.pile));
+    const tip = new THREE.Mesh(new THREE.CylinderGeometry(B.pileB*.71, 60, 600, 4, 1), MAT.pile); tip.rotation.y = Math.PI/4; tip.position.set(x,-8500,z); g.add(tip);
+    if (i===p.leadPile) g.add(rodMesh(new THREE.Vector3(x,-8800,z), new THREE.Vector3(x,-9800,z), 8, MAT.steel));
+  });
+  /* หลักดินเหล็กฉาก */
+  if (p.rod){
+    const a = B.rodA, t = B.rodT, ang = new THREE.Shape(); ang.moveTo(0,0); ang.lineTo(a,0); ang.lineTo(a,t); ang.lineTo(t,t); ang.lineTo(t,a); ang.lineTo(0,a); ang.lineTo(0,0);
+    const rod = new THREE.Mesh(new THREE.ExtrudeGeometry(ang,{depth:B.rodLen,bevelEnabled:false}), MAT.steel);
+    rod.rotation.x = Math.PI/2; rod.position.set(p.rod.x-a/2, B.rodTop, p.rod.z-a/2); g.add(rod);
+  }
+  /* สายดิน */
+  const W = wirePath(p), zf = 0;
+  const pts = W.w.map(([x,v])=>new THREE.Vector3(x, v, zf));
+  for (let i=0;i<pts.length-1;i++) g.add(rodMesh(pts[i], pts[i+1], 16, cu));
+  if (W.lead){
+    const [lx,lz] = p.piles[p.leadPile];
+    const L = [new THREE.Vector3(W.lead[0][0], W.lead[0][1], zf), new THREE.Vector3(W.lead[1][0], W.lead[1][1], (zf+lz)/2), new THREE.Vector3(lx, p.pileTop-300, lz), new THREE.Vector3(lx, -8800, lz)];
+    for (let i=0;i<L.length-1;i++) g.add(rodMesh(L[i], L[i+1], 12, cu));
+  }
+  W.cl.forEach(([x,v],i)=>{ const c = new THREE.Mesh(new THREE.TorusGeometry(26,8,8,16), MAT.steel); c.position.set(x, v, zf); c.rotation.x = Math.PI/2; g.add(c); });
+  const gw = p.slab ? p.slab.W + 2400 : 4600;
+  const gr = new THREE.Mesh(new THREE.PlaneGeometry(gw, 4000), MAT.ground); gr.rotation.x = -Math.PI/2; gr.position.set(0,1,0); g.add(gr);
+  return g;
+}
+function views(p){
+  const piles = !!p.piles;
+  const ry = piles ? .7 : -.7;
+  return { iso:[0,-200,0,.42,ry,8600], front:[0,-200,0,0,0,8600], top:[0,0,0,Math.PI/2,0,8000],
+    ground: piles ? [p.piles[p.leadPile][0],-9100,p.piles[p.leadPile][1],.25,.6,3800] : [p.rod.x*.5,-600,0,.3,-.75,6500],
+    full:[0,-3800,0,.15,ry,25000] };
+}
+
+
+/* ===== ส่วนกลาง (ใช้ร่วมทุกแบบ) ===== */
+let cur = 0;
+const $ = id => document.getElementById(id);
+const fmt = n => Number(n).toLocaleString("en-US");
+const C45 = Math.SQRT1_2;
+const MK = id => `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="var(--dim)"/></marker>
+  <pattern id="hat${id}" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--ink)" stroke-width="1"/></pattern></defs>`;
+let AR = "ar";
+function dl(x1,y1,x2,y2,label,lx,ly,anchor){
+  const t = label===""||label==null ? "" : `<text x="${lx??(x1+x2)/2}" y="${ly??Math.min(y1,y2)-6}" font-size="13" text-anchor="${anchor||"middle"}" style="fill:var(--dim)">${label}</text>`;
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width="1" marker-start="url(#${AR})" marker-end="url(#${AR})"/>` + t;
+}
+function ext(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width=".6" stroke-dasharray="3 3"/>`; }
+function cl(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="10 3 2 3"/>`; }
+function brk(x,top,bot){
+  const h = bot-top;
+  return `<path d="M${x} ${top-7} L${x} ${top+h*.32} L${x-6} ${top+h*.44} L${x+6} ${top+h*.56} L${x} ${top+h*.68} L${x} ${bot+7}" fill="none" stroke="var(--ink)" stroke-width=".9"/>`;
+}
+function lead(x1,y1,x2,y2,th,en,anchor){
+  const a = anchor||"start";
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width=".8"/><text class="th" x="${x2+(a==="start"?4:-4)}" y="${y2+4}" font-size="13" text-anchor="${a}">${th}</text>${en?`<text x="${x2+(a==="start"?4:-4)}" y="${y2+19}" font-size="11" text-anchor="${a}" style="fill:var(--muted)">${en}</text>`:""}`;
+}
+function header(){
+  $("grp").innerHTML = PART.group + `<span class="e" style="text-transform:none">${PART.groupEn}</span>`;
+  $("nameTh").textContent = PART.nameTh;
+  $("nameEn").textContent = PART.nameEn;
+  $("asmNo").textContent = PART.assembly;
+  $("asmOld").textContent = PART.assemblyOld ? "เดิม · OLD " + PART.assemblyOld : "";
+  $("varSeg").innerHTML = PART.variants.map((v,i)=>`<button type="button" id="var${i}" data-i="${i}">${v.label}</button>`).join("");
+  $("varSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setVariant(+b.dataset.i); });
+  const tb = PART.titleBlock;
+  $("tb").innerHTML = `<div class="w6">${tb.org}</div>
+    <div><span class="k">มาตราส่วน · SCALE</span>${tb.scale}</div>
+    <div><span class="k">วันที่ · DATE</span>${tb.date}</div>
+    <div class="w2"><span class="k">ชื่อแบบ · TITLE</span>${PART.nameTh}<span class="e">${PART.nameEn}</span></div>
+    <div><span class="k">แบบเลขที่ · DWG NO.</span>${tb.dwg}</div>
+    <div><span class="k">SHEET</span>${tb.sheet}</div>`;
+  $("fab").innerHTML = PART.fabrication.map(([th,en])=>`<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = PART.assumptions.map(([th,en])=>`<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join("");
+}
+
+/* ===== 3D ===== */
+const box3 = $("v3d");
+let R, scene, cam, pivot, model, rx = .5, ry = -.55, dist = 3000, lastView = "iso";
+const MAT = {};
+function init3d(){
+  if (!window.THREE){ box3.innerHTML = '<p style="padding:16px;color:var(--muted)">โหลดโมเดล 3 มิติไม่สำเร็จ / 3D model could not load</p>'; return; }
+  R = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  R.setClearColor(0x000000,0); R.setPixelRatio(Math.min(devicePixelRatio,2));
+  box3.appendChild(R.domElement);
+  scene = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(32,1,1,200000);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8890a0,.85)); scene.add(new THREE.AmbientLight(0xffffff,.25));
+  const d1 = new THREE.DirectionalLight(0xffffff,.8); d1.position.set(900,1600,1400); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xffffff,.55); d2.position.set(-700,900,-1400); scene.add(d2);
+  pivot = new THREE.Group(); scene.add(pivot);
+  MAT.steel = new THREE.MeshStandardMaterial({color:0xb9c1c9, metalness:.3, roughness:.5});
+  MAT.weld = new THREE.MeshStandardMaterial({color:0xd27a22, metalness:.25, roughness:.7});
+  MAT.concrete = new THREE.MeshStandardMaterial({color:0xc9c4b8, metalness:0, roughness:.95, transparent:true, opacity:.55, depthWrite:false});
+  MAT.pile = new THREE.MeshStandardMaterial({color:0x9a958a, metalness:0, roughness:.9});
+  MAT.ground = new THREE.MeshStandardMaterial({color:0x8a7a5c, metalness:0, roughness:1, transparent:true, opacity:.18, side:THREE.DoubleSide, depthWrite:false});
+  let drag=false,px=0,py=0;
+  box3.addEventListener("pointerdown",e=>{drag=true;px=e.clientX;py=e.clientY;box3.setPointerCapture(e.pointerId);box3.style.cursor="grabbing"});
+  box3.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.008;rx+=(e.clientY-py)*.008;px=e.clientX;py=e.clientY;render()});
+  box3.addEventListener("pointerup",()=>{drag=false;box3.style.cursor="grab"});
+  box3.addEventListener("wheel",e=>{e.preventDefault();dist=Math.max(100,Math.min(60000,dist*(1+e.deltaY*.0012)));render()},{passive:false});
+  new ResizeObserver(size).observe(box3);
+  document.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>view(b.dataset.v)));
+}
+function size(){ if(!R)return; const w=box3.clientWidth,h=box3.clientHeight; R.setSize(w,h); cam.aspect=w/h; cam.updateProjectionMatrix(); render(); }
+function box(w,h,d,x,y,z,mat){ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat||MAT.steel); m.position.set(x,y,z); return m; }
+function build3d(){
+  if (!R) return;
+  if (model) pivot.remove(model);
+  model = makeModel(PART.variants[cur]);
+  pivot.add(model);
+  view(lastView);
+}
+function view(v){
+  lastView = v;
+  if (!R || !model) return;
+  const T = views(PART.variants[cur])[v];
+  model.position.set(-T[0],-T[1],-T[2]); rx=T[3]; ry=T[4]; dist=T[5]; render();
+}
+function render(){ if(!R||!model)return; pivot.rotation.set(rx,ry,0); cam.position.set(0,0,dist); cam.lookAt(0,0,0); R.render(scene,cam); }
+
+function setVariant(i){
+  cur = i;
+  PART.variants.forEach((_,j)=>$("var"+j).setAttribute("aria-pressed", j===i));
+  drawElev(); drawDetail(); tables(); build3d();
+}
+header(); init3d(); setVariant(0); size();
+</script>
+</html><a id="hubBack" href="../index.html" onclick="if(history.length>1){history.back();return false}" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← คลังแบบ</a><style id="blnCss">
+svg text.bln-t{cursor:pointer}
+svg .bln-g:focus{outline:none}svg .bln-g:focus-visible circle.bln-c{stroke:#2563eb!important;stroke-width:2.4!important}
+svg circle.bln-c{cursor:pointer;transition:fill .15s}
+svg .bln-g:hover circle.bln-c,svg circle.bln-c.hov{fill:rgba(37,99,235,.18)!important}
+svg circle.bln-c.on{fill:rgba(234,88,12,.28)!important;stroke:#ea580c!important;stroke-width:2.4!important}
+svg text.bln-t.on{fill:#c2410c!important;font-weight:700}
+#blnPop{position:fixed;z-index:10000;max-width:340px;width:calc(100vw - 24px);background:var(--sheet,#fff);color:var(--ink,#111);border:1px solid var(--line,#d4d4d8);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);font:14px/1.45 "IBM Plex Sans Thai",system-ui,sans-serif;display:none;overflow:hidden}
+#blnPop .hd{display:flex;gap:10px;align-items:flex-start;padding:12px 14px 8px}
+#blnPop .no{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 15px "IBM Plex Mono",monospace}
+#blnPop .th{font-weight:600}
+#blnPop .en{color:var(--muted,#666);font-size:12.5px}
+#blnPop .x{margin-left:auto;border:0;background:none;font-size:20px;line-height:1;color:var(--muted,#666);cursor:pointer;padding:0 2px}
+#blnPop .qty{display:flex;align-items:baseline;gap:8px;padding:8px 14px;background:rgba(234,88,12,.08);border-top:1px solid var(--line,#e4e4e7);border-bottom:1px solid var(--line,#e4e4e7)}
+#blnPop .qty b{font:700 22px "IBM Plex Mono",monospace;color:#c2410c}
+#blnPop .qty .u{font-weight:600}
+#blnPop .qty .v{margin-left:auto;font-size:12px;color:var(--muted,#666)}
+#blnPop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;padding:8px 14px;font-size:13px}
+#blnPop dt{color:var(--muted,#666)}#blnPop dd{margin:0;font-family:"IBM Plex Mono",monospace}
+#blnPop .all{padding:0 14px 6px;font-size:12px;color:var(--muted,#666)}
+#blnPop .ft{padding:8px 14px 12px}
+#blnPop .ft button{border:1px solid var(--line,#d4d4d8);background:none;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;color:inherit}
+tr.bln-flash>td{animation:blnF 1.8s ease}
+@keyframes blnF{0%,60%{background:rgba(234,88,12,.25)}100%{background:transparent}}
+.bln-hint{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted,#555);background:rgba(37,99,235,.08);border-radius:14px;padding:3px 10px;margin:4px 0 6px}
+.bln-hint i{font-style:normal;width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;display:inline-grid;place-items:center;font-size:10px}
+</style>
+<div id="blnPop" role="dialog" aria-live="polite"></div>
+<script>
+(function(){
+const CIR="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳",RX=/^([0-9]{1,2}[a-zก-ฮ]?['′]?|[a-e]|[①-⑳])$/;
+const norm=s=>{s=(s||"").trim().replace(/'/g,"′");const i=CIR.indexOf(s);return i>=0?String(i+1):s;};
+let BOM={},VLAB="";
+/* BOM first-column text -> keys: "6*"->6, "4 *"->4, "6a/6b"->6a,6b, "19a/b/c"->19a,19b,19c */
+function bkeys(t){t=(t||"").replace(/[*✱\s]/g,"").replace(/'/g,"′");if(!t)return[];const ps=t.split("/");const out=[];let base="";
+  ps.forEach((p,i)=>{let m=p.match(/^(\d+)([a-z]?)(′?)$/);if(m){base=m[1];out.push(p);}else if(/^[a-z]$/.test(p)&&base)out.push(base+p);else out.push(p);});
+  return out.map(norm).filter(k=>RX.test(k));}
+function readBom(){
+  const tb=document.getElementById("bomTbl")||[...document.querySelectorAll("table")].find(t=>/วัสดุเลขที่|Mat/i.test(t.tHead?.textContent||""));
+  BOM={};VLAB="";if(!tb)return;
+  const hs=[...(tb.tHead?.rows[0]?.cells||[])];
+  const iDesc=hs.findIndex(h=>/รายละเอียด|Description/.test(h.textContent));
+  const iMat=hs.findIndex(h=>/วัสดุเลขที่|Mat/.test(h.textContent));
+  const qIdx=[];hs.forEach((h,i)=>{if(i>iDesc&&(iMat<0||i<iMat))qIdx.push(i)});
+  let cur=qIdx.find(i=>hs[i].classList.contains("on"));if(cur==null)cur=qIdx[0];
+  VLAB=qIdx.length>1?hs[cur].textContent.trim():"";
+  [...tb.tBodies].forEach(b=>[...b.rows].forEach(r=>{
+    const c=r.cells;if(c.length<3||c[0].tagName!=="TD")return;
+    const ks=bkeys(c[0].textContent);if(!ks.length)return;const n=ks[0];
+    const d=c[iDesc],en=d.querySelector(".e");const th=en?d.textContent.replace(en.textContent,"").trim():d.textContent.trim();
+    const all=qIdx.map(i=>({l:hs[i].textContent.trim(),q:(c[i]?.textContent||"").trim()}));
+    const m=c[iMat];const me=m?.querySelector(".e");
+    const o={n,th,en:en?en.textContent.trim():"",q:(c[cur]?.textContent||"").trim(),all,mat:m?(me?m.textContent.replace(me.textContent,""):m.textContent).trim():"",old:me?me.textContent.trim():"",row:r};
+    ks.forEach(k=>{if(!BOM[k])BOM[k]=Object.assign({},o,{n:k});});
+    ks.forEach(k=>{const m=k.match(/^(\d+)[a-z]$/);if(m&&!BOM[m[1]])BOM[m[1]]=Object.assign({},o,{n:m[1]});});
+  }));
+}
+const UNITS=[[/สลักเกลียว|สกรู|bolt|screw/i,"ตัว","pcs"],[/น็อต|นัต|nut/i,"ตัว","pcs"],[/แหวน|washer/i,"อัน","pcs"],[/แป้น|แผ่น|plate|board/i,"แผ่น","pcs"],[/แร็ค|rack/i,"ชุด","set"],[/มิเตอร์|meter/i,"เครื่อง","set"],[/ตู้|cabinet/i,"ตู้","set"],[/เสา|pole/i,"ต้น","pcs"],[/สาย|cable|conductor|wire/i,"ม.","m"],[/คอนเนคเตอร์|connector|แคลมป์|clamp/i,"ตัว","pcs"],[/ลูกถ้วย|insulator/i,"ลูก","pcs"],[/หลักดิน|ground rod/i,"แท่ง","pcs"],[/เหล็กฉาก|เหล็ก|angle|channel/i,"ท่อน","pcs"]];
+function qtyUnit(it){
+  const q=it.q;if(!q||q==="–"||q==="-")return {v:"–",u:"ไม่ใช้ในแบบนี้",inf:false};
+  const m=q.match(/^([\d.,/]+)\s*(.*)$/);if(m&&m[2])return {v:m[1],u:m[2],inf:false};
+  if(m){const k=UNITS.find(([re])=>re.test(it.en))||UNITS.find(([re])=>re.test(it.th));return {v:m[1],u:k?k[1]:"ชิ้น",inf:true};}
+  return {v:q,u:"",inf:false};
+}
+const pop=document.getElementById("blnPop");let curN=null;
+function mark(n){document.querySelectorAll(".bln-c,.bln-t").forEach(e=>e.classList.toggle("on",e.dataset.bn===n));}
+function show(n,ev){
+  const it=BOM[n];if(!it)return;curN=n;mark(n);
+  const qu=qtyUnit(it);const cnt=document.querySelectorAll('text.bln-t[data-bn="'+n+'"]').length;
+  pop.innerHTML='<div class="hd"><div class="no">'+n+'</div><div><div class="th">'+it.th+'</div><div class="en">'+it.en+'</div></div><button class="x" aria-label="ปิด">×</button></div>'
+   +'<div class="qty"><span>จำนวน</span><b>'+qu.v+'</b><span class="u">'+qu.u+(qu.inf?'<sup title="หน่วยนี้ระบบประมาณจากชื่อวัสดุ">*</sup>':'')+'</span>'+(VLAB?'<span class="v">แบบที่เลือก: '+VLAB+'</span>':'')+'</div>'
+   +'<dl><dt>วัสดุเลขที่</dt><dd>'+(it.mat||"–")+(it.old?' <span style="color:var(--muted)">'+it.old+'</span>':'')+'</dd>'
+   +'<dt>ในรูปนี้</dt><dd style="font-family:inherit">ชี้ไว้ '+cnt+' ตำแหน่ง (ไฮไลต์สีส้ม)</dd></dl>'
+   +(it.all.length>1?'<div class="all">ทุกแบบย่อย: '+it.all.map(a=>a.l+' = '+a.q).join(' · ')+'</div>':'')
+   +'<div class="ft"><button class="go">ดูในตารางรายการวัสดุ ↓</button></div>';
+  pop.style.display="block";
+  lastEv=ev;place();
+  if(window.P3D&&window.THREE){const v=document.createElement("div");v.className="v3";pop.querySelector(".hd").after(v);try{P3D.mount(v,it);}catch(e){v.remove();}}
+  place();
+  pop.querySelector(".x").onclick=hide;
+  pop.querySelector(".go").onclick=()=>{hide();it.row.scrollIntoView({behavior:"smooth",block:"center"});it.row.classList.remove("bln-flash");void it.row.offsetWidth;it.row.classList.add("bln-flash");};
+}
+let lastEv=null;
+/* Position the card. Phones get a bottom sheet that stays the same on-screen size even when the page is pinch-zoomed
+   (counter-scale by visualViewport.scale and pin to the visual viewport). */
+function place(){
+  if(pop.style.display!=="block")return;const vv=window.visualViewport,sc=vv?vv.scale:1,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight;
+  const W0=vw*sc;
+  if(W0<600){pop.style.maxWidth="none";pop.style.width=Math.min(W0-16,520)+"px";pop.style.maxHeight=Math.round(vh*sc*.62)+"px";pop.style.overflowY="auto";
+    pop.style.transformOrigin="0 0";pop.style.transform=sc!==1?"scale("+(1/sc)+")":"";
+    const h=pop.offsetHeight/sc,w=pop.offsetWidth/sc;pop.style.left=(ox+(vw-w)/2)+"px";pop.style.top=(oy+vh-h-8/sc)+"px";pop.style.bottom="auto";pop.classList.add("sheet");}
+  else{pop.style.transform="";pop.style.maxHeight="";pop.style.overflowY="";pop.style.width="";pop.style.maxWidth="";pop.classList.remove("sheet");
+    const W=innerWidth,H=innerHeight,r=pop.getBoundingClientRect(),ev=lastEv||{clientX:W/2,clientY:H/2};
+    let x=ev.clientX+16,y=ev.clientY+16;if(x+r.width>W-8)x=ev.clientX-r.width-16;if(y+r.height>H-8)y=Math.max(8,H-r.height-8);pop.style.left=x+"px";pop.style.top=y+"px";pop.style.bottom="auto";}
+}
+window.blnPlace=place;
+if(window.visualViewport){visualViewport.addEventListener("resize",place);visualViewport.addEventListener("scroll",place);}
+addEventListener("resize",place);
+function hide(){if(window.P3D)P3D.stop();pop.style.display="none";curN=null;mark(null);}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hide();});
+document.addEventListener("click",e=>{if(pop.style.display==="block"&&!pop.contains(e.target)&&!e.target.closest(".bln-g"))hide();});
+function wire(){
+  readBom();
+  document.querySelectorAll("svg").forEach(s=>{
+    const cs=[...s.querySelectorAll("circle")].filter(c=>c.r.baseVal.value>3);
+    s.querySelectorAll("text").forEach(t=>{
+      if(t.dataset.bn)return;const n=norm(t.textContent);if(!RX.test(t.textContent.trim())||!BOM[n])return;
+      let bb;try{bb=t.getBBox()}catch(e){return}
+      const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+      const c=cs.find(c=>Math.hypot(c.cx.baseVal.value-cx,c.cy.baseVal.value-cy)<c.r.baseVal.value);
+      if(!c)return;
+      const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+      c.parentNode.insertBefore(g,c);g.appendChild(c);g.appendChild(t);
+      c.classList.add("bln-c");t.classList.add("bln-t");c.dataset.bn=t.dataset.bn=n;
+      if(!c.getAttribute("fill")||c.getAttribute("fill")==="none")c.setAttribute("fill","rgba(0,0,0,0)");
+      g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+      g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+    });
+  });
+  /* labels that carry a circled number, e.g. "steel pipe Ø 50 ③" */
+  document.querySelectorAll("svg text").forEach(t=>{
+    if(t.dataset.bn||t.closest(".bln-g"))return;const m=t.textContent.match(/[①-⑳]/g);if(!m)return;
+    const n=norm(m[m.length-1]);if(!BOM[n])return;
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+    t.parentNode.insertBefore(g,t);g.appendChild(t);t.classList.add("bln-t");t.dataset.bn=n;t.style.textDecoration="underline dotted";
+    g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+  });
+  if(curN)mark(curN);
+}
+let tm;const mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{mo.disconnect();wire();obs();},120);});
+const obs=()=>document.querySelectorAll("svg").forEach(s=>mo.observe(s.parentElement||s,{childList:true,subtree:true}));
+function hint(){const g0=document.querySelector(".bln-g");const s=g0&&g0.ownerSVGElement;if(!s||document.querySelector(".bln-hint"))return;const h=document.createElement("div");h.className="bln-hint";h.innerHTML="<i>3</i> แตะหมายเลขในวงกลมบนรูป เพื่อดูชื่อวัสดุ จำนวน และหน่วย";(s.closest("section")||s.parentElement).insertBefore(h,(s.closest("section")||s.parentElement).querySelector("svg")?.parentElement===s.closest("section")?s:s.parentElement);}
+function init(){wire();obs();hint();const bt=document.getElementById("bomTbl");if(bt)new MutationObserver(()=>{readBom();}).observe(bt,{childList:true,subtree:true});}
+if(document.readyState==="complete")setTimeout(init,300);else addEventListener("load",()=>setTimeout(init,300));
+})();
+</script>
+<style id="p3dCss">
+#blnPop.sheet .v3{height:150px!important}
+#blnPop .v3{position:relative;height:190px;margin:0 14px 8px;border:1px solid var(--line,#e4e4e7);border-radius:10px;background:radial-gradient(circle at 50% 35%,var(--sheet,#fff),var(--soft,#f1f4f7));overflow:hidden;touch-action:none;cursor:grab}
+#blnPop .v3 canvas{display:block;width:100%!important;height:100%!important}
+#blnPop .v3 .cap{position:absolute;left:8px;bottom:6px;right:8px;font-size:11.5px;color:var(--muted,#666);pointer-events:none;display:flex;justify-content:space-between;gap:6px}
+#blnPop .v3 .cap b{font-weight:600;color:var(--ink,#222)}
+#blnPop .v3 .tg{position:absolute;top:6px;right:8px;font-size:10.5px;color:var(--muted,#777);background:var(--sheet,#fff);border:1px solid var(--line,#e4e4e7);border-radius:8px;padding:0 6px}
+</style>
+<script>
+/* P3D — generic 3D preview of one BOM item, built from its description (type + dimensions parsed from text). */
+window.P3D=(function(){
+  let R=null,scene,cam,root,raf=0,host=null,rx=.45,ry=.6,auto=true,dist=1;
+  const M={};
+  function mats(){if(M.steel)return M;const S=(c,m,r)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
+    Object.assign(M,{steel:S(0xc4cbd2,.25,.4),dark:S(0x7b838b,.25,.5),alu:S(0xdfe3e7,.2,.35),cu:S(0xc8794a,.3,.4),wood:S(0xb98a55,0,.8),woodE:S(0x9c6f3e,0,.85),
+      pvc:S(0x26292d,0,.55),grey:S(0x9aa1a8,0,.6),porc:S(0x8a4b2c,.05,.25),white:S(0xeef0f2,0,.4),glass:new THREE.MeshStandardMaterial({color:0x9fc3d9,metalness:0,roughness:.1,transparent:true,opacity:.55}),
+      conc:S(0xb3aea4,0,.95),red:S(0xc0392b,0,.5),orange:S(0xd9822b,.2,.5)});return M;}
+  const num=s=>parseFloat(String(s).replace(",","."));
+  function dims(t){
+    const r={};let m;
+    if(m=t.match(/M\s?(\d+)\s*[×x]\s*(\d+)/i)){r.d=+m[1];r.L=+m[2];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*(mm|cm|m\b|มม|ซม)?/i)){let k=/cm|ซม/.test(m[4]||"")?10:1;r.a=num(m[1])*k;r.b=num(m[2])*k;r.c=num(m[3])*k;}
+    if(m=t.match(/Ø\s?(\d+(?:[.,]\d+)?)/))r.hole=num(m[1]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)(?:\s*[–-]\s*(\d+(?:[.,]\d+)?))?\s*(?:mm²|ตร\.?มม)/)){r.mm2=num(m[1]);r.mm2s=m[2]?m[1]+"–"+m[2]:m[1];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*mm\s*wide|กว้าง\s*(\d+)/i))r.w=num(m[1]||m[2]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*(?:m|ม\.)\s*(?:long|ยาว)?\b/)&&!r.L)r.len=num(m[1]);
+    if(m=t.match(/(\d{1,2}(?:[.,]\d+)?)\s*(?:m\b|ม\.)\s*(?:concrete\s*)?pole|เสา[^\d]{0,12}(\d{1,2}(?:\.\d+)?)\s*ม/i))r.pole=num(m[1]||m[2]);
+    return r;}
+  /* ---- part builders (mm) ---- */
+  const G=()=>new THREE.Group();
+  function cyl(r1,r2,h,mat,seg){return new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg||24),mat);}
+  function box(x,y,z,mat){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),mat);}
+  function hex(d,h,mat){const m=cyl(d*.9,d*.9,h,mat,6);return m;}
+  function thread(g,d,L,y0,mat){g.add(cyl(d/2,d/2,L,mat,20).translateY(y0+L/2));for(let y=y0+d*.3;y<y0+L;y+=Math.max(2.5,d*.2)){const t=new THREE.Mesh(new THREE.TorusGeometry(d/2,Math.max(.3,d*.035),5,20),M.steel);t.rotation.x=Math.PI/2;t.position.y=y;g.add(t);}}
+  const B={
+    bolt(t,D){const d=D.d||16,L=D.L||200,g=G();g.add(hex(d,d*.65,M.steel).translateY(L+d*.32));thread(g,d,L,0,M.steel);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2.2;g.add(n);const w=box(d*3.2,d*.28,d*3.2,M.steel);w.position.y=d*2.8;g.add(w);
+      g.rotation.z=Math.PI/2;return {g,lab:`M${d} × ${L} มม.`,note:"หัวหกเหลี่ยม + แหวน + แป้นเกลียว"};},
+    eyebolt(t,D){const d=D.d||16,L=D.L||250,g=G();thread(g,d,L,0,M.steel);const e=new THREE.Mesh(new THREE.TorusGeometry(d*1.6,d*.45,10,28),M.steel);e.position.y=L+d*1.9;g.add(e);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2;g.add(n);g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวตาเดียว M${d} × ${L}`};},
+    dabolt(t,D){const d=D.d||16,L=D.L||400,g=G();thread(g,d,L,0,M.steel);[d*1.5,L-d*1.5].forEach(y=>{const n=hex(d,d*.8,M.steel);n.position.y=y;g.add(n);});g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวสองหัว M${d} × ${L}`};},
+    screw(t,D){const g=G(),L=20,d=4;g.add(cyl(d*1.1,d*.5,d*.8,M.steel).translateY(L));g.add(cyl(d/2,.3,L,M.steel).translateY(L/2));
+      for(let y=2;y<L-1;y+=1.4){const r=new THREE.Mesh(new THREE.TorusGeometry(d/2*(y/L*.6+.4),.35,4,14),M.dark);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);}g.rotation.z=Math.PI/2;return {g,lab:"สกรู 15–20 มม."};},
+    nail(t,D){const g=G();g.add(cyl(1.6,1.6,.5,M.steel).translateY(18));g.add(cyl(.5,.15,18,M.steel).translateY(9));g.rotation.z=Math.PI/2;return {g,lab:"ตะปู 15–20 มม. Ø1"};},
+    nut(t,D){const d=D.d||16,g=G();const n=hex(d,d*.8,M.steel);g.add(n);const h=cyl(d/2,d/2,d,M.dark);g.add(h);return {g,lab:`แป้นเกลียว M${d}`};},
+    sqwasher(t,D){const a=D.a||52,c=D.c||4.5,h=D.hole||18,g=G();const s=new THREE.Shape();s.moveTo(-a/2,-a/2);s.lineTo(a/2,-a/2);s.lineTo(a/2,a/2);s.lineTo(-a/2,a/2);s.lineTo(-a/2,-a/2);
+      const p=new THREE.Path();p.absarc(0,0,h/2,0,Math.PI*2,true);s.holes.push(p);const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:c,bevelEnabled:false,curveSegments:24}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);
+      return {g,lab:`${a} × ${a} × ${c} มม. รู Ø${h}`};},
+    washer(t,D){const d=D.d||16,g=G();const s=new THREE.Shape();s.absarc(0,0,d*1.1,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,d*.55,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false,curveSegments:28}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);return {g,lab:"แหวนกลม"};},
+    spring(t,D){const d=D.d||16,g=G();const tq=new THREE.Mesh(new THREE.TorusGeometry(d*.75,d*.18,8,28,Math.PI*1.9),M.steel);tq.rotation.x=Math.PI/2;g.add(tq);return {g,lab:"แหวนสปริง"};},
+    connector(t,D){const g=G();const b1=box(70,14,46,M.alu),b2=box(70,14,46,M.alu);b1.position.y=9;b2.position.y=-9;g.add(b1,b2);
+      [[-15,0],[15,0]].forEach(([z])=>{const c=cyl(5,5,320,M.pvc,16);c.rotation.z=Math.PI/2;c.position.z=z;c.position.y=0;g.add(c);});
+      const bo=cyl(5,5,50,M.steel);bo.position.y=0;g.add(bo);const h=hex(10,8,M.steel);h.position.y=20;g.add(h);
+      return {g,lab:/single bolt|สลักเดียว/i.test(t)?"พีจีคอนเนคเตอร์ 1 สลัก":"พีจีคอนเนคเตอร์ (ร่องขนาน)",note:D.mm2?`สาย ${D.mm2s} ตร.มม.`:""};},
+    tape(t,D){const w=D.w||19,g=G();const s=new THREE.Shape();s.absarc(0,0,48,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,19,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:w,bevelEnabled:false,curveSegments:40}),M.pvc);g.add(m);const c=cyl(19,19,w,M.white,32);c.rotation.x=Math.PI/2;c.position.z=w/2;g.add(c);
+      const tail=box(60,.6,w,M.pvc);tail.position.set(30,-48,w/2);g.add(tail);return {g,lab:`เทป PVC กว้าง ${w} มม.`};},
+    strap(t,D){const g=G();const r=new THREE.Mesh(new THREE.TorusGeometry(60,1,6,48),M.steel);r.scale.set(1,1,10);g.add(r);const c=box(18,10,14,M.steel);c.position.set(60,0,0);g.add(c);
+      const cab=cyl(10,10,240,M.pvc);cab.rotation.x=Math.PI/2;cab.position.x=-40;g.add(cab);return {g,lab:"เข็มขัดรัดสาย (เทปเกราะ 1 × 10 มม.)"};},
+    cable(t,D){const a=D.mm2||16,r=Math.sqrt(a/Math.PI)*1.1+1.5,g=G(),cu=/\bCu\b|ทองแดง/.test(t)&&!/\bAl\b|อะลูมิเนียม/.test(t);
+      const pts=[];for(let i=0;i<=60;i++){const u=i/60;pts.push(new THREE.Vector3(Math.cos(u*Math.PI*3.2)*60,u*60-30,Math.sin(u*Math.PI*3.2)*60));}
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),120,r,14,false),M.pvc));
+      const end=pts[60],cd=cyl(r*.62,r*.62,r*4,cu?M.cu:M.alu,14);cd.position.copy(end).add(new THREE.Vector3(0,r*2,0));g.add(cd);
+      return {g,lab:`สาย ${cu?"ทองแดง":"อะลูมิเนียม"} ${a} ตร.มม.`,note:"หุ้มฉนวน PVC · ปลายแสดงตัวนำ"};},
+    meter(t,D){const g=G();const body=box(130,180,110,M.white);body.material=M.white;body.position.y=90;g.add(body);const base=box(130,60,110,M.grey);base.position.y=-30;g.add(base);
+      const win=box(96,70,4,M.glass);win.position.set(0,120,56);g.add(win);const reg=box(70,16,2,M.pvc);reg.position.set(0,125,55);g.add(reg);
+      const disk=cyl(30,30,2,M.dark,28);disk.rotation.x=Math.PI/2;disk.position.set(0,98,55);g.add(disk);
+      for(let i=0;i<4;i++){const c=cyl(5,5,60,M.pvc,12);c.position.set(-36+i*24,-90,0);g.add(c);}
+      return {g,lab:"วัตต์อาวร์มิเตอร์",note:"ตัวเครื่อง + ฝาครอบขั้วสาย"};},
+    plate(t,D){let a=D.a||600,b=D.b||200,c=D.c||20;const g=G();const p=box(b,a,c,/wood|ไม้/i.test(t)?M.wood:M.steel);p.position.y=a/2;g.add(p);
+      [a*.12,a*.88].forEach(y=>{const h=cyl(9,9,c+2,M.pvc,16);h.rotation.x=Math.PI/2;h.position.y=y;g.add(h);});
+      return {g,lab:`แป้น ${a/10} × ${b/10} × ${c/10} ซม.`,note:/wood|ไม้/i.test(t)?"ไม้เนื้อแข็ง ไสเรียบ":""};},
+    cabinet(t,D){const g=G();const b=box(300,820,250,M.grey);b.position.y=410;g.add(b);const dr=box(280,790,6,M.steel);dr.position.set(0,410,128);g.add(dr);
+      const w=box(140,120,4,M.glass);w.position.set(0,620,132);g.add(w);const hd=box(10,60,14,M.dark);hd.position.set(120,420,136);g.add(hd);return {g,lab:"ตู้เหล็ก"};},
+    rack(t,D){const g=G(),n=/2\s*[×x]|2 ×|2 spool/.test(t)?2:(/4/.test(t)?4:1);const h=200*n+60;
+      const bk=box(10,h,60,M.steel);bk.position.set(-60,h/2,0);g.add(bk);[0,h].forEach(y=>{const a=box(120,10,60,M.steel);a.position.set(0,y,0);g.add(a);});
+      for(let i=0;i<n;i++){const y=60+i*200,sp=cyl(38,38,70,M.porc,24);sp.position.set(20,y+40,0);g.add(sp);const gr=new THREE.Mesh(new THREE.TorusGeometry(38,8,8,24),M.porc);gr.rotation.x=Math.PI/2;gr.position.set(20,y+40,0);g.add(gr);}
+      const pin=cyl(8,8,h,M.steel);pin.position.set(20,h/2,0);g.add(pin);return {g,lab:`แร็คแรงต่ำ ${n} ช่อง`,note:"พร้อมลูกถ้วยลูกรอก"};},
+    spool(t,D){const g=G();const c=cyl(38,38,75,M.porc,28);g.add(c);[-26,26].forEach(y=>{const r=new THREE.Mesh(new THREE.TorusGeometry(36,6,8,28),M.porc);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);});
+      const hole=cyl(10,10,78,M.dark,16);g.add(hole);return {g,lab:"ลูกถ้วยลูกรอกแรงต่ำ"};},
+    pinins(t,D){const g=G();[0,40,80].forEach((y,i)=>{const s=cyl(70-i*12,40-i*6,30,M.porc,28);s.position.y=y;g.add(s);});const top=cyl(28,28,40,M.porc,24);top.position.y=120;g.add(top);
+      const pin=cyl(12,12,160,M.steel,16);pin.position.y=-60;g.add(pin);return {g,lab:"ลูกถ้วยก้านตรง"};},
+    disc(t,D){const g=G();for(let i=0;i<3;i++){const p=[[0,0],[20,0],[24,-25],[125,-70],[127,-76],[78,-74],[50,-82],[28,-78],[12,-90],[0,-90]].map(([x,y])=>new THREE.Vector2(x,y));
+      const d=new THREE.Mesh(new THREE.LatheGeometry(p,36),M.porc);d.position.y=-i*146;g.add(d);const c=cyl(28,32,32,M.steel);c.position.y=-i*146-4;g.add(c);}return {g,lab:"ลูกถ้วยแขวน"};},
+    rod(t,D){const g=G(),L=2400;g.add(cyl(8,8,L,M.cu,16).translateY(L/2));const tip=cyl(8,.5,40,M.cu,16);tip.position.y=-20;g.add(tip);const cl=box(30,40,30,M.cu);cl.position.y=L-60;g.add(cl);return {g,lab:"หลักดิน 2.4 ม."};},
+    channel(t,D){const L=Math.min(D.len?D.len*1000:2400,3000),g=G(),ang=/angle|ฉาก/i.test(t);const s=new THREE.Shape();
+      if(ang){const a=D.a||65,c=D.c||6;[[0,0],[a,0],[a,c],[c,c],[c,a],[0,a]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      else{const h=D.a||100,b=D.b||50,c=7;[[0,0],[b,0],[b,c],[c,c],[c,h-c],[b,h-c],[b,h],[0,h]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:L,bevelEnabled:false}),M.steel);m.position.z=-L/2;g.add(m);g.rotation.y=Math.PI/2;
+      return {g,lab:(ang?"เหล็กฉาก":"เหล็กรางน้ำ (คอนสาย)")+(D.len?` ยาว ${D.len} ม.`:"")};},
+    pole(t,D){const g=G(),L=(D.pole||9)*1000;const p=cyl(70,130,L,M.conc,4);p.rotation.y=Math.PI/4;p.position.y=L/2;g.add(p);return {g,lab:`เสาคอนกรีต ${D.pole||9} ม.`};},
+    transformer(t,D){const g=G();const tk=cyl(220,220,700,M.grey,32);tk.position.y=350;g.add(tk);for(let i=0;i<12;i++){const f=box(8,560,90,M.grey);const a=i/12*Math.PI*2;f.position.set(Math.cos(a)*250,330,Math.sin(a)*250);f.rotation.y=-a;g.add(f);}
+      [-90,90].forEach(x=>{const b=cyl(22,30,180,M.porc);b.position.set(x,790,0);g.add(b);});return {g,lab:"หม้อแปลงจำหน่าย"};},
+    cutout(t,D){const g=G();const b=cyl(35,45,320,M.porc,20);b.rotation.z=.35;g.add(b);const tube=cyl(16,16,300,M.dark);tube.position.set(60,0,0);tube.rotation.z=.35;g.add(tube);
+      const br=box(20,20,200,M.steel);br.position.set(-40,0,0);g.add(br);return {g,lab:/arrester|กับดัก/i.test(t)?"กับดักเสิร์จ":"ฟิวส์คัตเอาต์"};},
+    generic(t,D){const g=G();const b=box(120,80,80,M.grey);g.add(b);return {g,lab:"รูปแบบทั่วไป",note:"ยังไม่มีแบบจำลองเฉพาะของวัสดุนี้"};}
+  };
+  function classify(t){const L=t.toLowerCase();
+    if(/nail|ตะปู/.test(L))return"nail";if(/screw|สกรู/.test(L))return"screw";
+    if(/eye\s*bolt|ตาเดียว|ตาไก่/.test(L))return"eyebolt";if(/double arming|สองหัว/.test(L))return"dabolt";
+    if(/\bbolt|สลักเกลียว/.test(L))return"bolt";
+    if(/washer.*(square|สี่เหลี่ยม)|แหวนสี่เหลี่ยม|square.*washer/.test(L))return"sqwasher";if(/spring|lock washer|แหวนสปริง/.test(L))return"spring";if(/washer|แหวน/.test(L))return"washer";
+    if(/\bnut\b|แป้นเกลียว|น็อต/.test(L))return"nut";
+    if(/strap|เข็มขัด/.test(L))return"strap";if(/tape|เทป/.test(L))return"tape";
+    if(/connector|คอนเนค|parallel groove/.test(L))return"connector";
+    if(/rack|แร็ค/.test(L))return"rack";if(/spool|ลูกรอก/.test(L))return"spool";
+    if(/suspension|disc|ลูกถ้วยแขวน/.test(L))return"disc";if(/pin.*insulator|insulator.*pin|ก้านตรง|line post/.test(L))return"pinins";
+    if(/transformer|หม้อแปลง/.test(L))return"transformer";if(/cutout|cut-out|fuse|arrester|ฟิวส์|กับดัก/.test(L))return"cutout";
+    if(/ground rod|หลักดิน/.test(L))return"rod";
+    if(/watthour|kwh|มิเตอร์|meter,/.test(L)&&!/plate|แป้น|board/.test(L))return"meter";
+    if(/cabinet|ตู้/.test(L))return"cabinet";if(/plate|แป้น|board/.test(L))return"plate";
+    if(/conductor|cable|\bwire\b|สาย/.test(L))return"cable";
+    if(/crossarm|คอน|channel|รางน้ำ|angle|ฉาก/.test(L))return"channel";if(/\bpole\b|เสา/.test(L))return"pole";
+    return"generic";}
+  function setup(){mats();R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setClearColor(0,0);
+    scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(30,1,1,1e6);scene.add(new THREE.HemisphereLight(0xffffff,0x5a6470,.85));
+    const d=new THREE.DirectionalLight(0xffffff,.85);d.position.set(1,1.4,1.2);scene.add(d);const d2=new THREE.DirectionalLight(0xffffff,.3);d2.position.set(-1,-.4,-1);scene.add(d2);
+    const el=R.domElement;let drag=0,px=0,py=0;
+    el.addEventListener("pointerdown",e=>{drag=1;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);e.stopPropagation();});
+    el.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.01;rx+=(e.clientY-py)*.01;rx=Math.max(-1.4,Math.min(1.4,rx));px=e.clientX;py=e.clientY;});
+    el.addEventListener("pointerup",()=>drag=0);el.addEventListener("click",e=>e.stopPropagation());
+    el.addEventListener("wheel",e=>{e.preventDefault();dist*=1+e.deltaY*.001;dist=Math.max(.4,Math.min(3,dist));},{passive:false});}
+  function loop(){raf=requestAnimationFrame(loop);if(!host||!host.isConnected){stop();return;}if(auto)ry+=.004;root.rotation.set(rx,ry,0);
+    const s=root.userData.size;cam.position.set(0,0,s*2.1*dist);cam.lookAt(0,0,0);R.render(scene,cam);}
+  function stop(){cancelAnimationFrame(raf);raf=0;}
+  function mount(el,it){
+    if(!window.THREE){el.remove();return;}if(!R)setup();stop();
+    const txt=(it.en||"")+" "+(it.th||""),D=dims(txt);let k=classify(it.en||"");if(k==="generic")k=classify(it.th||"");if(k==="generic"){el.remove();return;}const r=B[k](txt,D);
+    if(root)scene.remove(root);root=new THREE.Group();const inner=G();inner.add(r.g);
+    const bb=new THREE.Box3().setFromObject(inner),c=bb.getCenter(new THREE.Vector3()),sz=bb.getSize(new THREE.Vector3());inner.position.sub(c);root.add(inner);
+    root.userData.size=Math.max(sz.x,sz.y,sz.z);scene.add(root);rx=.38;ry=-.5;auto=true;dist=1;
+    el.innerHTML="";el.appendChild(R.domElement);const w=el.clientWidth||300,h=el.clientHeight||190;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+    const cap=document.createElement("div");cap.className="cap";cap.innerHTML="<span><b>"+r.lab+"</b>"+(r.note?" · "+r.note:"")+"</span>";el.appendChild(cap);
+    const tg=document.createElement("div");tg.className="tg";tg.textContent=(k==="generic"?"ภาพตัวแทน":"3D ตัวแทน")+" · ลากเพื่อหมุน";el.appendChild(tg);
+    host=el;loop();}
+  return {mount,classify,dims,stop};
+})();
+</script>
+<style id="hl3Css">
+#v3d .hl3bar{position:absolute;left:8px;right:8px;top:8px;display:none;align-items:center;gap:8px;background:var(--sheet,#fff);border:1px solid #ea580c;border-radius:10px;padding:6px 10px;font:13px/1.35 "IBM Plex Sans Thai",system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.15);z-index:2}
+#v3d .hl3bar .no{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 12px "IBM Plex Mono",monospace}
+#v3d .hl3bar .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#v3d .hl3bar button{flex:none;border:1px solid var(--line,#d4d4d8);background:var(--soft,#f5f7f9);border-radius:8px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer;color:inherit}
+#v3d .hl3pin{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#ea580c;color:#fff;font:700 11px "IBM Plex Mono",monospace;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(234,88,12,.25);pointer-events:none;z-index:1;animation:hl3p 1.6s ease-in-out infinite}
+@keyframes hl3p{50%{box-shadow:0 0 0 9px rgba(234,88,12,.08)}}
+#blnPop .loc{display:flex;align-items:center;gap:8px;margin:0 14px 10px;padding:8px 10px;border:1px solid #ea580c;border-radius:10px;background:rgba(234,88,12,.07);color:#c2410c;font:600 13.5px "IBM Plex Sans Thai",system-ui,sans-serif;cursor:pointer;width:calc(100% - 28px);text-align:left}
+#blnPop .loc small{font-weight:400;color:var(--muted,#666);margin-left:auto}
+#blnPop .loc.no{border-color:var(--line,#d4d4d8);background:var(--soft,#f5f7f9);color:var(--muted,#777);cursor:default}
+</style>
+<script>
+/* ===== HL3: highlight tagged parts inside the page's own 3D model ===== */
+window.HL3=(function(){
+  let on=null,saved=new Map(),ghost=null,hot=null,ret=null;
+  const box3=()=>document.getElementById("v3d");
+  function mats(){if(ghost)return;ghost=new THREE.MeshStandardMaterial({color:0x9aa3ad,transparent:true,opacity:.2,depthWrite:false,roughness:.9});
+    hot=new THREE.MeshStandardMaterial({color:0xff6a00,emissive:0xff5a00,emissiveIntensity:.55,roughness:.4,metalness:.1});}
+  const nk=t=>String(t).replace(/[*✱\s]/g,"").replace(/'/g,"′");
+  let LOOSE=false;function hasN(arr,n){n=nk(n);return arr.some(t=>{t=nk(t);return t===n||(LOOSE&&/^\d+$/.test(n)&&new RegExp("^"+n+"[a-z]$").test(t));});}
+  function tagged0(n){const out=[];if(typeof model==="undefined"||!model)return out;
+    model.traverse(o=>{if(!(o.userData&&o.userData.bn&&hasN(o.userData.bn,n)))return;let a=o.parent,dup=false;while(a){if(a.userData&&a.userData.bn&&hasN(a.userData.bn,n)){dup=true;break;}a=a.parent;}if(!dup)out.push(o);});return out;}
+  function tagged(n){LOOSE=false;let r=tagged0(n);if(!r.length){LOOSE=true;r=tagged0(n);}return r;}
+  function meshesOf(r,n){const set=[];(function walk(o){if(o!==r&&o.userData&&o.userData.bn&&!hasN(o.userData.bn,n))return;if(o.isMesh)set.push(o);o.children.forEach(walk);})(r);return set;}
+  function has(n){return tagged(n).length>0;}
+  let pins=[];
+  function drawPins(){const v=box3();v.querySelectorAll(".hl3pin").forEach(e=>e.remove());if(!on||typeof cam==="undefined")return;const W=v.clientWidth,H=v.clientHeight;
+    pins.forEach(o=>{const bb=new THREE.Box3().setFromObject(o),c=bb.getCenter(new THREE.Vector3()).project(cam);if(c.z>1)return;
+      const d=document.createElement("div");d.className="hl3pin";d.textContent=on;d.style.left=((c.x+1)/2*W)+"px";d.style.top=((1-c.y)/2*H)+"px";v.appendChild(d);});}
+  function clear(){pins=[];saved.forEach((m,o)=>o.material=m);saved.clear();on=null;const b=box3()?.querySelector(".hl3bar");if(b)b.style.display="none";}
+  function reset(){clear();if(ret){model.position.copy(ret.p);rx=ret.rx;ry=ret.ry;dist=ret.d;ret=null;}render();}
+  function show(n,it){mats();if(typeof model==="undefined"||!model)return false;clear();const roots=tagged(n);if(!roots.length)return false;
+    const hotSet=new Set();roots.forEach(r=>meshesOf(r,n).forEach(o=>hotSet.add(o)));
+    model.traverse(o=>{if(!o.isMesh&&!o.isLine)return;saved.set(o,o.material);o.material=hotSet.has(o)?hot:(o.isMesh?ghost:o.material);});
+    if(!ret)ret={p:model.position.clone(),rx,ry,d:dist};
+    /* fly to the parts: centre of their bounding box in model space */
+    pivot.updateMatrixWorld(true);const bb=new THREE.Box3();roots.forEach(r=>bb.expandByObject(r));const inv=new THREE.Matrix4().copy(pivot.matrixWorld).invert();
+    const c=bb.getCenter(new THREE.Vector3()).applyMatrix4(inv).sub(model.position),s=bb.getSize(new THREE.Vector3()).length();
+    model.position.set(-c.x,-c.y,-c.z);dist=Math.max(450,Math.min(9000,s*2.4));render();
+    on=n;pins=roots;const b=bar();b.querySelector(".no").textContent=n;b.querySelector(".tx").innerHTML="<b>"+(it?it.th:"")+"</b> · "+roots.length+" ตำแหน่ง";b.style.display="flex";render();
+    return true;}
+  function bar(){const v=box3();let b=v.querySelector(".hl3bar");if(!b){b=document.createElement("div");b.className="hl3bar";b.innerHTML='<span class="no"></span><span class="tx"></span><button type="button">ดูทั้งชุด</button>';
+      b.querySelector("button").onclick=e=>{e.stopPropagation();reset();};v.appendChild(b);}return b;}
+  /* re-apply after variant switch rebuilds the model */
+  const _b=window.build3d;if(_b)window.build3d=function(){const n=on;ret=null;clear();_b.apply(this,arguments);if(n&&has(n))setTimeout(()=>show(n,null),0);};
+  const _r=window.render;if(typeof _r==="function"){window.render=function(){_r.apply(this,arguments);drawPins();};try{render();}catch(e){}}
+  return {show,has,reset,count:n=>tagged(n).length};
+})();
+/* add a "locate in 3D" button to the item card */
+(function(){const pop=document.getElementById("blnPop");if(!pop)return;
+  new MutationObserver(()=>{if(pop.style.display!=="block"||pop.querySelector(".loc"))return;const no=pop.querySelector(".no");if(!no)return;const n=no.textContent.trim();
+    const b=document.createElement("button");b.type="button";const k=window.HL3?HL3.count(n):0;
+    if(k){b.className="loc";b.innerHTML="📍 ดูตำแหน่งในโมเดล 3 มิติของชุด<small>"+k+" ชิ้น</small>";
+      b.onclick=e=>{e.stopPropagation();const th=pop.querySelector(".th")?.textContent||"";pop.style.display="none";document.querySelectorAll(".bln-c.on,.bln-t.on").forEach(x=>x.classList.remove("on"));
+        const v=document.getElementById("v3d");v.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>HL3.show(n,{th}),350);};}
+    else if(window.HL3_BOUND){b.className="loc no";b.textContent="ชิ้นนี้ไม่ได้แสดงในโมเดล 3 มิติของชุด";}else return;
+    const q=pop.querySelector(".qty");q.parentNode.insertBefore(b,q);
+    if(window.blnPlace)blnPlace();
+  }).observe(pop,{childList:true});
+})();
+/* rebuild once so the tagged model is used */
+if(window.HL3_BOUND&&window.build3d)setTimeout(()=>{try{build3d();}catch(e){}},50);
+</script>

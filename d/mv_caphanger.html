@@ -1,0 +1,1140 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>3603–3605 ที่แขวนคะแปซิเตอร์ 11–33 kV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: drafting sheet — title strip, variant switch, 2D elevation, details + 3D, tables, title block */
+:root{
+  --paper:#eef1f4; --sheet:#ffffff; --ink:#18212b; --muted:#5a6573; --line:#cdd4dc; --soft:#f5f7f9;
+  --accent:#7a1e6b; --accent-bg:#f6e9f3; --dim:#245f93; --weld:#c2620f; --steel:#9aa5b1; --hole:#ffffff;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1318; --sheet:#161c23; --ink:#e3e8ee; --muted:#97a2b0; --line:#2b3440; --soft:#1b222b;
+  --accent:#d98cc9; --accent-bg:#3a1f35; --dim:#82b6e6; --weld:#eb9a4c; --steel:#6d7884; --hole:#161c23; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:24px 48px}
+.sheet{max-width:1080px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--ink);display:flex;flex-direction:column}
+.blk{padding:20px 24px;border-top:1px solid var(--line);min-width:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 small{font-family:var(--f-body);font-weight:400;font-size:13px;color:var(--muted)}
+.head{display:grid;grid-template-columns:1fr auto;gap:16px;padding:20px 24px;align-items:start}
+.eyebrow{font-size:13px;color:var(--muted)}
+.head h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,4vw,34px);line-height:1.2;margin:4px 0 2px;text-wrap:balance}
+.head .en{font-family:var(--f-mono);font-size:16px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.asm{border:1.5px solid var(--ink);padding:8px 14px;text-align:right}
+.asm .n{font-family:var(--f-display);font-size:34px;font-weight:600;line-height:1;color:var(--accent)}
+.asm .l{font-size:12px;color:var(--muted)}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--soft);border-top:1px solid var(--line)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+.seg button{font:500 14px var(--f-body);background:transparent;color:var(--ink);border:0;padding:7px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--sheet)}
+.seg button:focus-visible,.btn:focus-visible{outline:2px solid var(--dim);outline-offset:2px}
+.spec{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.scroll{overflow-x:auto}
+.scroll svg{display:block;min-width:720px;width:100%;height:auto}
+svg text{font-family:var(--f-mono);fill:var(--ink)}
+svg .th{font-family:var(--f-body)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+.two>.blk{border-top:0}
+.two>.blk+.blk{border-left:1px solid var(--line)}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}.two>.blk+.blk{border-left:0;border-top:1px solid var(--line)}.head{grid-template-columns:1fr}.asm{justify-self:start;text-align:left}}
+#v3d{height:360px;border:1px solid var(--line);background:var(--soft);touch-action:none;cursor:grab;position:relative;border-radius:4px;overflow:hidden}
+#v3d canvas{display:block}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.btn{font:13px var(--f-body);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:center;vertical-align:middle}
+th{font-weight:500;background:var(--soft);font-size:13px}
+td.l,th.l{text-align:left}
+tr.on td{background:var(--accent-bg)}
+td.mono{font-family:var(--f-mono)}
+tfoot td{font-weight:600}
+.notes{margin:0;padding-left:1.3em;max-width:72ch;display:grid;gap:6px}
+.e{display:block;font-family:var(--f-mono);font-size:.78em;font-weight:400;color:var(--muted);letter-spacing:.02em;line-height:1.35}
+h2 .e{display:inline;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.notes li .e{margin-top:1px}
+.btn .e{font-size:10px}
+.tag{display:inline-block;font-size:11px;font-family:var(--f-mono);padding:1px 6px;border-radius:3px;background:var(--accent-bg);color:var(--accent);vertical-align:1px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px}
+.tb{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1.5px solid var(--ink);font-size:13px}
+.tb>div{padding:8px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.tb .k{display:block;font-size:11px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+.tb .w2{grid-column:span 2}.tb .w3{grid-column:span 3}.tb .w6{grid-column:span 6;text-align:center;font-family:var(--f-display);font-weight:600;letter-spacing:.06em}
+@media (max-width:640px){.tb{grid-template-columns:repeat(2,minmax(0,1fr))}.tb .w2,.tb .w3,.tb .w6{grid-column:span 2}}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.links .btn{text-decoration:none;display:inline-flex;flex-direction:column;line-height:1.25;font-weight:500;border-color:var(--ink)}
+.links .btn.pri{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.links .btn.pri .e{color:inherit;opacity:.8}
+</style>
+
+<div class="sheet">
+  <header class="head">
+    <div>
+      <div class="eyebrow" id="grp"></div>
+      <h1 id="nameTh"></h1>
+      <div class="en" id="nameEn"></div>
+    </div>
+    <div class="asm"><div class="l">การประกอบเลขที่ · ASSEMBLY NO.</div><div class="n" id="asmNo"></div><div class="l" id="asmOld"></div></div>
+  </header>
+
+  <div class="bar">
+    <div class="seg" id="varSeg" role="group" aria-label="เลือกรุ่น / Select variant"></div>
+    <div class="spec" id="varSpec"></div>
+    <div class="links">
+      <a class="btn pri" href="../pdf/e1a504241424.pdf" target="_blank" rel="noopener">เปิดแบบต้นฉบับ PDF<span class="e">Original drawing</span></a>
+      <a class="btn" href="../index.html" target="_blank" rel="noopener">คลังแบบทั้งหมด<span class="e">Drawing library</span></a>
+    </div>
+  </div>
+
+  <section class="blk">
+    <h2>ด้านบนและด้านหน้า <span class="e">Top and front views</span></h2>
+    <div class="scroll"><svg id="elev" viewBox="0 0 1000 1000" role="img" aria-label="ด้านบนและด้านหน้า"></svg></div>
+    <div class="legend"><span><i style="background:var(--ink)"></i>ผิวเหล็ก / Steel outline</span><span><i style="background:var(--dim)"></i>เส้นบอกระยะ / Dimension</span><span><i style="background:var(--muted)"></i>เส้นศูนย์กลาง / Centre line</span><span><i style="background:var(--weld)"></i>แนวเชื่อม / Weld</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>ด้านข้างและรายละเอียด <span class="e">Side view and details</span></h2>
+      <div class="scroll"><svg id="detail" viewBox="0 0 720 600" role="img" aria-label="ด้านข้างและรายละเอียด" style="min-width:420px"></svg></div>
+    </section>
+    <section class="blk">
+      <h2>โมเดล 3 มิติ <span class="e">3D model</span></h2>
+      <div id="v3d" aria-label="โมเดล 3 มิติ หมุนได้"></div>
+      <div class="tools"><button class="btn" data-v="iso">มุมเอียง<span class="e">Isometric</span></button><button class="btn" data-v="front">ด้านหน้า<span class="e">Front</span></button><button class="btn" data-v="side">ด้านข้าง<span class="e">Side</span></button><button class="btn" data-v="top">ด้านบน<span class="e">Top</span></button><button class="btn" data-v="strap">แผ่นรัดเสา<span class="e">Pole strap</span></button></div>
+      <div class="hint">ลากเพื่อหมุน เลื่อนลูกกลิ้งเพื่อซูม<span class="e">Drag to rotate, scroll to zoom</span></div>
+    </section>
+  </div>
+
+  <section class="blk">
+    <h2>ตารางมิติ <span class="e">Dimensions · mm</span></h2>
+    <div class="scroll"><table id="dimTbl"></table></div>
+  </section>
+
+  <section class="blk">
+    <h2>รายการวัสดุ <span class="e">Bill of materials · per set</span></h2>
+    <div class="scroll"><table id="bomTbl"></table></div>
+    <div class="hint">น้ำหนักคำนวณจากความยาว × น้ำหนักต่อเมตร ไม่หักเนื้อรู ยังไม่รวมสังกะสี ยูแคล้มป์ไม่รวมในน้ำหนัก สลักเกลียวยึดเสาและคะแปซิเตอร์ไม่อยู่ในบัญชี<span class="e">Weight = length × kg/m, holes not deducted, before galvanizing; clamps not weighed; pole bolts and capacitors not included</span></div>
+  </section>
+
+  <div class="two">
+    <section class="blk">
+      <h2>ข้อกำหนดและการผลิต <span class="e">Notes and fabrication</span></h2>
+      <ol class="notes" id="fab"></ol>
+    </section>
+    <section class="blk">
+      <h2>ค่าที่ต้องยืนยัน <span class="e">To be verified</span></h2><div class="hint" style="margin:-6px 0 10px">แบบต้นฉบับไม่ได้ระบุ หรืออ่านจากภาพ<span class="e">Not stated on the original, or read from the picture</span></div>
+      <ol class="notes" id="assume"></ol>
+    </section>
+  </div>
+
+  <footer class="tb" id="tb"></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ===== ข้อมูลอุปกรณ์ — แบบ 3603 / 3604 / 3605 ที่แขวนคะแปซิเตอร์ 11–33 kV ===== */
+const KG = { L40: 1.83, L50: 3.06, P150: 150*4*0.00785, P40: 40*4*0.00785, R12: 0.888 };
+const NOTE_GALV = ["หมายเหตุ 1 (ตามแบบ): ให้อาบสังกะสีหลังจากประกอบ", "Note 1 (drawing): to be galvanized after fabrication."];
+const STEPS = ["ขั้นตอนผลิต: ตัดเหล็กตามบัญชีวัสดุ → ดัดแผ่นรัดเสา 2 ชิ้น → เจาะรู Ø10 × 15 บนรางและตัดช่องแขวนก่อนประกอบ → จับเสาตั้งกับแผ่นรัดแล้วเชื่อม → เชื่อมแขน ค้ำ ราง และห่วงยกบนโต๊ะจิ๊ก ตรวจระยะศูนย์รู 395 → ลบคม แล้วชุบสังกะสีแบบจุ่มร้อน", "Fabrication: cut steel to the BOM → bend the two pole straps → drill the Ø10 × 15 rail holes and cut the hanging slots before assembly → weld posts to straps → weld arms, braces, rails and lifting lugs in a jig, checking the 395 hole-line spacing → deburr, then hot-dip galvanize."];
+const COMMON_ASSUME = [
+  ["เสาตั้งเหล็กฉากวางแบบมุมหุ้มขาแผ่นรัด: ปีกหนึ่งแนบผิวนอกขาแผ่นรัด อีกปีกชี้ออกด้านข้างในแนวหลังราง อ่านจากภาพด้านบน ไม่มีมิติตำแหน่ง", "Post angles are taken as wrapping the strap legs: one leg against the outside of the strap leg, the other pointing outward on the rail-back line; read from the top view, not dimensioned."],
+  ["ช่องแขวน 18 มม. เปิดที่ขอบล่างของแผ่นรัดทั้งบนและล่าง และระยะ 500 วัดระหว่างปลายช่อง (= ระยะสลักเกลียวยึดเสา) สลักเกลียวยึดเสาไม่อยู่ในบัญชีวัสดุ", "The 18 mm hanging slots are open at the lower edge of both straps; 500 is measured between the slot ends (= pole-bolt spacing). Pole bolts are not in the BOM."],
+  ["รู Ø10 × 15 ตีความเป็นรูยาว กว้าง 10 ยาว 15 มม. ตามขวางราง ปลายรูห่างขอบปลายปีก 12.5 มม. ศูนย์รูจึงห่างปลายปีก 20 มม.* (ตรงกับระยะศูนย์รูถึงศูนย์รู 395 ทั้งราง 40 และ 50)", "Hole Ø10 × 15 is read as a 10 × 15 mm slot across the rail, its end 12.5 mm from the leg toe, so the centre is 20 mm* from the toe (this matches the 395 hole-line spacing for both the 40 and 50 rails)."],
+  ["รางวางปีกราบขึ้นด้านบน (มีรู) ปีกตั้งห้อยลงที่ขอบนอก อ่านจากเส้นประในภาพด้านบน", "Rails are set with the drilled leg flat on top and the other leg hanging down at the outer edge, read from the hidden lines in the top view."],
+  ["ห่วงยกเป็นเหล็กกลม Ø12 มม.* ดัดรูปตัวยู ไม่มีขนาดในแบบ", "Lifting lugs taken as Ø12 mm* round bar bent to a U; size not given."],
+  ["ยูแคล้มป์ M8 สำหรับต่อสายดิน 2 ตัว จำลองไว้ที่มุมลบซ้ายของแผ่นรัดบนและล่าง แผ่นละ 1 ตัว (ภาพด้านบนแสดงตัวเดียว)", "The 2 M8 grounding U-bolt clamps are modelled one on the left chamfer of each strap (the top view shows only one)."],
+  ["น้ำหนักต่อเมตร: เหล็กฉาก 40×40×3 = 1.83 และ 50×50×4 = 3.06 กก./ม. เป็นค่าทั่วไป ควรตรวจกับ มอก. 116 · เหล็กแผ่นคำนวณ กว้าง × หนา × 0.00785", "kg/m: angle 40×40×3 = 1.83 and 50×50×4 = 3.06 are typical values, check against TIS 116; plates are width × t × 0.00785."],
+  ["เลข 2605 / 2606 / 2607 \"สำหรับแฟ้ม A2\" ที่มุมบนของแบบ ถือเป็นเลขการประกอบเดิม · ชื่อหมวด A3600 ตั้งจากชื่อแบบ", "The numbers 2605 / 2606 / 2607 \"for file A2\" at the top of the sheets are taken as the old assembly numbers; series name A3600 taken from the drawing titles."]
+];
+const ARM_ASSUME = [
+  ["แขนรับ (เหล็กฉาก 40×40×3) ยาวเท่าความกว้างรางนอกถึงนอก* วางใต้ราง ไม่มีมิติในแบบ ตำแหน่งปลายค้ำเอียง (โคนเสาถึงใต้ปลายแขน) อ่านจากภาพด้านข้าง", "Arms (angle 40×40×3) are taken as long as the rail outside width*, under the rails; not dimensioned. Brace ends (post foot to under the arm tip) read from the side view."],
+  ["ห่วงยกสูงประมาณ 40 มม.* วัดจากภาพ อยู่บนรางเหนือแขนรับ 4 ตัว", "Lifting lugs about 40 mm* high (scaled), 4 off on the rails above the arms."]
+];
+const PART = {
+  assembly: "3603", assemblyOld: "2605",
+  nameTh: "ที่แขวนคะแปซิเตอร์ 11–33 kV 1 × 3 ชุด",
+  nameEn: "CAPACITOR HANGER 11–33 kV 1 × 3 SETS",
+  group: "A3600 ระบบ 22–33 kV · การติดตั้งคาปาซิเตอร์",
+  groupEn: "A3600 22–33 kV DISTRIBUTION · CAPACITOR INSTALLATION",
+  titleBlock: { org: "การไฟฟ้าส่วนภูมิภาค · กองวิศวกรรม — PROVINCIAL ELECTRICITY AUTHORITY", scale: "1 : 12.5", date: "", dwg: "", sheet: "แผ่นที่ 1 / 1" },
+  variants: [
+    { label: "3603 · 1×3", type: "arm", asm: "3603", asmOld: "2605 (แฟ้ม A2)", pdf: "../pdf/e1a504241424.pdf",
+      nameTh: "ที่แขวนคะแปซิเตอร์ 11–33 kV 1 × 3 ชุด", nameEn: "CAPACITOR HANGER 11–33 kV 1 × 3 SETS",
+      date: "17 ต.ค. 2517 · แก้ 22 ม.ค. 2519", dwg: "S02-015/17066", scale: "1 : 12.50",
+      nCap: 3, load: 500, L: 750, holes: [95,375,655], chain: [0,95,375,655,750],
+      sw: 240, D: 435, hcc: 395, clear: 355, ra: 40, rt: 3, rkg: KG.L40, rname: "L 40×40×3",
+      pa: 40, pt: 3, H: 650, zR: 450, sd: 50, sW: 18, lugH: 40,
+      extra: [] },
+    { label: "3604 · 1×6 แบบ 1", type: "cage", asm: "3604", asmOld: "2606 (แฟ้ม A2)", pdf: "../pdf/091856846693.pdf",
+      nameTh: "ที่แขวนคะแปซิเตอร์ 11–33 kV 1 × 6 ชุด แบบที่ 1", nameEn: "CAPACITOR HANGER 11–33 kV 1 × 6 SETS TYPE 1",
+      date: "21 มิ.ย. 2517", dwg: "S02-015/17031", scale: "1 : 12.5",
+      nCap: 6, L: 1500, holes: [150,390,630,870,1110,1350], chain: [150,390,630,750,870,1110,1350],
+      sw: 480, W: 500, Hf: 500, ra: 40, rt: 3, rkg: KG.L40, rname: "L 40×40×3",
+      pa: 40, pt: 3, H: 650, sd: 75, sW: 18, lugH: 50,
+      extra: [
+        ["ความกว้างและความสูงของโครงไม่มีมิติ (หมายเหตุ 2: เปลี่ยนได้ตามขนาดคะแปซิเตอร์) ใช้ 500 × 500 มม.* วัดจากภาพ ความสูง 500 = เสา 650 − แผ่นรัดบน 150", "Frame width and height are not dimensioned (note 2: may change to suit the capacitor); 500 × 500 mm* is scaled from the picture; the 500 height = 650 post − 150 top strap."],
+        ["ระยะรูแรกและรูสุดท้ายจากปลายราง 150 มม.* คำนวณจากโซ่มิติ 1,200 มม. วางกึ่งกลางราง 1,500 (แบบไม่ให้ระยะปลาย)", "End distance 150 mm* to the first and last holes is derived by centring the 1,200 mm chain on the 1,500 rail (no end distance given)."],
+        ["จำนวนชิ้นโครง (ราง 4 · ตั้ง 8 · ขวาง 8) ตีความจากภาพ 3 ด้าน รูเจาะอยู่บนรางบนตามภาพด้านบน ค้ำเหล็กแผ่น 40 × 4 จำลองไว้ที่โครงขวางกลาง 2 ชุด ใต้เสาตั้ง", "Frame member count (4 rails, 8 uprights, 8 cross members) is interpreted from the three views; holes on the top rails as seen in the top view; the 40 × 4 plate braces are modelled on the two inner cross frames under the posts."],
+        ["ห่วงยกสูง 50 มม. ตามภาพด้านหน้า อยู่บนรางบนเหนือโครงขวางกลาง 4 ตัว", "Lifting lugs 50 mm high from the front view, 4 off on the top rails over the inner cross frames."]
+      ] },
+    { label: "3605 · 1×6 แบบ 2", type: "arm", asm: "3605", asmOld: "2607 (แฟ้ม A2)", pdf: "../pdf/ab44cf67c373.pdf",
+      nameTh: "ที่แขวนคะแปซิเตอร์ 11–33 kV 1 × 6 ชุด แบบที่ 2", nameEn: "CAPACITOR HANGER 11–33 kV 1 × 6 SETS TYPE 2",
+      date: "16 ก.ย. 2517 · แก้ 22 ม.ค. 2519", dwg: "S02-015/17059", scale: "1 : 12.50",
+      nCap: 6, load: 600, L: 1400, holes: [100,340,580,820,1060,1300], chain: [0,100,340,483,580,700,820,917,1060,1300,1400],
+      sw: 440, D: 455, hcc: 395, clear: 355, ra: 50, rt: 4, rkg: KG.L50, rname: "L 50×50×4",
+      pa: 40, pt: 3, H: 650, zR: 450, sd: 50, sW: 18, lugH: 40,
+      extra: [
+        ["โซ่มิติ 143 + 97 อ้างเส้นเสาตั้ง/ขาแผ่นรัด ที่ 217 มม. จากกึ่งกลาง แต่แผ่นรัดกว้าง 440 (ครึ่ง 220) ต่างกัน 3 มม. ถือว่าเป็นผิวในของปีกเสา", "The 143 + 97 chain refers to the post / strap-leg line at 217 mm from the centre, while the 440 strap gives 220; the 3 mm difference is taken as the post leg face."],
+        ["ราง 50×50×4 นอกถึงนอก 455 ศูนย์ราง 405 แต่แบบให้ 395 ซึ่งตรงกับระยะศูนย์รู (รูห่างหลังราง 30 มม.)", "With 50×50×4 rails, 455 outside gives 405 between rail centres; the printed 395 matches the hole lines (holes 30 mm from the rail heel)."]
+      ] }
+  ],
+  fabrication: [],
+  assumptions: []
+};
+
+/* ส่วนหัว กรอบชื่อ ข้อกำหนด ค่าที่ต้องยืนยัน และปุ่ม PDF ตามรุ่นที่เลือก */
+function fabFor(p){
+  const n = p.nCap, half = p.sw/2;
+  const f = [];
+  if (p.type === "arm"){
+    f.push([`ที่แขวนรับคะแปซิเตอร์ ${n} ชุด เรียงแถวเดียว (1 × ${n}) ระบบ 11–33 kV แขวนบนสลักเกลียวยึดเสา 2 ตัว ระยะ 500 มม. ผ่านช่องเปิดล่าง 18 × 50 มม. ของแผ่นรัดบนและล่าง`, `Hanger for ${n} capacitor units in one row (1 × ${n}), 11–33 kV; hung on two pole bolts 500 mm apart through the 18 × 50 mm open slots of the upper and lower straps.`]);
+    f.push([`แผ่นรัดเสา เหล็กแผ่น 150 × 4 มม. 2 ชิ้น ดัดรูปรางลบมุม 45°: ขาตรงลึก 100 มม. ลบมุมลึก 50 มม. กว้างนอก ${p.sw} มม.`, `Pole straps: 2 steel plates 150 × 4 mm bent to a chamfered U (45°): 100 mm straight legs, 50 mm chamfers, ${p.sw} mm outside width.`]);
+    f.push(["เสาตั้ง เหล็กฉาก 40 × 40 × 3 มม. ชนิดผลิตร้อน ตาม มอก. 116 ยาว 650 มม. 2 ต้น: แผ่นรัดบน 150 · ช่วงกลาง 350 · แผ่นรัดล่าง 150 เชื่อมติดขาแผ่นรัดตลอดความสูงแผ่น", "Posts: hot-rolled angle 40 × 40 × 3 mm to TIS 116, 650 mm long, 2 off: upper strap 150 · middle 350 · lower strap 150; welded to the strap legs over the full strap height."]);
+    f.push([`ราง ${p.rname} มม. (มอก. 116) ยาว ${fmt(p.L)} มม. 2 ท่อน หลังรางต่ำจากปลายบนเสา 200 มม. นอกถึงนอก ${p.D} · ศูนย์รูถึงศูนย์รู ${p.hcc} · ช่องว่างในต่ำสุด ${p.clear} มม.`, `Rails: angle ${p.rname} mm (TIS 116), ${fmt(p.L)} mm long, 2 off; rail top 200 mm below the post top; ${p.D} outside · ${p.hcc} hole lines · ${p.clear} min. clear.`]);
+    f.push([`เจาะรู Ø10 × 15 มม. บนปีกราบของรางทั้งสอง ที่ ${p.holes.map(fmt).join(" · ")} มม. จากปลายซ้าย ปลายรูห่างขอบปลายปีก 12.5 มม. (รางละ ${p.holes.length} รู)`, `Drill Ø10 × 15 mm holes in the top leg of both rails at ${p.holes.map(fmt).join(" · ")} mm from the left end, hole end 12.5 mm from the leg toe (${p.holes.length} per rail).`]);
+    f.push(["แขนรับและค้ำเอียง เหล็กฉาก 40 × 40 × 3 มม. ข้างละ 1 ชุด เชื่อมกับเสาตั้ง ค้ำจากโคนเสาถึงใต้ปลายแขน · ห่วงสำหรับยก 4 ตัว เชื่อมบนรางเหนือแขน", "Arms and diagonal braces: angle 40 × 40 × 3 mm, one set each side, welded to the posts; brace from the post foot to under the arm tip · 4 lifting lugs welded on the rails above the arms."]);
+    f.push(["ยูแคล้มป์สลักเดี่ยว M8 2 ตัว สำหรับต่อสายดิน ติดที่มุมลบของแผ่นรัด", "2 single U-bolt clamps M8 for grounding, on the strap chamfers."]);
+    f.push(NOTE_GALV);
+    f.push([`หมายเหตุ 2 (ตามแบบ): รับน้ำหนักได้ไม่เกิน ${p.load} กก.`, `Note 2 (drawing): allowable load ${p.load} kg.`]);
+  } else {
+    f.push([`ที่แขวนรับคะแปซิเตอร์ ${n} ชุด เรียงแถวเดียว (1 × ${n}) แบบโครงกล่อง ระบบ 11–33 kV แขวนบนสลักเกลียวยึดเสา 2 ตัว ผ่านช่องเปิดล่าง 18 × 75 มม. ของแผ่นรัดบนและล่าง`, `Box-frame hanger for ${n} capacitor units in one row (1 × ${n}), 11–33 kV; hung on two pole bolts through the 18 × 75 mm open slots of the upper and lower straps.`]);
+    f.push([`แผ่นรัดเสา เหล็กแผ่น 150 × 4 มม. 2 ชิ้น ดัดรูปรางลบมุม 45°: ขาตรงลึก 100 ลบมุมลึก 50 กว้างนอก ${p.sw} มม. แผ่นบนอยู่เหนือโครง 150 มม. แผ่นล่างเสมอขอบล่างโครง`, `Pole straps: 2 steel plates 150 × 4 mm bent to a chamfered U (45°): 100 legs, 50 chamfers, ${p.sw} mm outside width; the upper strap stands 150 mm above the frame, the lower one flush with the frame bottom.`]);
+    f.push(["โครงกล่อง เหล็กฉาก 40 × 40 × 3 มม. ชนิดผลิตร้อน ตาม มอก. 116 ยาว 1,500 มม. มุมปลายตัดเฉียง 45° เชื่อม · เสาตั้งหลัง 650 มม. (150 + 350 + 150) 2 ต้น", "Box frame: hot-rolled angle 40 × 40 × 3 mm to TIS 116, 1,500 mm long, end corners mitred 45° and welded · two 650 mm rear posts (150 + 350 + 150)."]);
+    f.push(["เจาะรู Ø10 × 15 มม. บนรางบน ระยะ 240 · 240 · 120 · 120 · 240 · 240 มม. (6 รูต่อราง)", "Drill Ø10 × 15 mm holes in the top rails at 240 · 240 · 120 · 120 · 240 · 240 mm (6 per rail)."]);
+    f.push(["ค้ำทแยง เหล็กแผ่น 40 × 4 มม. เชื่อม · ห่วงสำหรับยก สูง 50 มม. 4 ตัว บนรางบน · ยูแคล้มป์สลักเดี่ยว M8 2 ตัว สำหรับต่อสายดิน", "Diagonal braces: steel plate 40 × 4 mm, welded · 4 lifting lugs 50 mm high on the top rails · 2 single U-bolt clamps M8 for grounding."]);
+    f.push(NOTE_GALV);
+    f.push(["หมายเหตุ 2 (ตามแบบ): ความกว้างและความสูงของที่แขวนอาจเปลี่ยนแปลงได้ตามขนาดของคะแปซิเตอร์", "Note 2 (drawing): the width and height of the hanger may be flexible for any size of capacitor."]);
+  }
+  f.push(STEPS);
+  return f;
+}
+function syncHead(p){
+  PART.assembly = p.asm; PART.assemblyOld = p.asmOld; PART.nameTh = p.nameTh; PART.nameEn = p.nameEn;
+  PART.titleBlock.date = p.date; PART.titleBlock.dwg = p.dwg; PART.titleBlock.scale = p.scale;
+  PART.fabrication = fabFor(p);
+  PART.assumptions = [...p.extra, ...(p.type === "arm" ? ARM_ASSUME : []), ...COMMON_ASSUME];
+  $("nameTh").textContent = p.nameTh; $("nameEn").textContent = p.nameEn;
+  $("asmNo").textContent = p.asm; $("asmOld").textContent = "เดิม · OLD " + p.asmOld;
+  const tb = PART.titleBlock;
+  $("tb").innerHTML = `<div class="w6">${tb.org}</div>
+    <div><span class="k">มาตราส่วน · SCALE</span>${tb.scale}</div>
+    <div><span class="k">วันที่ · DATE</span>${tb.date}</div>
+    <div class="w2"><span class="k">ชื่อแบบ · TITLE</span>${p.nameTh}<span class="e">${p.nameEn}</span></div>
+    <div><span class="k">แบบเลขที่ · DWG NO.</span>${tb.dwg}</div>
+    <div><span class="k">SHEET</span>${tb.sheet}</div>`;
+  $("fab").innerHTML = PART.fabrication.map(([th,en])=>`<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = PART.assumptions.map(([th,en])=>`<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join("");
+  const a = document.querySelector(".links .btn.pri"); if (a) a.setAttribute("href", p.pdf);
+  document.title = p.asm + " " + p.nameTh;
+}
+
+/* ===== ตัวช่วยวาด ===== */
+function slotSvg(cx,cy,ax,ay,k){
+  const w = ax*k, h = ay*k, r = Math.min(w,h)/2;
+  return `<rect x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="${r}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1"/>`;
+}
+function wz(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--weld)" stroke-width="3.2" stroke-dasharray="1.5 1.5"/>`; }
+function T2(x,y,th,en,anchor,size){ const a = anchor||"start"; return `<text class="th" x="${x}" y="${y}" font-size="${size||13}" font-weight="600" text-anchor="${a}">${th}</text><text x="${x}" y="${y+16}" font-size="11" text-anchor="${a}" style="fill:var(--muted)">${en}</text>`; }
+function vdim(x,y1,y2,label,side){ /* vertical dimension, label left (side=-1) or right (+1) */
+  const s = side||-1;
+  return dl(x,y1,x,y2,"",0,0) + `<text x="${x+s*5}" y="${(y1+y2)/2+5}" font-size="13" text-anchor="${s<0?"end":"start"}" style="fill:var(--dim)">${label}</text>`;
+}
+function hdim(x1,x2,y,label,below){ return dl(x1,y,x2,y,"",0,0) + `<text x="${(x1+x2)/2}" y="${below? y+16 : y-6}" font-size="12" text-anchor="middle" style="fill:var(--dim)">${label}</text>`; }
+function small(x,y,th,en,anchor){ const a = anchor||"start"; return `<text class="th" x="${x}" y="${y}" font-size="12" text-anchor="${a}" style="fill:var(--muted)">${th}</text><text x="${x}" y="${y+15}" font-size="10.5" text-anchor="${a}" style="fill:var(--muted)">${en}</text>`; }
+const INK = 'stroke="var(--ink)" stroke-width="1.5"';
+/* แผ่นรัด (มองบน) เส้นกลางแผ่น */
+function strapPlan(c,sw,X,Y){
+  const h = sw/2;
+  return `<path d="M${X(c-h)} ${Y(0)} V${Y(-100)} L${X(c-h+50)} ${Y(-150)} H${X(c+h-50)} L${X(c+h)} ${Y(-100)} V${Y(0)}" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"/>`;
+}
+/* เสาตั้งเหล็กฉาก (มองบน) s = -1 ซ้าย, +1 ขวา */
+function postPlan(c,sw,a,t,s,X,Y){
+  const x = c + s*sw/2, P = [[x,0],[x+s*a,0],[x+s*a,-t],[x+s*t,-t],[x+s*t,-a],[x,-a]];
+  return `<path d="M${P.map(([u,v])=>X(u)+" "+Y(v)).join(" L")} Z" fill="var(--steel)" stroke="var(--ink)" stroke-width="1"/>`;
+}
+/* ห่วงยก มองด้านข้าง (รูปตัวยู) */
+function lugSide(cx,yb,h,k){
+  const r = 14*k, w = 6*k;
+  return `<path d="M${cx-r} ${yb} V${yb-h*k+r} A${r} ${r} 0 0 1 ${cx+r} ${yb-h*k+r} V${yb}" fill="none" stroke="var(--ink)" stroke-width="${Math.max(2,12*k*.55)}"/><path d="M${cx-r} ${yb} V${yb-h*k+r} A${r} ${r} 0 0 1 ${cx+r} ${yb-h*k+r} V${yb}" fill="none" stroke="var(--sheet)" stroke-width="${Math.max(.6,12*k*.55-2.2)}"/>`;
+}
+/* ห่วงยก มองหน้า (สันแบน) */
+function lugEdge(cx,yb,h,k){ const w = Math.max(5,12*k); return `<rect x="${cx-w/2}" y="${yb-h*k}" width="${w}" height="${h*k}" rx="${w/2}" fill="var(--soft)" stroke="var(--ink)" stroke-width="1"/>`; }
+/* ยูแคล้มป์ (สัญลักษณ์) */
+function clampSym(x,y){ return `<circle cx="${x}" cy="${y}" r="6" fill="var(--soft)" stroke="var(--ink)" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="2.5" fill="none" stroke="var(--ink)" stroke-width="1"/>`; }
+
+/* ===== แบบด้านบน + ด้านหน้า ===== */
+function drawElev(){
+  const p = PART.variants[cur]; AR = "ar";
+  syncHead(p);
+  const k = Math.min(.62, 760/p.L), x0 = 165, c = p.L/2, X = v => x0 + v*k;
+  const sh = p.sw/2, depth = p.type === "arm" ? p.D : p.W;
+  let s = MK("ar");
+  /* ---------- PLAN ---------- */
+  const yP = 150, Y = v => yP + (v+150)*k;
+  s += T2(x0,24,"ด้านบน","TOP VIEW");
+  if (p.type === "arm"){
+    /* arms between rails */
+    [-1,1].forEach(sg=>{ const xa = c + sg*sh, xb = xa + sg*p.pa;
+      s += `<rect x="${Math.min(X(xa),X(xb))}" y="${Y(0)}" width="${p.pa*k}" height="${depth*k}" fill="var(--soft)" stroke="var(--ink)" stroke-width="1" stroke-dasharray="5 3"/>`;
+      s += `<rect x="${Math.min(X(xa),X(xb))}" y="${Y(p.ra)}" width="${p.pa*k}" height="${(depth-2*p.ra)*k}" fill="var(--soft)" stroke="var(--ink)" stroke-width="1.2"/>`; });
+    /* rails */
+    [[0,p.rt],[depth-p.ra,depth-p.rt]].forEach(([y0,yh])=>{
+      s += `<rect x="${X(0)}" y="${Y(y0)}" width="${p.L*k}" height="${p.ra*k}" fill="none" ${INK}/>`;
+      s += `<line x1="${X(0)}" y1="${Y(yh)}" x2="${X(p.L)}" y2="${Y(yh)}" stroke="var(--ink)" stroke-width=".6" stroke-dasharray="5 3"/>`; });
+  } else {
+    /* box frame: outer + inner (top rails & end cross members, mitred) */
+    const a = p.ra;
+    s += `<rect x="${X(0)}" y="${Y(0)}" width="${p.L*k}" height="${depth*k}" fill="none" ${INK}/>`;
+    s += `<rect x="${X(a)}" y="${Y(a)}" width="${(p.L-2*a)*k}" height="${(depth-2*a)*k}" fill="none" stroke="var(--ink)" stroke-width="1.2"/>`;
+    [[0,0,1,1],[p.L,0,-1,1],[0,depth,1,-1],[p.L,depth,-1,-1]].forEach(([x,y,dx,dy])=>{ s += `<line x1="${X(x)}" y1="${Y(y)}" x2="${X(x+dx*a)}" y2="${Y(y+dy*a)}" stroke="var(--ink)" stroke-width="1"/>` + wz(X(x)+dx*2,Y(y)+dy*2,X(x+dx*a)-dx*1,Y(y+dy*a)-dy*1); });
+    s += `<rect x="${X(p.rt)}" y="${Y(p.rt)}" width="${(p.L-2*p.rt)*k}" height="${(depth-2*p.rt)*k}" fill="none" stroke="var(--ink)" stroke-width=".6" stroke-dasharray="5 3"/>`;
+    [-1,1].forEach(sg=>{ const xa = c + sg*sh, xb = xa + sg*p.pa;
+      s += `<rect x="${Math.min(X(xa),X(xb))}" y="${Y(a)}" width="${p.pa*k}" height="${(depth-2*a)*k}" fill="var(--soft)" stroke="var(--ink)" stroke-width="1.2"/>`; });
+  }
+  [-1,1].forEach(sg=>{ s += postPlan(c,p.sw,p.pa,p.pt,sg,X,Y); });
+  s += strapPlan(c,p.sw,X,Y);
+  s += `<rect x="${X(c)-5}" y="${Y(-150)-2}" width="10" height="5" fill="var(--hole)" stroke="var(--ink)" stroke-width="1"/>`;
+  s += wz(X(c-sh)-2,Y(-p.pa),X(c-sh)-2,Y(0)) + wz(X(c+sh)+2,Y(-p.pa),X(c+sh)+2,Y(0));
+  /* holes Ø10×15 */
+  const hy = [p.ra-20, depth-p.ra+20];
+  hy.forEach(yy=>p.holes.forEach(x=>{ s += slotSvg(X(x),Y(yy),10,15,k*1.15); }));
+  s += cl(X(-10),Y(hy[0]),X(p.L+10),Y(hy[0])) + cl(X(-10),Y(hy[1]),X(p.L+10),Y(hy[1]));
+  s += cl(X(c),Y(-150)-14,X(c),Y(depth)+14);
+  /* lugs */
+  const lugX = [c-sh-p.pa/2, c+sh+p.pa/2];
+  lugX.forEach(x=>[p.ra/2, depth-p.ra/2].forEach(yy=>{ s += `<rect x="${X(x)-4}" y="${Y(yy)-14*k-6}" width="8" height="${28*k+12}" rx="4" fill="var(--soft)" stroke="var(--ink)" stroke-width="1.1"/>`; }));
+  /* clamp on left chamfer */
+  const cxp = X(c-sh+25), cyp = Y(-125);
+  s += clampSym(cxp-6,cyp-6);
+  /* dims: top */
+  const yd0 = Y(-150)-58, yd1 = Y(-150)-26;
+  s += ext(X(0),Y(0)-4,X(0),yd0-6) + ext(X(p.L),Y(0)-4,X(p.L),yd0-6);
+  s += dl(X(0),yd0,X(p.L),yd0) + `<rect x="${X(c)-34}" y="${yd0-11}" width="68" height="20" fill="var(--sheet)"/><text x="${X(c)}" y="${yd0+5}" text-anchor="middle" font-size="14" font-weight="500" style="fill:var(--dim)">${fmt(p.L)}</text>`;
+  s += ext(X(c-sh),Y(-100)-4,X(c-sh),yd1-6) + ext(X(c+sh),Y(-100)-4,X(c+sh),yd1-6) + dl(X(c-sh),yd1,X(c+sh),yd1,p.sw);
+  s += `<text x="${X(c+sh-25)+16}" y="${Y(-125)-2}" font-size="12" style="fill:var(--dim)">45°</text>`;
+  /* dims: left */
+  const xl1 = x0-26, xl2 = x0-60, xl3 = x0-94;
+  [-150,-100,0,depth].forEach(v=>{ s += ext(X(0)-4,Y(v),xl1-6,Y(v)); });
+  s += ext(X(c-sh+40),Y(-150),X(0)-4,Y(-150)) ;
+  s += vdim(xl1,Y(-150),Y(-100),"50") + vdim(xl1,Y(-100),Y(0),"100");
+  if (p.type === "arm"){
+    s += vdim(xl1,Y(0),Y(depth),p.D);
+    s += ext(X(0)-4,Y(hy[0]),xl2-6,Y(hy[0])) + ext(X(0)-4,Y(hy[1]),xl2-6,Y(hy[1])) + vdim(xl2,Y(hy[0]),Y(hy[1]),p.hcc);
+    s += ext(X(0)-4,Y(p.ra),xl3-6,Y(p.ra)) + ext(X(0)-4,Y(depth-p.ra),xl3-6,Y(depth-p.ra)) + vdim(xl3,Y(p.ra),Y(depth-p.ra),p.clear);
+    s += `<text x="${xl3-5}" y="${Y(depth/2)+20}" font-size="10" text-anchor="end" style="fill:var(--dim)">MIN.</text>`;
+  } else {
+    s += vdim(xl1,Y(0),Y(depth),"≈500*");
+    s += `<text class="th" x="${xl1-5}" y="${Y(depth/2)+22}" font-size="11" text-anchor="end" style="fill:var(--muted)">ความกว้าง</text><text x="${xl1-5}" y="${Y(depth/2)+35}" font-size="10" text-anchor="end" style="fill:var(--muted)">WIDTH</text>`;
+  }
+  /* dims: hole chain under plan */
+  const yc = Y(depth)+30, ch = p.chain;
+  ch.forEach(v=>{ s += ext(X(v),Y(depth)+4,X(v),yc+6); });
+  for (let i=0;i<ch.length-1;i++) s += dl(X(ch[i]),yc,X(ch[i+1]),yc) + `<text x="${(X(ch[i])+X(ch[i+1]))/2}" y="${yc+17}" font-size="12" text-anchor="middle" style="fill:var(--dim)">${ch[i+1]-ch[i]}</text>`;
+  if (p.type === "cage"){
+    const yc2 = yc+34;
+    [0,p.L].forEach(v=>{ s += ext(X(v),Y(depth)+4,X(v),yc2+6); });
+    s += ext(X(ch[0]),yc+6,X(ch[0]),yc2+6) + ext(X(ch[ch.length-1]),yc+6,X(ch[ch.length-1]),yc2+6);
+    s += dl(X(0),yc2,X(ch[0]),yc2) + `<text x="${X(ch[0]/2)}" y="${yc2+17}" font-size="12" text-anchor="middle" style="fill:var(--dim)">150*</text>`;
+    s += dl(X(ch[ch.length-1]),yc2,X(p.L),yc2) + `<text x="${X((ch[ch.length-1]+p.L)/2)}" y="${yc2+17}" font-size="12" text-anchor="middle" style="fill:var(--dim)">150*</text>`;
+  }
+  /* leaders */
+  const hx = p.holes[p.holes.length-1], wide = X(p.L) > 700;
+  const yLab = Y(-150)+8;
+  s += lead(cxp-10,cyp-10,X(c-sh)-14,Y(-150)-26,"ยูแคล้มป์ M8 · 2 ตัว","2 U-BOLT CLAMP M8","end");
+  s += lead(X(c+sh-12),Y(-140),X(c+sh)+40,yLab-28,"เหล็กแผ่น 150 × 4 มม. (แผ่นรัดเสา)","STEEL PLATE 150 × 4 mm · POLE STRAP");
+  const xR0 = X(c+sh+p.pa)+24, xL0 = X(c-sh-p.pa)-24;
+  if (wide){
+    const hin = p.holes.filter(x=>x>c && x<c+sh)[0] ?? p.holes.filter(x=>x>c)[0];
+    s += lead(X(hin)+3,Y(hy[0])+5,xR0,Y(p.ra)+40,"รู Ø10 × 15 มม. · รางละ " + p.holes.length + " รู","HOLE Ø10 × 15 mm · " + p.holes.length + " PER RAIL");
+    s += lead(X(lugX[0])-4,Y(p.ra/2)+8,xL0,Y(p.ra)+40,"ห่วงสำหรับยก · 4 ตัว","LIFTING LUG · 4 NOS","end");
+  } else {
+    s += lead(X(hx)+5,Y(hy[0])-4,X(p.L)+30,Y(-30),"รู Ø10 × 15 มม. · รางละ " + p.holes.length + " รู","HOLE Ø10 × 15 mm · " + p.holes.length + " PER RAIL");
+    s += lead(X(lugX[1])+5,Y(p.ra/2)+6,X(p.L)+30,Y(p.ra)+46,"ห่วงสำหรับยก · 4 ตัว","LIFTING LUG · 4 NOS");
+  }
+  const railTxt = p.type === "arm" ? `ราง ${p.rname} มม. · มอก. 116` : "โครง L 40×40×3 มม. · มอก. 116";
+  const railEn = p.type === "arm" ? `RAIL, ANGLE ${p.rname} · TIS 116` : "FRAME, ANGLE 40×40×3 · TIS 116";
+  if (wide) s += lead(xR0-14,Y(depth-p.ra/2),xR0,Y(depth-p.ra)-44,railTxt,railEn);
+  else s += lead(X(p.L)-4,Y(depth-p.ra/2),X(p.L)+30,Y(depth)-6,railTxt,railEn);
+  const yPend = Y(depth) + (p.type==="cage" ? 112 : 84);
+
+  /* ---------- FRONT ---------- */
+  const yF = yPend + 70, Z = v => yF + (p.H - v)*k;
+  s += T2(x0,yF-44,"ด้านหน้า (มองจากด้านคะแปซิเตอร์)","FRONT VIEW · FROM THE CAPACITOR SIDE");
+  const zS1 = p.type==="arm" ? 500 : p.Hf;       /* top strap bottom edge */
+  const strapF = (z0)=>{
+    let o = `<rect x="${X(c-sh)}" y="${Z(z0+150)}" width="${p.sw*k}" height="${150*k}" fill="var(--sheet)" ${INK}/>`;
+    o += `<path d="M${X(c-sh+50)} ${Z(z0+150)} V${Z(z0)} M${X(c+sh-50)} ${Z(z0+150)} V${Z(z0)} M${X(c-sh+4)} ${Z(z0+150)} V${Z(z0)} M${X(c+sh-4)} ${Z(z0+150)} V${Z(z0)}" stroke="var(--ink)" stroke-width=".7"/>`;
+    const w = p.sW*k, r = w/2, top = Z(z0+p.sd);
+    o += `<path d="M${X(c)-r} ${Z(z0)+.5} V${top+r} A${r} ${r} 0 0 1 ${X(c)+r} ${top+r} V${Z(z0)+.5}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1.1"/>`;
+    return o;
+  };
+  /* posts */
+  const postF = sg => { const xa = c+sg*sh, xb = xa+sg*p.pa; return `<rect x="${Math.min(X(xa),X(xb))}" y="${Z(p.H)}" width="${p.pa*k}" height="${p.H*k}" fill="var(--sheet)" ${INK}/><line x1="${X(xa+sg*p.pt)}" y1="${Z(p.H)}" x2="${X(xa+sg*p.pt)}" y2="${Z(0)}" stroke="var(--ink)" stroke-width=".7"/>`; };
+  if (p.type === "arm"){
+    s += strapF(500) + strapF(0);
+    [-1,1].forEach(sg=>{ s += postF(sg); });
+    [500,0].forEach(z0=>[-1,1].forEach(sg=>{ s += wz(X(c+sg*sh)+sg*1.5,Z(z0+150)+2,X(c+sg*sh)+sg*1.5,Z(z0)-2); }));
+    /* front rail */
+    s += `<rect x="${X(0)}" y="${Z(p.zR)}" width="${p.L*k}" height="${p.ra*k}" fill="var(--sheet)" ${INK}/><line x1="${X(0)}" y1="${Z(p.zR-p.rt)}" x2="${X(p.L)}" y2="${Z(p.zR-p.rt)}" stroke="var(--ink)" stroke-width=".6" stroke-dasharray="5 3"/>`;
+    lugX.forEach(x=>{ s += lugEdge(X(x),Z(p.zR),p.lugH,k); });
+  } else {
+    const a = p.ra, Hf = p.Hf;
+    s += strapF(Hf);
+    /* frame front face */
+    s += `<rect x="${X(0)}" y="${Z(Hf)}" width="${p.L*k}" height="${Hf*k}" fill="var(--sheet)" ${INK}/>`;
+    s += strapF(0).replace(/fill="var\(--sheet\)"/,'fill="none"');
+    s += `<rect x="${X(0)}" y="${Z(Hf)}" width="${p.L*k}" height="${a*k}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/><rect x="${X(0)}" y="${Z(a)}" width="${p.L*k}" height="${a*k}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`;
+    const ups = [0, p.L-a, c-sh-a, c+sh];
+    ups.forEach(x=>{ s += `<rect x="${X(x)}" y="${Z(Hf-a)}" width="${a*k}" height="${(Hf-2*a)*k}" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.2"/>`; });
+    ups.forEach(x=>{ [Z(Hf-a)+1, Z(a)-1].forEach(yy=>{ s += wz(X(x),yy,X(x+a),yy); }); });
+    /* posts above frame */
+    [-1,1].forEach(sg=>{ const xa = c+sg*sh, xb = xa+sg*p.pa; s += `<rect x="${Math.min(X(xa),X(xb))}" y="${Z(p.H)}" width="${p.pa*k}" height="${(p.H-Hf)*k}" fill="var(--sheet)" ${INK}/><line x1="${X(xa+sg*p.pt)}" y1="${Z(p.H)}" x2="${X(xa+sg*p.pt)}" y2="${Z(Hf)}" stroke="var(--ink)" stroke-width=".7"/>`; });
+    lugX.forEach(x=>{ s += lugEdge(X(x),Z(Hf),p.lugH,k); });
+  }
+  /* front dims */
+  const xr1 = X(p.L)+26, xr2 = X(p.L)+62;
+  if (p.type === "arm"){
+    [p.H,p.zR,0].forEach(v=>{ s += ext(X(p.L)+4,Z(v),xr1+6,Z(v)); });
+    s += ext(X(c+sh+p.pa)+4,Z(p.H),X(p.L)+4,Z(p.H)) + ext(X(c+sh+p.pa)+4,Z(0),X(p.L)+4,Z(0));
+    s += vdim(xr1,Z(p.H),Z(p.zR),"200",1) + vdim(xr1,Z(p.zR),Z(0),"450",1);
+    s += ext(xr1+6,Z(p.H),xr2+6,Z(p.H)) + ext(xr1+6,Z(0),xr2+6,Z(0)) + vdim(xr2,Z(p.H),Z(0),"650",1);
+  } else {
+    [p.H,p.Hf,0].forEach(v=>{ s += ext(X(p.L)+4,Z(v),xr1+6,Z(v)); });
+    s += ext(X(c+sh+p.pa)+4,Z(p.H),X(p.L)+4,Z(p.H));
+    s += vdim(xr1,Z(p.H),Z(p.Hf),"150",1) + vdim(xr1,Z(p.Hf),Z(0),"≈500*",1);
+    s += `<text class="th" x="${xr1+5}" y="${Z(p.Hf/2)+24}" font-size="11" style="fill:var(--muted)">ความสูง</text><text x="${xr1+5}" y="${Z(p.Hf/2)+37}" font-size="10" style="fill:var(--muted)">HEIGHT</text>`;
+    /* lug 50 */
+    const lx = X(lugX[1])+18;
+    s += ext(X(lugX[1])+5,Z(p.Hf+p.lugH),lx+6,Z(p.Hf+p.lugH)) + `<line x1="${lx}" y1="${Z(p.Hf+p.lugH)-22}" x2="${lx}" y2="${Z(p.Hf+p.lugH)}" stroke="var(--dim)" stroke-width="1" marker-end="url(#ar)"/><line x1="${lx}" y1="${Z(p.Hf)+22}" x2="${lx}" y2="${Z(p.Hf)}" stroke="var(--dim)" stroke-width="1" marker-end="url(#ar)"/><text x="${lx+5}" y="${Z(p.Hf+p.lugH)-10}" font-size="12" style="fill:var(--dim)">50</text>`;
+  }
+  /* slot dims */
+  const zTopEnd = zS1 + p.sd, xs = X(c)-34;
+  s += ext(X(c)-6,Z(zTopEnd),xs-6,Z(zTopEnd)) + ext(X(c)-6,Z(p.sd),xs-6,Z(p.sd));
+  s += vdim(xs,Z(zTopEnd),Z(p.sd),"500" + (p.type==="cage"?"*":""));
+  const sx = X(c)+p.sW*k/2, yy = Z(p.sd)-14;
+  s += `<line x1="${X(c)-p.sW*k/2-20}" y1="${yy}" x2="${X(c)-p.sW*k/2}" y2="${yy}" stroke="var(--dim)" stroke-width="1" marker-end="url(#ar)"/><line x1="${sx+20}" y1="${yy}" x2="${sx}" y2="${yy}" stroke="var(--dim)" stroke-width="1" marker-end="url(#ar)"/><text x="${sx+24}" y="${yy+4}" font-size="12" style="fill:var(--dim)">${p.sW}</text>`;
+  const xv = X(c)+22;
+  s += ext(X(c)+p.sW*k/2+2,Z(p.sd),xv+6,Z(p.sd)) + vdim(xv,Z(p.sd),Z(0),p.sd,1);
+  s += lead(X(c)-p.sW*k/2,Z(p.sd*.5),X(c-sh-p.pa)-24,Z(105),"ช่องแขวน 18 × " + p.sd + " (บน–ล่าง)","HANGING SLOT 18 × " + p.sd + " · TOP & BOTTOM","end");
+  /* weld callout */
+  if (p.type === "arm") s += lead(X(c-sh)-2,Z(570),X(c-sh)-50,Z(560)-30,"เชื่อม","WELDED","end");
+  else s += lead(X(c-sh-p.pa/2),Z(p.Hf-p.ra)+2,X(c-sh)-70,Z(p.Hf/2),"เชื่อม","WELDED","end");
+  const yEnd = Z(0) + 40;
+  s += `<text class="th" x="${x0}" y="${yEnd}" font-size="12" style="fill:var(--muted)">วาดตามมาตราส่วน หน่วย มม. · * ค่าที่ไม่ได้ระบุในแบบ ดูหัวข้อค่าที่ต้องยืนยัน</text><text x="${x0}" y="${yEnd+15}" font-size="11" style="fill:var(--muted)">To scale, mm · * not stated on the drawing, see “To be verified”</text>`;
+  const el = $("elev");
+  el.setAttribute("viewBox", `0 0 1040 ${Math.ceil(yEnd+30)}`);
+  el.innerHTML = s;
+}
+
+/* ===== ภาพด้านข้าง + รายละเอียด ===== */
+function drawDetail(){
+  const p = PART.variants[cur]; AR = "ar2";
+  let s = MK("ar2");
+  const depth = p.type === "arm" ? p.D : p.W;
+  const k = 380/(150+depth), x0 = 150, zs0 = 80, Y = v => x0 + (v+150)*k, Z = v => zs0 + (p.H - v)*k;
+  s += T2(20,24,"ด้านข้าง","SIDE VIEW");
+  /* straps (visible part) + post */
+  const zs = p.type==="arm" ? [500,0] : [p.Hf,0];
+  zs.forEach(z0=>{ s += `<rect x="${Y(-150)}" y="${Z(z0+150)}" width="${(150-p.pa)*k}" height="${150*k}" fill="var(--sheet)" ${INK}/><line x1="${Y(-100)}" y1="${Z(z0+150)}" x2="${Y(-100)}" y2="${Z(z0)}" stroke="var(--ink)" stroke-width=".7"/>`; });
+  s += `<rect x="${Y(-p.pa)}" y="${Z(p.H)}" width="${p.pa*k}" height="${p.H*k}" fill="var(--sheet)" ${INK}/>`;
+  zs.forEach(z0=>{ s += wz(Y(-p.pa)-2,Z(z0+150)+2,Y(-p.pa)-2,Z(z0)-2); });
+  /* clamp legs on lower strap */
+  [40,95].forEach(z=>{ s += `<rect x="${Y(-146)}" y="${Z(z)-3}" width="${26*k}" height="6" rx="3" fill="var(--hole)" stroke="var(--ink)" stroke-width="1"/>`; });
+  const Lsec = (y0,z0,dy,dz,a,t)=>{ const P = [[y0,z0],[y0+dy*a,z0],[y0+dy*a,z0+dz*t],[y0+dy*t,z0+dz*t],[y0+dy*t,z0+dz*a],[y0,z0+dz*a]]; return `<path d="M${P.map(([u,v])=>Y(u)+" "+Z(v)).join(" L")} Z" fill="url(#hatar2)" stroke="var(--ink)" stroke-width="1.1"/>`; };
+  const band = (A,B,hw,fill) => { const ang = Math.atan2(B[1]-A[1],B[0]-A[0]), nx = -Math.sin(ang)*hw, nz = Math.cos(ang)*hw;
+    return `<path d="M${Y(A[0]+nx)} ${Z(A[1]+nz)} L${Y(B[0]+nx)} ${Z(B[1]+nz)} L${Y(B[0]-nx)} ${Z(B[1]-nz)} L${Y(A[0]-nx)} ${Z(A[1]-nz)} Z" fill="${fill}" ${INK}/>`; };
+  s += lead(Y(-p.pa)-3,Z(p.H-60),Y(40),Z(p.H-22),"เชื่อม","WELDED");
+  if (p.type === "arm"){
+    const zt = p.zR - p.rt, zb = zt - p.pa;
+    const A = [4,22], B = [depth-26, zb];
+    s += band(A,B,15,"var(--sheet)") + `<line x1="${Y(A[0])}" y1="${Z(A[1])}" x2="${Y(B[0])}" y2="${Z(B[1])}" stroke="var(--ink)" stroke-width=".6"/>`;
+    s += `<rect x="${Y(0)}" y="${Z(zt)}" width="${depth*k}" height="${p.pa*k}" fill="var(--sheet)" ${INK}/><line x1="${Y(0)}" y1="${Z(zt-p.pt)}" x2="${Y(depth)}" y2="${Z(zt-p.pt)}" stroke="var(--ink)" stroke-width=".7"/>`;
+    s += wz(Y(0)+2,Z(zt),Y(0)+2,Z(zb)) + wz(Y(A[0])+2,Z(A[1]+20),Y(A[0])+2,Z(A[1]-16)) + wz(Y(B[0]-12),Z(zb)+2,Y(B[0]+14),Z(zb)+2);
+    s += Lsec(0,p.zR,1,-1,p.ra,p.rt) + Lsec(depth,p.zR,-1,-1,p.ra,p.rt);
+    [p.ra/2, depth-p.ra/2].forEach(y=>{ s += lugSide(Y(y),Z(p.zR),p.lugH,k); });
+    const xr = Y(depth)+30;
+    s += ext(Y(depth)+4,Z(p.zR),xr+6,Z(p.zR)) + ext(Y(-p.pa/2),Z(p.H),xr+6,Z(p.H)) + ext(Y(depth)+4,Z(0),xr+6,Z(0));
+    s += vdim(xr,Z(p.H),Z(p.zR),"200",1) + vdim(xr,Z(p.zR),Z(0),"450",1);
+    s += ext(Y(0),Z(0)+4,Y(0),Z(0)+34) + ext(Y(depth),Z(p.zR)+4,Y(depth),Z(0)+34) + hdim(Y(0),Y(depth),Z(0)+26,p.D+"*",true);
+    const yb = 4 + (250-22)/(zb-22)*(B[0]-4);
+    s += lead(Y(yb)+8,Z(250),Y(depth)-10,Z(90),"แขน · ค้ำ · เสา L 40×40×3","ARM · BRACE · POST L40×40×3","end");
+    s += lead(Y(depth-p.ra/2)-6,Z(p.zR+p.lugH)+2,Y(depth)-30,Z(p.zR+p.lugH+70),"ห่วงสำหรับยก*","LIFTING LUG*","end");
+  } else {
+    const a = p.ra, W = p.W, Hf = p.Hf;
+    s += `<rect x="${Y(0)}" y="${Z(Hf)}" width="${W*k}" height="${Hf*k}" fill="var(--sheet)" ${INK}/>`;
+    s += `<rect x="${Y(0)}" y="${Z(Hf)}" width="${W*k}" height="${a*k}" fill="none" stroke="var(--ink)" stroke-width="1.1"/><rect x="${Y(0)}" y="${Z(a)}" width="${W*k}" height="${a*k}" fill="none" stroke="var(--ink)" stroke-width="1.1"/>`;
+    s += `<rect x="${Y(0)}" y="${Z(Hf-a)}" width="${a*k}" height="${(Hf-2*a)*k}" fill="none" stroke="var(--ink)" stroke-width="1.1"/><rect x="${Y(W-a)}" y="${Z(Hf-a)}" width="${a*k}" height="${(Hf-2*a)*k}" fill="none" stroke="var(--ink)" stroke-width="1.1"/>`;
+    [[0,Hf-a],[W-a,Hf-a],[0,a],[W-a,a]].forEach(([y,z])=>{ s += wz(Y(y),Z(z),Y(y+a),Z(z)); });
+    const A = [a, Hf-a], B = [W-a, a];
+    s += band(A,B,20,"var(--soft)");
+    s += wz(Y(A[0])+2,Z(A[1])-4,Y(A[0]+28),Z(A[1]-2)) + wz(Y(B[0])-2,Z(B[1])+4,Y(B[0]-28),Z(B[1]+2));
+    s += wz(Y(0)+2,Z(Hf)+2,Y(0)+2,Z(0)-2);
+    [a/2, W-a/2].forEach(y=>{ s += lugSide(Y(y),Z(Hf),p.lugH,k); });
+    const xr = Y(W)+30;
+    s += ext(Y(W)+4,Z(Hf),xr+6,Z(Hf)) + ext(Y(W)+4,Z(0),xr+6,Z(0)) + vdim(xr,Z(Hf),Z(0),"≈500*",1);
+    s += ext(Y(-p.pa/2),Z(p.H),xr+6,Z(p.H)) + vdim(xr,Z(p.H),Z(Hf),"150",1);
+    s += ext(Y(0),Z(0)+4,Y(0),Z(0)+34) + ext(Y(W),Z(0)+4,Y(W),Z(0)+34) + hdim(Y(0),Y(W),Z(0)+26,"≈500*",true);
+    s += lead(Y(W*.62),Z(Hf*.5)+4,Y(W-a)-8,Z(Hf-a-40),"ค้ำ เหล็กแผ่น 40 × 4","BRACE, PLATE 40×4","end");
+  }
+  /* left dims 150 / 350 / 150 / 650 */
+  const xa = Y(-150)-22, xb = Y(-150)-58;
+  [0,150,500,650].forEach(v=>{ s += ext(Y(-150)-4,Z(v),xa-6,Z(v)); });
+  s += vdim(xa,Z(650),Z(500),"150") + vdim(xa,Z(500),Z(150),"350") + vdim(xa,Z(150),Z(0),"150");
+  s += ext(xa-6,Z(650),xb-6,Z(650)) + ext(xa-6,Z(0),xb-6,Z(0)) + vdim(xb,Z(650),Z(0),"650");
+  s += small(20,Z(0)+62,"ซ้ายคือด้านเสา · แผ่นรัดลึก 150 (100 + 50) · ยูแคล้มป์ที่แผ่นรัดล่าง","Pole on the left · strap depth 150 (100 + 50) · clamp on lower strap");
+
+  /* ---- rail section (enlarged) ---- */
+  const yB = Z(0) + 120;
+  const ks = p.ra > 40 ? 2.4 : 2.8, ra = p.ra, rt = p.rt, sx0 = 70, sy0 = yB + 112, U = v => sx0 + v*ks, V = v => sy0 + v*ks;
+  s += T2(20,yB,"หน้าตัดรางผ่านรู (ขยาย)","RAIL SECTION THROUGH HOLE");
+  const g1 = ra-12.5-15, g2 = ra-12.5;
+  s += `<path d="M${U(0)} ${V(0)} H${U(g1)} V${V(rt)} H${U(rt)} V${V(ra)} H${U(0)} Z" fill="url(#hatar2)" stroke="var(--ink)" stroke-width="1.3"/>`;
+  s += `<path d="M${U(g2)} ${V(0)} H${U(ra)} V${V(rt)} H${U(g2)} Z" fill="url(#hatar2)" stroke="var(--ink)" stroke-width="1.3"/>`;
+  s += `<path d="M${U(g1)} ${V(0)} H${U(g2)} M${U(g1)} ${V(rt)} H${U(g2)}" stroke="var(--ink)" stroke-width=".5" stroke-dasharray="3 2"/>`;
+  s += cl(U(ra-20),V(-10),U(ra-20),V(rt)+16);
+  const yd = V(0)-16;
+  s += ext(U(ra),V(0)-3,U(ra),yd-54) + ext(U(g2),V(0)-3,U(g2),yd-6) + ext(U(ra-20),V(0)-12,U(ra-20),yd-30) + ext(U(0),V(0)-3,U(0),yd-54);
+  s += hdim(U(g2),U(ra),yd,"12.5") + hdim(U(ra-20),U(ra),yd-24,"20*") + hdim(U(0),U(ra),yd-48,ra);
+  s += ext(U(ra)+4,V(0),U(ra)+30,V(0)) + ext(U(rt)+4,V(ra),U(ra)+30,V(ra)) + vdim(U(ra)+24,V(0),V(ra),ra,1);
+  s += `<text x="${U(rt)+6}" y="${V(ra)-4}" font-size="11" style="fill:var(--dim)">t ${rt}</text>`;
+  s += lead(U((g1+g2)/2),V(rt)+2,U(ra)+60,V(ra)+24,"รูยาว 10 × 15 ตามขวาง","SLOT 10 × 15 ACROSS");
+  s += small(20,V(ra)+62,"ปีกตั้งที่ขอบนอก · ปลายปีกหันเข้าช่องว่าง","Heel at outer edge · toe to the gap");
+  s += small(20,V(ra)+94,p.type==="arm" ? `ราง ${p.rname} · ศูนย์รู 2 แนวห่าง ${p.hcc}` : "ราง L 40×40×3 · รูบนรางบนทั้งสอง*", p.type==="arm" ? `Hole lines ${p.hcc} mm apart` : "Holes on both top rails*");
+
+  /* ---- hanging slot detail ---- */
+  const kq = 1.0, qx = 480, Wq = 140, qy = yB + 64 + 150*kq, Q = v => qy - v*kq;
+  s += T2(420,yB,"ช่องแขวนที่แผ่นรัด (ขยาย)","STRAP HANGING SLOT");
+  s += `<path d="M${qx} ${Q(0)} H${qx+Wq} M${qx} ${Q(150)} H${qx+Wq}" stroke="var(--ink)" stroke-width="1.5"/>` + brk(qx,Q(150),Q(0)) + brk(qx+Wq,Q(150),Q(0));
+  const cx = qx+Wq/2, w = p.sW*kq, r = w/2;
+  s += `<path d="M${cx-r} ${Q(0)} V${Q(p.sd)+r} A${r} ${r} 0 0 1 ${cx+r} ${Q(p.sd)+r} V${Q(0)}" fill="var(--hole)" stroke="var(--ink)" stroke-width="1.3"/>`;
+  s += cl(cx,Q(p.sd)-14,cx,Q(0)+12);
+  s += ext(cx+r+3,Q(p.sd),cx+48,Q(p.sd)) + vdim(cx+42,Q(p.sd),Q(0),p.sd,1);
+  s += ext(qx-10,Q(150),qx-36,Q(150)) + ext(qx-10,Q(0),qx-36,Q(0)) + vdim(qx-30,Q(150),Q(0),"150");
+  s += `<line x1="${cx-r-22}" y1="${Q(p.sd+16)}" x2="${cx-r}" y2="${Q(p.sd+16)}" stroke="var(--dim)" stroke-width="1" marker-end="url(#ar2)"/><line x1="${cx+r+22}" y1="${Q(p.sd+16)}" x2="${cx+r}" y2="${Q(p.sd+16)}" stroke="var(--dim)" stroke-width="1" marker-end="url(#ar2)"/><text x="${cx}" y="${Q(p.sd+16)-6}" font-size="12" text-anchor="middle" style="fill:var(--dim)">${p.sW}</text>`;
+  s += small(420,Q(0)+30,"เปิดที่ขอบล่าง · แผ่นหนา 4 มม.","Open at the lower edge · plate 4 mm");
+  s += small(420,Q(0)+60,"ปลายช่องบน–ล่างห่างกัน 500" + (p.type==="cage"?"*":""),"Slot ends 500 apart" + (p.type==="cage"?"*":""));
+  const el = $("detail");
+  el.setAttribute("viewBox", `0 0 720 ${Math.ceil(Math.max(V(ra)+120, Q(0)+90))}`);
+  el.innerHTML = s;
+}
+
+/* ===== น้ำหนัก + ตาราง ===== */
+function strapDev(sw){ return 2*100 + 2*50*Math.SQRT2 + (sw-100); }
+function lugDev(h){ return Math.PI*14 + 2*(h-14) + 20; }
+function bom(p){
+  const rows = [];
+  const add = (th,en,size,q,len,kgm,mat) => rows.push({th,en,size,q,len,kgm,w: len&&kgm ? q*len/1000*kgm : 0, mat});
+  const sDev = strapDev(p.sw);
+  if (p.type === "arm"){
+    const zb = p.zR-p.rt-p.pa, Lb = Math.hypot(p.D-30, zb-22);
+    add("ราง เหล็กฉากผลิตร้อน มอก. 116","Rail, hot-rolled angle, TIS 116",p.rname,2,p.L,p.rkg);
+    add("เสาตั้ง เหล็กฉาก","Post, angle","L 40×40×3",2,650,KG.L40);
+    add("แขนรับ เหล็กฉาก*","Arm, angle*","L 40×40×3",2,p.D,KG.L40);
+    add("ค้ำเอียง เหล็กฉาก (ยาวประมาณ*)","Diagonal brace, angle (approx.*)","L 40×40×3",2,Math.round(Lb/5)*5,KG.L40);
+    add("แผ่นรัดเสา เหล็กแผ่น (ความยาวแผ่ ≈)","Pole strap, steel plate (developed ≈)","PL 150×4",2,Math.round(sDev),KG.P150);
+    add("ห่วงสำหรับยก เหล็กกลม*","Lifting lug, round bar*","Ø12*",4,Math.round(lugDev(p.lugH)),KG.R12);
+  } else {
+    const a = p.ra, Lb = Math.hypot(p.W-2*a, p.Hf-2*a);
+    add("ราง บน–ล่าง หน้า–หลัง เหล็กฉาก มอก. 116","Rails top/bottom, front/back, angle TIS 116","L 40×40×3",4,p.L,KG.L40);
+    add("ตัวขวาง บน–ล่าง (ปลาย 4 + กลาง 4)*","Cross members top/bottom (4 end + 4 inner)*","L 40×40×3",8,p.W,KG.L40);
+    add("ตัวตั้งโครง (มุม 4 + กลาง 4)*","Frame uprights (4 corner + 4 inner)*","L 40×40×3",8,p.Hf-2*a,KG.L40);
+    add("เสาตั้งหลัง เหล็กฉาก","Rear post, angle","L 40×40×3",2,650,KG.L40);
+    add("ค้ำทแยง เหล็กแผ่น (ยาวประมาณ*)","Diagonal brace, steel plate (approx.*)","PL 40×4",2,Math.round(Lb/5)*5,KG.P40);
+    add("แผ่นรัดเสา เหล็กแผ่น (ความยาวแผ่ ≈)","Pole strap, steel plate (developed ≈)","PL 150×4",2,Math.round(sDev),KG.P150);
+    add("ห่วงสำหรับยก เหล็กกลม*","Lifting lug, round bar*","Ø12*",4,Math.round(lugDev(p.lugH)),KG.R12);
+  }
+  add("ยูแคล้มป์สลักเดี่ยว สำหรับต่อสายดิน","Clamp, single U-bolt, for grounding","M8",2,0,0);
+  return rows;
+}
+function tables(){
+  const p = PART.variants[cur];
+  syncHead(p);
+  const R = [];
+  const r = (th,en,v) => R.push([th,en,v]);
+  r("ความยาวราง","Rail length",fmt(p.L));
+  r("รู Ø10 × 15 ตำแหน่งจากปลายซ้าย","Ø10 × 15 holes from left end",p.holes.map(fmt).join(" · ") + (p.type==="cage"?" (150*)":""));
+  r("โซ่มิติตามแบบ","Dimension chain as drawn",p.chain.slice(1).map((v,i)=>v-p.chain[i]).join(" · "));
+  r("ปลายรูถึงขอบปลายปีก / ศูนย์รูถึงปลายปีก","Hole end / centre to leg toe","12.5 · 20*");
+  if (p.type === "arm"){
+    r("รางนอกถึงนอก / ศูนย์รูถึงศูนย์รู / ช่องว่างในต่ำสุด","Rails outside / hole lines / min. clear",`${p.D} · ${p.hcc} · ${p.clear} MIN.`);
+    r("หลังรางจากปลายบนเสา / จากปลายล่าง","Rail top from post top / from bottom","200 · 450");
+    r("แขนรับยาว*","Arm length*",p.D+"*");
+  } else {
+    r("โครง กว้าง × สูง (เปลี่ยนได้)","Frame width × height (flexible)","≈500* × ≈500*");
+    r("แผ่นรัดบนเหนือโครง","Upper strap above frame","150");
+  }
+  r("แผ่นรัดเสา กว้างนอก × ลึก (ขา 100 + ลบมุม 50 @ 45°)","Pole strap width × depth (100 leg + 50 chamfer @ 45°)",`${p.sw} × 150`);
+  r("เสาตั้ง: แผ่นรัดบน · ช่วงกลาง · แผ่นรัดล่าง","Post: upper strap · middle · lower strap","650 = 150 · 350 · 150");
+  r("ช่องแขวน กว้าง × ลึก / ระยะปลายช่องบน–ล่าง","Hanging slot W × depth / slot-end spacing",`${p.sW} × ${p.sd} · 500${p.type==="cage"?"*":""}`);
+  r("ห่วงยก สูง","Lifting lug height",p.type==="cage" ? "50" : "40*");
+  let h = `<thead><tr><th class="l">รายการ<span class="e">Item</span></th><th>มิติ (มม.)<span class="e">Dimension (mm)</span></th></tr></thead><tbody>`;
+  R.forEach(x=>{ h += `<tr><td class="l">${x[0]}<span class="e">${x[1]}</span></td><td class="mono">${x[2]}</td></tr>`; });
+  $("dimTbl").innerHTML = h + "</tbody>";
+  const rows = bom(p), tot = rows.reduce((a,b)=>a+b.w,0);
+  $("bomTbl").innerHTML = `<thead><tr><th>ลำดับ<span class="e">No.</span></th><th class="l">รายการ<span class="e">Description</span></th><th>ขนาด (มม.)<span class="e">Size (mm)</span></th><th>จำนวน<span class="e">Qty</span></th><th>ยาว/ชิ้น (มม.)<span class="e">Length each (mm)</span></th><th>กก./ม.<span class="e">kg/m</span></th><th>น้ำหนัก (กก.)<span class="e">Weight (kg)</span></th></tr></thead><tbody>` +
+    rows.map((x,i)=>`<tr><td>${i+1}</td><td class="l">${x.th}<span class="e">${x.en}</span></td><td class="mono">${x.size}</td><td>${x.q}</td><td class="mono">${x.len?fmt(x.len):"–"}</td><td class="mono">${x.kgm?x.kgm.toFixed(2)+(x.size.startsWith("PL")?"":"*"):"–"}</td><td class="mono">${x.w?x.w.toFixed(2):"–"}</td></tr>`).join("") +
+    `</tbody><tfoot><tr><td colspan="6" class="l">น้ำหนักเหล็กโดยประมาณ ต่อชุด (ก่อนชุบ)${p.type==="cage"?" · ที่โครง 500 × 500*":""}<span class="e">Approx. steel weight per set (before galvanizing)${p.type==="cage"?" · for a 500 × 500* frame":""}</span></td><td class="mono">${tot.toFixed(1)}</td></tr></tfoot>`;
+  $("varSpec").textContent = p.type === "arm"
+    ? `${p.asm} · 1 × ${p.nCap} · ${p.rname} × ${fmt(p.L)} · ${p.D} deep · ≤ ${p.load} kg · ≈ ${tot.toFixed(1)} kg`
+    : `${p.asm} · 1 × ${p.nCap} · box frame ${fmt(p.L)} × ≈500 × ≈500 · L 40×40×3 · ≈ ${tot.toFixed(1)} kg`;
+}
+
+/* ===== 3D ===== */
+function slotPath(cx,cy,ax,ay){
+  const P = new THREE.Path(), r = Math.min(ax,ay)/2;
+  if (ax >= ay){ const d = ax/2-r; P.moveTo(cx-d,cy-r); P.lineTo(cx+d,cy-r); P.absarc(cx+d,cy,r,-Math.PI/2,Math.PI/2,false); P.lineTo(cx-d,cy+r); P.absarc(cx-d,cy,r,Math.PI/2,Math.PI*1.5,false); }
+  else { const d = ay/2-r; P.moveTo(cx+r,cy-d); P.lineTo(cx+r,cy+d); P.absarc(cx,cy+d,r,0,Math.PI,false); P.lineTo(cx-r,cy-d); P.absarc(cx,cy-d,r,Math.PI,Math.PI*2,false); }
+  return P;
+}
+function shapeOf(pts){ const sh = new THREE.Shape(); sh.moveTo(pts[0][0],pts[0][1]); pts.slice(1).forEach(([u,v])=>sh.lineTo(u,v)); sh.lineTo(pts[0][0],pts[0][1]); return sh; }
+function Lpts(c1,c2,d1,d2,a,t){ return [[c1,c2],[c1+d1*a,c2],[c1+d1*a,c2+d2*t],[c1+d1*t,c2+d2*t],[c1+d1*t,c2+d2*a],[c1,c2+d2*a]]; }
+/* แท่งหน้าตัดใด ๆ ตามแกน: 'y' pts=(X,Z)  'x' pts=(Z,Y)  'z' pts=(X,Y) */
+function bar(pts,len,axis,start,mat){
+  let P = pts;
+  if (axis === "y") P = pts.map(([x,z])=>[x,-z]);
+  if (axis === "x") P = pts.map(([z,y])=>[-z,y]);
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shapeOf(P),{depth:len,bevelEnabled:false}),mat||MAT.steel);
+  if (axis === "y"){ m.rotation.x = -Math.PI/2; m.position.y = start; }
+  if (axis === "x"){ m.rotation.y = Math.PI/2; m.position.x = start; }
+  if (axis === "z"){ m.position.z = start; }
+  return m;
+}
+/* รางตามแกน X: ปีกราบ (มีรู) บน/ล่าง + ปีกตั้งที่ขอบ heel; dir = ทิศจาก heel ไป toe (+1/-1 ตาม Z) */
+function rail(g,L,a,t,zHeel,dir,yTop,holes,holeZ,up){
+  const z0 = Math.min(zHeel, zHeel+dir*a);
+  const sh = new THREE.Shape(); sh.moveTo(0,0); sh.lineTo(L,0); sh.lineTo(L,a); sh.lineTo(0,a); sh.lineTo(0,0);
+  (holes||[]).forEach(x=>sh.holes.push(slotPath(x,holeZ-z0,10,15)));
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:t,bevelEnabled:false,curveSegments:16}),MAT.steel);
+  m.rotation.x = Math.PI/2; m.position.set(0, up===false ? yTop+t : yTop, z0); g.add(m);
+  const vz = dir > 0 ? zHeel + t/2 : zHeel - t/2;
+  g.add(box(L,a-t,t,L/2, up===false ? yTop+t+(a-t)/2 : yTop-t-(a-t)/2, vz));
+}
+/* แผ่นรัดเสา: ขา ลบมุม และแผ่นหน้ามีช่องเปิดล่าง */
+function strap3d(g,c,sw,y0,sd){
+  const h = sw/2, t = 4, H = 150, f = h-50;
+  [-1,1].forEach(s=>{
+    g.add(box(t,H,100,c+s*(h-t/2),y0+H/2,-50));
+    const ch = box(50*Math.SQRT2,H,t,c+s*(h-25),y0+H/2,-125); ch.rotation.y = -s*Math.PI/4; g.add(ch);
+  });
+  const r = 9, P = [[-f,0],[-r,0],[-r,sd-r]];
+  const sh = new THREE.Shape(); sh.moveTo(-f,0); sh.lineTo(-r,0); sh.lineTo(-r,sd-r); sh.absarc(0,sd-r,r,Math.PI,0,true); sh.lineTo(r,0); sh.lineTo(f,0); sh.lineTo(f,H); sh.lineTo(-f,H); sh.lineTo(-f,0);
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:t,bevelEnabled:false,curveSegments:16}),MAT.steel);
+  m.position.set(c,y0,-150-t/2); g.add(m);
+  /* grounding U-bolt clamp on left chamfer */
+  const u = new THREE.Mesh(new THREE.TorusGeometry(9,3.5,10,20,Math.PI),MAT.steel);
+  u.position.set(c-h+22,y0+H*.55,-122); u.rotation.y = -Math.PI/4; u.rotation.z = Math.PI/2; g.add(u);
+  const sd2 = box(10,28,22,c-h+22,y0+H*.55,-122); sd2.rotation.y = Math.PI/4; g.add(sd2);
+}
+/* เสาตั้ง (มุมที่ขาแผ่นรัด) */
+function post3d(g,c,sw,a,t,s,y0,len){ g.add(bar(Lpts(c+s*sw/2,0,s,-1,a,t),len,"y",y0)); }
+function lug3d(g,x,y,z,h){
+  const r = 14, d = 6;
+  const tor = new THREE.Mesh(new THREE.TorusGeometry(r,d,10,24,Math.PI),MAT.steel); tor.rotation.y = Math.PI/2; tor.position.set(x,y+h-r-d,z); g.add(tor);
+  [-r,r].forEach(dz=>{ const c = new THREE.Mesh(new THREE.CylinderGeometry(d,d,h-r-d,12),MAT.steel); c.position.set(x,y+(h-r-d)/2,z+dz); g.add(c); });
+  g.add(box(10,3,2*r+14,x,y+1.5,z,MAT.weld));
+}
+function makeModel(p){
+  const g = new THREE.Group(), c = p.L/2, sh = p.sw/2;
+  if (p.type === "arm"){
+    const D = p.D, zt = p.zR - p.rt, zb = zt - p.pa;
+    strap3d(g,c,p.sw,500,p.sd); strap3d(g,c,p.sw,0,p.sd);
+    [-1,1].forEach(s=>{
+      post3d(g,c,p.sw,p.pa,p.pt,s,0,p.H);
+      const xa = c + s*sh, xo = xa + s*p.pa;
+      /* arm: horizontal leg on top, vertical leg outside */
+      g.add(bar(Lpts(xo,zt,-s,-1,p.pa,p.pt),D,"z",0));
+      /* brace from post foot to arm tip */
+      const A = [p.pt+2,22], B = [D-26,zb], len = Math.hypot(B[0]-A[0],B[1]-A[1]), th = Math.atan2(B[1]-A[1],B[0]-A[0]);
+      const br = bar(Lpts(xo,0,-s,1,p.pa,p.pt).map(([x,y])=>[x,y-p.pa/2]),len,"z",0);
+      const grp = new THREE.Group(); grp.add(br); grp.position.set(0,A[1],A[0]); grp.rotation.x = -th; g.add(grp);
+      g.add(box(p.pa,4,6,(xa+xo)/2,22,p.pt+4,MAT.weld));
+      g.add(box(p.pa,6,4,(xa+xo)/2,zb-2,B[0],MAT.weld));
+    });
+    rail(g,p.L,p.ra,p.rt,0,1,p.zR,p.holes,p.ra-20);
+    rail(g,p.L,p.ra,p.rt,D,-1,p.zR,p.holes,D-p.ra+20);
+    [c-sh-p.pa/2, c+sh+p.pa/2].forEach(x=>[p.ra/2, D-p.ra/2].forEach(z=>lug3d(g,x,p.zR,z,p.lugH)));
+  } else {
+    const a = p.ra, t = p.rt, W = p.W, Hf = p.Hf, L = p.L;
+    strap3d(g,c,p.sw,Hf,p.sd); strap3d(g,c,p.sw,0,p.sd);
+    [-1,1].forEach(s=>post3d(g,c,p.sw,p.pa,p.pt,s,0,p.H));
+    /* rails: top (holes) and bottom */
+    rail(g,L,a,t,0,1,Hf,p.holes,a-20);
+    rail(g,L,a,t,W,-1,Hf,p.holes,W-a+20);
+    rail(g,L,a,t,0,1,0,[],0,false);
+    rail(g,L,a,t,W,-1,0,[],0,false);
+    /* cross members (along Z) at ends & inner frames, top & bottom */
+    const xs = [[0,1],[L,-1],[c-sh-a,1],[c+sh+a,-1]];
+    xs.forEach(([x,d])=>{
+      g.add(bar(Lpts(x,Hf,d,-1,a,t),W-2*a,"z",a));
+      g.add(bar(Lpts(x,0,d,1,a,t),W-2*a,"z",a));
+      /* uprights front & back */
+      g.add(bar(Lpts(x,0,d,1,a,t),Hf-2*a,"y",a));
+      g.add(bar(Lpts(x,W,d,-1,a,t),Hf-2*a,"y",a));
+    });
+    /* brace plates 40×4 on inner frames */
+    [c-sh-a/2, c+sh+a/2].forEach(x=>{
+      const A = [a,Hf-a], B = [W-a,a], len = Math.hypot(B[0]-A[0],B[1]-A[1]), th = Math.atan2(B[1]-A[1],B[0]-A[0]);
+      const pl = box(4,40,len,0,0,len/2,MAT.steel);
+      const grp = new THREE.Group(); grp.add(pl); grp.position.set(x+(x<c?6:-6),A[1],A[0]); grp.rotation.x = -th; g.add(grp);
+    });
+    [c-sh-a/2, c+sh+a/2].forEach(x=>[a/2, W-a/2].forEach(z=>lug3d(g,x,Hf,z,p.lugH)));
+  }
+  return g;
+}
+function views(p){
+  const L = p.L, dep = p.type === "arm" ? p.D : p.W, cz = (dep-150)/2, d = Math.max(L,1100);
+  return { iso:[L/2,325,cz,.42,-.62,d*1.85], front:[L/2,325,cz,0,0,d*1.75], side:[L/2,325,cz,.05,Math.PI/2,p.type==="arm"?1800:2150], top:[L/2,325,cz,Math.PI/2,0,d*1.7], strap:[L/2,420,-60,.32,-2.55,1600] };
+}
+
+
+/* ===== ส่วนกลาง (ใช้ร่วมทุกแบบ) ===== */
+let cur = 0;
+const $ = id => document.getElementById(id);
+const fmt = n => Number(n).toLocaleString("en-US");
+const C45 = Math.SQRT1_2;
+const MK = id => `<defs><marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9z" fill="var(--dim)"/></marker>
+  <pattern id="hat${id}" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--ink)" stroke-width="1"/></pattern></defs>`;
+let AR = "ar";
+function dl(x1,y1,x2,y2,label,lx,ly,anchor){
+  const t = label===""||label==null ? "" : `<text x="${lx??(x1+x2)/2}" y="${ly??Math.min(y1,y2)-6}" font-size="13" text-anchor="${anchor||"middle"}" style="fill:var(--dim)">${label}</text>`;
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width="1" marker-start="url(#${AR})" marker-end="url(#${AR})"/>` + t;
+}
+function ext(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--dim)" stroke-width=".6" stroke-dasharray="3 3"/>`; }
+function cl(x1,y1,x2,y2){ return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="10 3 2 3"/>`; }
+function brk(x,top,bot){
+  const h = bot-top;
+  return `<path d="M${x} ${top-7} L${x} ${top+h*.32} L${x-6} ${top+h*.44} L${x+6} ${top+h*.56} L${x} ${top+h*.68} L${x} ${bot+7}" fill="none" stroke="var(--ink)" stroke-width=".9"/>`;
+}
+function lead(x1,y1,x2,y2,th,en,anchor){
+  const a = anchor||"start";
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--muted)" stroke-width=".8"/><text class="th" x="${x2+(a==="start"?4:-4)}" y="${y2+4}" font-size="13" text-anchor="${a}">${th}</text>${en?`<text x="${x2+(a==="start"?4:-4)}" y="${y2+19}" font-size="11" text-anchor="${a}" style="fill:var(--muted)">${en}</text>`:""}`;
+}
+function header(){
+  $("grp").innerHTML = PART.group + `<span class="e" style="text-transform:none">${PART.groupEn}</span>`;
+  $("nameTh").textContent = PART.nameTh;
+  $("nameEn").textContent = PART.nameEn;
+  $("asmNo").textContent = PART.assembly;
+  $("asmOld").textContent = PART.assemblyOld ? "เดิม · OLD " + PART.assemblyOld : "";
+  $("varSeg").innerHTML = PART.variants.map((v,i)=>`<button type="button" id="var${i}" data-i="${i}">${v.label}</button>`).join("");
+  $("varSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setVariant(+b.dataset.i); });
+  const tb = PART.titleBlock;
+  $("tb").innerHTML = `<div class="w6">${tb.org}</div>
+    <div><span class="k">มาตราส่วน · SCALE</span>${tb.scale}</div>
+    <div><span class="k">วันที่ · DATE</span>${tb.date}</div>
+    <div class="w2"><span class="k">ชื่อแบบ · TITLE</span>${PART.nameTh}<span class="e">${PART.nameEn}</span></div>
+    <div><span class="k">แบบเลขที่ · DWG NO.</span>${tb.dwg}</div>
+    <div><span class="k">SHEET</span>${tb.sheet}</div>`;
+  $("fab").innerHTML = PART.fabrication.map(([th,en])=>`<li>${th}<span class="e">${en}</span></li>`).join("");
+  $("assume").innerHTML = PART.assumptions.map(([th,en])=>`<li><span class="tag">ยืนยัน · VERIFY</span> ${th}<span class="e">${en}</span></li>`).join("");
+}
+
+/* ===== 3D ===== */
+const box3 = $("v3d");
+let R, scene, cam, pivot, model, rx = .5, ry = -.55, dist = 3000, lastView = "iso";
+const MAT = {};
+function init3d(){
+  if (!window.THREE){ box3.innerHTML = '<p style="padding:16px;color:var(--muted)">โหลดโมเดล 3 มิติไม่สำเร็จ / 3D model could not load</p>'; return; }
+  R = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  R.setClearColor(0x000000,0); R.setPixelRatio(Math.min(devicePixelRatio,2));
+  box3.appendChild(R.domElement);
+  scene = new THREE.Scene();
+  cam = new THREE.PerspectiveCamera(32,1,1,200000);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8890a0,.85)); scene.add(new THREE.AmbientLight(0xffffff,.25));
+  const d1 = new THREE.DirectionalLight(0xffffff,.8); d1.position.set(900,1600,1400); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xffffff,.55); d2.position.set(-700,900,-1400); scene.add(d2);
+  pivot = new THREE.Group(); scene.add(pivot);
+  MAT.steel = new THREE.MeshStandardMaterial({color:0xb9c1c9, metalness:.3, roughness:.5});
+  MAT.weld = new THREE.MeshStandardMaterial({color:0xd27a22, metalness:.25, roughness:.7});
+  MAT.concrete = new THREE.MeshStandardMaterial({color:0xc9c4b8, metalness:0, roughness:.95, transparent:true, opacity:.55, depthWrite:false});
+  MAT.pile = new THREE.MeshStandardMaterial({color:0x9a958a, metalness:0, roughness:.9});
+  MAT.ground = new THREE.MeshStandardMaterial({color:0x8a7a5c, metalness:0, roughness:1, transparent:true, opacity:.18, side:THREE.DoubleSide, depthWrite:false});
+  let drag=false,px=0,py=0;
+  box3.addEventListener("pointerdown",e=>{drag=true;px=e.clientX;py=e.clientY;box3.setPointerCapture(e.pointerId);box3.style.cursor="grabbing"});
+  box3.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.008;rx+=(e.clientY-py)*.008;px=e.clientX;py=e.clientY;render()});
+  box3.addEventListener("pointerup",()=>{drag=false;box3.style.cursor="grab"});
+  box3.addEventListener("wheel",e=>{e.preventDefault();dist=Math.max(100,Math.min(60000,dist*(1+e.deltaY*.0012)));render()},{passive:false});
+  new ResizeObserver(size).observe(box3);
+  document.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>view(b.dataset.v)));
+}
+function size(){ if(!R)return; const w=box3.clientWidth,h=box3.clientHeight; R.setSize(w,h); cam.aspect=w/h; cam.updateProjectionMatrix(); render(); }
+function box(w,h,d,x,y,z,mat){ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat||MAT.steel); m.position.set(x,y,z); return m; }
+function build3d(){
+  if (!R) return;
+  if (model) pivot.remove(model);
+  model = makeModel(PART.variants[cur]);
+  pivot.add(model);
+  view(lastView);
+}
+function view(v){
+  lastView = v;
+  if (!R || !model) return;
+  const T = views(PART.variants[cur])[v];
+  model.position.set(-T[0],-T[1],-T[2]); rx=T[3]; ry=T[4]; dist=T[5]; render();
+}
+function render(){ if(!R||!model)return; pivot.rotation.set(rx,ry,0); cam.position.set(0,0,dist); cam.lookAt(0,0,0); R.render(scene,cam); }
+
+function setVariant(i){
+  cur = i;
+  PART.variants.forEach((_,j)=>$("var"+j).setAttribute("aria-pressed", j===i));
+  drawElev(); drawDetail(); tables(); build3d();
+}
+header(); init3d(); setVariant(0); size();
+</script>
+</html><a id="hubBack" href="../index.html" onclick="if(history.length>1){history.back();return false}" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← คลังแบบ</a><style id="blnCss">
+svg text.bln-t{cursor:pointer}
+svg .bln-g:focus{outline:none}svg .bln-g:focus-visible circle.bln-c{stroke:#2563eb!important;stroke-width:2.4!important}
+svg circle.bln-c{cursor:pointer;transition:fill .15s}
+svg .bln-g:hover circle.bln-c,svg circle.bln-c.hov{fill:rgba(37,99,235,.18)!important}
+svg circle.bln-c.on{fill:rgba(234,88,12,.28)!important;stroke:#ea580c!important;stroke-width:2.4!important}
+svg text.bln-t.on{fill:#c2410c!important;font-weight:700}
+#blnPop{position:fixed;z-index:10000;max-width:340px;width:calc(100vw - 24px);background:var(--sheet,#fff);color:var(--ink,#111);border:1px solid var(--line,#d4d4d8);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.22);font:14px/1.45 "IBM Plex Sans Thai",system-ui,sans-serif;display:none;overflow:hidden}
+#blnPop .hd{display:flex;gap:10px;align-items:flex-start;padding:12px 14px 8px}
+#blnPop .no{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 15px "IBM Plex Mono",monospace}
+#blnPop .th{font-weight:600}
+#blnPop .en{color:var(--muted,#666);font-size:12.5px}
+#blnPop .x{margin-left:auto;border:0;background:none;font-size:20px;line-height:1;color:var(--muted,#666);cursor:pointer;padding:0 2px}
+#blnPop .qty{display:flex;align-items:baseline;gap:8px;padding:8px 14px;background:rgba(234,88,12,.08);border-top:1px solid var(--line,#e4e4e7);border-bottom:1px solid var(--line,#e4e4e7)}
+#blnPop .qty b{font:700 22px "IBM Plex Mono",monospace;color:#c2410c}
+#blnPop .qty .u{font-weight:600}
+#blnPop .qty .v{margin-left:auto;font-size:12px;color:var(--muted,#666)}
+#blnPop dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:0;padding:8px 14px;font-size:13px}
+#blnPop dt{color:var(--muted,#666)}#blnPop dd{margin:0;font-family:"IBM Plex Mono",monospace}
+#blnPop .all{padding:0 14px 6px;font-size:12px;color:var(--muted,#666)}
+#blnPop .ft{padding:8px 14px 12px}
+#blnPop .ft button{border:1px solid var(--line,#d4d4d8);background:none;border-radius:8px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;color:inherit}
+tr.bln-flash>td{animation:blnF 1.8s ease}
+@keyframes blnF{0%,60%{background:rgba(234,88,12,.25)}100%{background:transparent}}
+.bln-hint{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted,#555);background:rgba(37,99,235,.08);border-radius:14px;padding:3px 10px;margin:4px 0 6px}
+.bln-hint i{font-style:normal;width:16px;height:16px;border:1.5px solid currentColor;border-radius:50%;display:inline-grid;place-items:center;font-size:10px}
+</style>
+<div id="blnPop" role="dialog" aria-live="polite"></div>
+<script>
+(function(){
+const CIR="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳",RX=/^([0-9]{1,2}[a-zก-ฮ]?['′]?|[a-e]|[①-⑳])$/;
+const norm=s=>{s=(s||"").trim().replace(/'/g,"′");const i=CIR.indexOf(s);return i>=0?String(i+1):s;};
+let BOM={},VLAB="";
+/* BOM first-column text -> keys: "6*"->6, "4 *"->4, "6a/6b"->6a,6b, "19a/b/c"->19a,19b,19c */
+function bkeys(t){t=(t||"").replace(/[*✱\s]/g,"").replace(/'/g,"′");if(!t)return[];const ps=t.split("/");const out=[];let base="";
+  ps.forEach((p,i)=>{let m=p.match(/^(\d+)([a-z]?)(′?)$/);if(m){base=m[1];out.push(p);}else if(/^[a-z]$/.test(p)&&base)out.push(base+p);else out.push(p);});
+  return out.map(norm).filter(k=>RX.test(k));}
+function readBom(){
+  const tb=document.getElementById("bomTbl")||[...document.querySelectorAll("table")].find(t=>/วัสดุเลขที่|Mat/i.test(t.tHead?.textContent||""));
+  BOM={};VLAB="";if(!tb)return;
+  const hs=[...(tb.tHead?.rows[0]?.cells||[])];
+  const iDesc=hs.findIndex(h=>/รายละเอียด|Description/.test(h.textContent));
+  const iMat=hs.findIndex(h=>/วัสดุเลขที่|Mat/.test(h.textContent));
+  const qIdx=[];hs.forEach((h,i)=>{if(i>iDesc&&(iMat<0||i<iMat))qIdx.push(i)});
+  let cur=qIdx.find(i=>hs[i].classList.contains("on"));if(cur==null)cur=qIdx[0];
+  VLAB=qIdx.length>1?hs[cur].textContent.trim():"";
+  [...tb.tBodies].forEach(b=>[...b.rows].forEach(r=>{
+    const c=r.cells;if(c.length<3||c[0].tagName!=="TD")return;
+    const ks=bkeys(c[0].textContent);if(!ks.length)return;const n=ks[0];
+    const d=c[iDesc],en=d.querySelector(".e");const th=en?d.textContent.replace(en.textContent,"").trim():d.textContent.trim();
+    const all=qIdx.map(i=>({l:hs[i].textContent.trim(),q:(c[i]?.textContent||"").trim()}));
+    const m=c[iMat];const me=m?.querySelector(".e");
+    const o={n,th,en:en?en.textContent.trim():"",q:(c[cur]?.textContent||"").trim(),all,mat:m?(me?m.textContent.replace(me.textContent,""):m.textContent).trim():"",old:me?me.textContent.trim():"",row:r};
+    ks.forEach(k=>{if(!BOM[k])BOM[k]=Object.assign({},o,{n:k});});
+    ks.forEach(k=>{const m=k.match(/^(\d+)[a-z]$/);if(m&&!BOM[m[1]])BOM[m[1]]=Object.assign({},o,{n:m[1]});});
+  }));
+}
+const UNITS=[[/สลักเกลียว|สกรู|bolt|screw/i,"ตัว","pcs"],[/น็อต|นัต|nut/i,"ตัว","pcs"],[/แหวน|washer/i,"อัน","pcs"],[/แป้น|แผ่น|plate|board/i,"แผ่น","pcs"],[/แร็ค|rack/i,"ชุด","set"],[/มิเตอร์|meter/i,"เครื่อง","set"],[/ตู้|cabinet/i,"ตู้","set"],[/เสา|pole/i,"ต้น","pcs"],[/สาย|cable|conductor|wire/i,"ม.","m"],[/คอนเนคเตอร์|connector|แคลมป์|clamp/i,"ตัว","pcs"],[/ลูกถ้วย|insulator/i,"ลูก","pcs"],[/หลักดิน|ground rod/i,"แท่ง","pcs"],[/เหล็กฉาก|เหล็ก|angle|channel/i,"ท่อน","pcs"]];
+function qtyUnit(it){
+  const q=it.q;if(!q||q==="–"||q==="-")return {v:"–",u:"ไม่ใช้ในแบบนี้",inf:false};
+  const m=q.match(/^([\d.,/]+)\s*(.*)$/);if(m&&m[2])return {v:m[1],u:m[2],inf:false};
+  if(m){const k=UNITS.find(([re])=>re.test(it.en))||UNITS.find(([re])=>re.test(it.th));return {v:m[1],u:k?k[1]:"ชิ้น",inf:true};}
+  return {v:q,u:"",inf:false};
+}
+const pop=document.getElementById("blnPop");let curN=null;
+function mark(n){document.querySelectorAll(".bln-c,.bln-t").forEach(e=>e.classList.toggle("on",e.dataset.bn===n));}
+function show(n,ev){
+  const it=BOM[n];if(!it)return;curN=n;mark(n);
+  const qu=qtyUnit(it);const cnt=document.querySelectorAll('text.bln-t[data-bn="'+n+'"]').length;
+  pop.innerHTML='<div class="hd"><div class="no">'+n+'</div><div><div class="th">'+it.th+'</div><div class="en">'+it.en+'</div></div><button class="x" aria-label="ปิด">×</button></div>'
+   +'<div class="qty"><span>จำนวน</span><b>'+qu.v+'</b><span class="u">'+qu.u+(qu.inf?'<sup title="หน่วยนี้ระบบประมาณจากชื่อวัสดุ">*</sup>':'')+'</span>'+(VLAB?'<span class="v">แบบที่เลือก: '+VLAB+'</span>':'')+'</div>'
+   +'<dl><dt>วัสดุเลขที่</dt><dd>'+(it.mat||"–")+(it.old?' <span style="color:var(--muted)">'+it.old+'</span>':'')+'</dd>'
+   +'<dt>ในรูปนี้</dt><dd style="font-family:inherit">ชี้ไว้ '+cnt+' ตำแหน่ง (ไฮไลต์สีส้ม)</dd></dl>'
+   +(it.all.length>1?'<div class="all">ทุกแบบย่อย: '+it.all.map(a=>a.l+' = '+a.q).join(' · ')+'</div>':'')
+   +'<div class="ft"><button class="go">ดูในตารางรายการวัสดุ ↓</button></div>';
+  pop.style.display="block";
+  lastEv=ev;place();
+  if(window.P3D&&window.THREE){const v=document.createElement("div");v.className="v3";pop.querySelector(".hd").after(v);try{P3D.mount(v,it);}catch(e){v.remove();}}
+  place();
+  pop.querySelector(".x").onclick=hide;
+  pop.querySelector(".go").onclick=()=>{hide();it.row.scrollIntoView({behavior:"smooth",block:"center"});it.row.classList.remove("bln-flash");void it.row.offsetWidth;it.row.classList.add("bln-flash");};
+}
+let lastEv=null;
+/* Position the card. Phones get a bottom sheet that stays the same on-screen size even when the page is pinch-zoomed
+   (counter-scale by visualViewport.scale and pin to the visual viewport). */
+function place(){
+  if(pop.style.display!=="block")return;const vv=window.visualViewport,sc=vv?vv.scale:1,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight;
+  const W0=vw*sc;
+  if(W0<600){pop.style.maxWidth="none";pop.style.width=Math.min(W0-16,520)+"px";pop.style.maxHeight=Math.round(vh*sc*.62)+"px";pop.style.overflowY="auto";
+    pop.style.transformOrigin="0 0";pop.style.transform=sc!==1?"scale("+(1/sc)+")":"";
+    const h=pop.offsetHeight/sc,w=pop.offsetWidth/sc;pop.style.left=(ox+(vw-w)/2)+"px";pop.style.top=(oy+vh-h-8/sc)+"px";pop.style.bottom="auto";pop.classList.add("sheet");}
+  else{pop.style.transform="";pop.style.maxHeight="";pop.style.overflowY="";pop.style.width="";pop.style.maxWidth="";pop.classList.remove("sheet");
+    const W=innerWidth,H=innerHeight,r=pop.getBoundingClientRect(),ev=lastEv||{clientX:W/2,clientY:H/2};
+    let x=ev.clientX+16,y=ev.clientY+16;if(x+r.width>W-8)x=ev.clientX-r.width-16;if(y+r.height>H-8)y=Math.max(8,H-r.height-8);pop.style.left=x+"px";pop.style.top=y+"px";pop.style.bottom="auto";}
+}
+window.blnPlace=place;
+if(window.visualViewport){visualViewport.addEventListener("resize",place);visualViewport.addEventListener("scroll",place);}
+addEventListener("resize",place);
+function hide(){if(window.P3D)P3D.stop();pop.style.display="none";curN=null;mark(null);}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hide();});
+document.addEventListener("click",e=>{if(pop.style.display==="block"&&!pop.contains(e.target)&&!e.target.closest(".bln-g"))hide();});
+function wire(){
+  readBom();
+  document.querySelectorAll("svg").forEach(s=>{
+    const cs=[...s.querySelectorAll("circle")].filter(c=>c.r.baseVal.value>3);
+    s.querySelectorAll("text").forEach(t=>{
+      if(t.dataset.bn)return;const n=norm(t.textContent);if(!RX.test(t.textContent.trim())||!BOM[n])return;
+      let bb;try{bb=t.getBBox()}catch(e){return}
+      const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+      const c=cs.find(c=>Math.hypot(c.cx.baseVal.value-cx,c.cy.baseVal.value-cy)<c.r.baseVal.value);
+      if(!c)return;
+      const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+      c.parentNode.insertBefore(g,c);g.appendChild(c);g.appendChild(t);
+      c.classList.add("bln-c");t.classList.add("bln-t");c.dataset.bn=t.dataset.bn=n;
+      if(!c.getAttribute("fill")||c.getAttribute("fill")==="none")c.setAttribute("fill","rgba(0,0,0,0)");
+      g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+      g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+    });
+  });
+  /* labels that carry a circled number, e.g. "steel pipe Ø 50 ③" */
+  document.querySelectorAll("svg text").forEach(t=>{
+    if(t.dataset.bn||t.closest(".bln-g"))return;const m=t.textContent.match(/[①-⑳]/g);if(!m)return;
+    const n=norm(m[m.length-1]);if(!BOM[n])return;
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","bln-g");g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label","รายการที่ "+n);
+    t.parentNode.insertBefore(g,t);g.appendChild(t);t.classList.add("bln-t");t.dataset.bn=n;t.style.textDecoration="underline dotted";
+    g.addEventListener("click",e=>{e.stopPropagation();curN===n?hide():show(n,e);});
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();const r=g.getBoundingClientRect();show(n,{clientX:r.right,clientY:r.bottom});}});
+  });
+  if(curN)mark(curN);
+}
+let tm;const mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{mo.disconnect();wire();obs();},120);});
+const obs=()=>document.querySelectorAll("svg").forEach(s=>mo.observe(s.parentElement||s,{childList:true,subtree:true}));
+function hint(){const g0=document.querySelector(".bln-g");const s=g0&&g0.ownerSVGElement;if(!s||document.querySelector(".bln-hint"))return;const h=document.createElement("div");h.className="bln-hint";h.innerHTML="<i>3</i> แตะหมายเลขในวงกลมบนรูป เพื่อดูชื่อวัสดุ จำนวน และหน่วย";(s.closest("section")||s.parentElement).insertBefore(h,(s.closest("section")||s.parentElement).querySelector("svg")?.parentElement===s.closest("section")?s:s.parentElement);}
+function init(){wire();obs();hint();const bt=document.getElementById("bomTbl");if(bt)new MutationObserver(()=>{readBom();}).observe(bt,{childList:true,subtree:true});}
+if(document.readyState==="complete")setTimeout(init,300);else addEventListener("load",()=>setTimeout(init,300));
+})();
+</script>
+<style id="p3dCss">
+#blnPop.sheet .v3{height:150px!important}
+#blnPop .v3{position:relative;height:190px;margin:0 14px 8px;border:1px solid var(--line,#e4e4e7);border-radius:10px;background:radial-gradient(circle at 50% 35%,var(--sheet,#fff),var(--soft,#f1f4f7));overflow:hidden;touch-action:none;cursor:grab}
+#blnPop .v3 canvas{display:block;width:100%!important;height:100%!important}
+#blnPop .v3 .cap{position:absolute;left:8px;bottom:6px;right:8px;font-size:11.5px;color:var(--muted,#666);pointer-events:none;display:flex;justify-content:space-between;gap:6px}
+#blnPop .v3 .cap b{font-weight:600;color:var(--ink,#222)}
+#blnPop .v3 .tg{position:absolute;top:6px;right:8px;font-size:10.5px;color:var(--muted,#777);background:var(--sheet,#fff);border:1px solid var(--line,#e4e4e7);border-radius:8px;padding:0 6px}
+</style>
+<script>
+/* P3D — generic 3D preview of one BOM item, built from its description (type + dimensions parsed from text). */
+window.P3D=(function(){
+  let R=null,scene,cam,root,raf=0,host=null,rx=.45,ry=.6,auto=true,dist=1;
+  const M={};
+  function mats(){if(M.steel)return M;const S=(c,m,r)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
+    Object.assign(M,{steel:S(0xc4cbd2,.25,.4),dark:S(0x7b838b,.25,.5),alu:S(0xdfe3e7,.2,.35),cu:S(0xc8794a,.3,.4),wood:S(0xb98a55,0,.8),woodE:S(0x9c6f3e,0,.85),
+      pvc:S(0x26292d,0,.55),grey:S(0x9aa1a8,0,.6),porc:S(0x8a4b2c,.05,.25),white:S(0xeef0f2,0,.4),glass:new THREE.MeshStandardMaterial({color:0x9fc3d9,metalness:0,roughness:.1,transparent:true,opacity:.55}),
+      conc:S(0xb3aea4,0,.95),red:S(0xc0392b,0,.5),orange:S(0xd9822b,.2,.5)});return M;}
+  const num=s=>parseFloat(String(s).replace(",","."));
+  function dims(t){
+    const r={};let m;
+    if(m=t.match(/M\s?(\d+)\s*[×x]\s*(\d+)/i)){r.d=+m[1];r.L=+m[2];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*[×x]\s*(\d+(?:[.,]\d+)?)\s*(mm|cm|m\b|มม|ซม)?/i)){let k=/cm|ซม/.test(m[4]||"")?10:1;r.a=num(m[1])*k;r.b=num(m[2])*k;r.c=num(m[3])*k;}
+    if(m=t.match(/Ø\s?(\d+(?:[.,]\d+)?)/))r.hole=num(m[1]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)(?:\s*[–-]\s*(\d+(?:[.,]\d+)?))?\s*(?:mm²|ตร\.?มม)/)){r.mm2=num(m[1]);r.mm2s=m[2]?m[1]+"–"+m[2]:m[1];}
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*mm\s*wide|กว้าง\s*(\d+)/i))r.w=num(m[1]||m[2]);
+    if(m=t.match(/(\d+(?:[.,]\d+)?)\s*(?:m|ม\.)\s*(?:long|ยาว)?\b/)&&!r.L)r.len=num(m[1]);
+    if(m=t.match(/(\d{1,2}(?:[.,]\d+)?)\s*(?:m\b|ม\.)\s*(?:concrete\s*)?pole|เสา[^\d]{0,12}(\d{1,2}(?:\.\d+)?)\s*ม/i))r.pole=num(m[1]||m[2]);
+    return r;}
+  /* ---- part builders (mm) ---- */
+  const G=()=>new THREE.Group();
+  function cyl(r1,r2,h,mat,seg){return new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg||24),mat);}
+  function box(x,y,z,mat){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),mat);}
+  function hex(d,h,mat){const m=cyl(d*.9,d*.9,h,mat,6);return m;}
+  function thread(g,d,L,y0,mat){g.add(cyl(d/2,d/2,L,mat,20).translateY(y0+L/2));for(let y=y0+d*.3;y<y0+L;y+=Math.max(2.5,d*.2)){const t=new THREE.Mesh(new THREE.TorusGeometry(d/2,Math.max(.3,d*.035),5,20),M.steel);t.rotation.x=Math.PI/2;t.position.y=y;g.add(t);}}
+  const B={
+    bolt(t,D){const d=D.d||16,L=D.L||200,g=G();g.add(hex(d,d*.65,M.steel).translateY(L+d*.32));thread(g,d,L,0,M.steel);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2.2;g.add(n);const w=box(d*3.2,d*.28,d*3.2,M.steel);w.position.y=d*2.8;g.add(w);
+      g.rotation.z=Math.PI/2;return {g,lab:`M${d} × ${L} มม.`,note:"หัวหกเหลี่ยม + แหวน + แป้นเกลียว"};},
+    eyebolt(t,D){const d=D.d||16,L=D.L||250,g=G();thread(g,d,L,0,M.steel);const e=new THREE.Mesh(new THREE.TorusGeometry(d*1.6,d*.45,10,28),M.steel);e.position.y=L+d*1.9;g.add(e);
+      const n=hex(d,d*.8,M.steel);n.position.y=d*2;g.add(n);g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวตาเดียว M${d} × ${L}`};},
+    dabolt(t,D){const d=D.d||16,L=D.L||400,g=G();thread(g,d,L,0,M.steel);[d*1.5,L-d*1.5].forEach(y=>{const n=hex(d,d*.8,M.steel);n.position.y=y;g.add(n);});g.rotation.z=Math.PI/2;return {g,lab:`สลักเกลียวสองหัว M${d} × ${L}`};},
+    screw(t,D){const g=G(),L=20,d=4;g.add(cyl(d*1.1,d*.5,d*.8,M.steel).translateY(L));g.add(cyl(d/2,.3,L,M.steel).translateY(L/2));
+      for(let y=2;y<L-1;y+=1.4){const r=new THREE.Mesh(new THREE.TorusGeometry(d/2*(y/L*.6+.4),.35,4,14),M.dark);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);}g.rotation.z=Math.PI/2;return {g,lab:"สกรู 15–20 มม."};},
+    nail(t,D){const g=G();g.add(cyl(1.6,1.6,.5,M.steel).translateY(18));g.add(cyl(.5,.15,18,M.steel).translateY(9));g.rotation.z=Math.PI/2;return {g,lab:"ตะปู 15–20 มม. Ø1"};},
+    nut(t,D){const d=D.d||16,g=G();const n=hex(d,d*.8,M.steel);g.add(n);const h=cyl(d/2,d/2,d,M.dark);g.add(h);return {g,lab:`แป้นเกลียว M${d}`};},
+    sqwasher(t,D){const a=D.a||52,c=D.c||4.5,h=D.hole||18,g=G();const s=new THREE.Shape();s.moveTo(-a/2,-a/2);s.lineTo(a/2,-a/2);s.lineTo(a/2,a/2);s.lineTo(-a/2,a/2);s.lineTo(-a/2,-a/2);
+      const p=new THREE.Path();p.absarc(0,0,h/2,0,Math.PI*2,true);s.holes.push(p);const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:c,bevelEnabled:false,curveSegments:24}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);
+      return {g,lab:`${a} × ${a} × ${c} มม. รู Ø${h}`};},
+    washer(t,D){const d=D.d||16,g=G();const s=new THREE.Shape();s.absarc(0,0,d*1.1,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,d*.55,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:3,bevelEnabled:false,curveSegments:28}),M.steel);m.rotation.x=-Math.PI/2;g.add(m);return {g,lab:"แหวนกลม"};},
+    spring(t,D){const d=D.d||16,g=G();const tq=new THREE.Mesh(new THREE.TorusGeometry(d*.75,d*.18,8,28,Math.PI*1.9),M.steel);tq.rotation.x=Math.PI/2;g.add(tq);return {g,lab:"แหวนสปริง"};},
+    connector(t,D){const g=G();const b1=box(70,14,46,M.alu),b2=box(70,14,46,M.alu);b1.position.y=9;b2.position.y=-9;g.add(b1,b2);
+      [[-15,0],[15,0]].forEach(([z])=>{const c=cyl(5,5,320,M.pvc,16);c.rotation.z=Math.PI/2;c.position.z=z;c.position.y=0;g.add(c);});
+      const bo=cyl(5,5,50,M.steel);bo.position.y=0;g.add(bo);const h=hex(10,8,M.steel);h.position.y=20;g.add(h);
+      return {g,lab:/single bolt|สลักเดียว/i.test(t)?"พีจีคอนเนคเตอร์ 1 สลัก":"พีจีคอนเนคเตอร์ (ร่องขนาน)",note:D.mm2?`สาย ${D.mm2s} ตร.มม.`:""};},
+    tape(t,D){const w=D.w||19,g=G();const s=new THREE.Shape();s.absarc(0,0,48,0,Math.PI*2);const p=new THREE.Path();p.absarc(0,0,19,0,Math.PI*2,true);s.holes.push(p);
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:w,bevelEnabled:false,curveSegments:40}),M.pvc);g.add(m);const c=cyl(19,19,w,M.white,32);c.rotation.x=Math.PI/2;c.position.z=w/2;g.add(c);
+      const tail=box(60,.6,w,M.pvc);tail.position.set(30,-48,w/2);g.add(tail);return {g,lab:`เทป PVC กว้าง ${w} มม.`};},
+    strap(t,D){const g=G();const r=new THREE.Mesh(new THREE.TorusGeometry(60,1,6,48),M.steel);r.scale.set(1,1,10);g.add(r);const c=box(18,10,14,M.steel);c.position.set(60,0,0);g.add(c);
+      const cab=cyl(10,10,240,M.pvc);cab.rotation.x=Math.PI/2;cab.position.x=-40;g.add(cab);return {g,lab:"เข็มขัดรัดสาย (เทปเกราะ 1 × 10 มม.)"};},
+    cable(t,D){const a=D.mm2||16,r=Math.sqrt(a/Math.PI)*1.1+1.5,g=G(),cu=/\bCu\b|ทองแดง/.test(t)&&!/\bAl\b|อะลูมิเนียม/.test(t);
+      const pts=[];for(let i=0;i<=60;i++){const u=i/60;pts.push(new THREE.Vector3(Math.cos(u*Math.PI*3.2)*60,u*60-30,Math.sin(u*Math.PI*3.2)*60));}
+      g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),120,r,14,false),M.pvc));
+      const end=pts[60],cd=cyl(r*.62,r*.62,r*4,cu?M.cu:M.alu,14);cd.position.copy(end).add(new THREE.Vector3(0,r*2,0));g.add(cd);
+      return {g,lab:`สาย ${cu?"ทองแดง":"อะลูมิเนียม"} ${a} ตร.มม.`,note:"หุ้มฉนวน PVC · ปลายแสดงตัวนำ"};},
+    meter(t,D){const g=G();const body=box(130,180,110,M.white);body.material=M.white;body.position.y=90;g.add(body);const base=box(130,60,110,M.grey);base.position.y=-30;g.add(base);
+      const win=box(96,70,4,M.glass);win.position.set(0,120,56);g.add(win);const reg=box(70,16,2,M.pvc);reg.position.set(0,125,55);g.add(reg);
+      const disk=cyl(30,30,2,M.dark,28);disk.rotation.x=Math.PI/2;disk.position.set(0,98,55);g.add(disk);
+      for(let i=0;i<4;i++){const c=cyl(5,5,60,M.pvc,12);c.position.set(-36+i*24,-90,0);g.add(c);}
+      return {g,lab:"วัตต์อาวร์มิเตอร์",note:"ตัวเครื่อง + ฝาครอบขั้วสาย"};},
+    plate(t,D){let a=D.a||600,b=D.b||200,c=D.c||20;const g=G();const p=box(b,a,c,/wood|ไม้/i.test(t)?M.wood:M.steel);p.position.y=a/2;g.add(p);
+      [a*.12,a*.88].forEach(y=>{const h=cyl(9,9,c+2,M.pvc,16);h.rotation.x=Math.PI/2;h.position.y=y;g.add(h);});
+      return {g,lab:`แป้น ${a/10} × ${b/10} × ${c/10} ซม.`,note:/wood|ไม้/i.test(t)?"ไม้เนื้อแข็ง ไสเรียบ":""};},
+    cabinet(t,D){const g=G();const b=box(300,820,250,M.grey);b.position.y=410;g.add(b);const dr=box(280,790,6,M.steel);dr.position.set(0,410,128);g.add(dr);
+      const w=box(140,120,4,M.glass);w.position.set(0,620,132);g.add(w);const hd=box(10,60,14,M.dark);hd.position.set(120,420,136);g.add(hd);return {g,lab:"ตู้เหล็ก"};},
+    rack(t,D){const g=G(),n=/2\s*[×x]|2 ×|2 spool/.test(t)?2:(/4/.test(t)?4:1);const h=200*n+60;
+      const bk=box(10,h,60,M.steel);bk.position.set(-60,h/2,0);g.add(bk);[0,h].forEach(y=>{const a=box(120,10,60,M.steel);a.position.set(0,y,0);g.add(a);});
+      for(let i=0;i<n;i++){const y=60+i*200,sp=cyl(38,38,70,M.porc,24);sp.position.set(20,y+40,0);g.add(sp);const gr=new THREE.Mesh(new THREE.TorusGeometry(38,8,8,24),M.porc);gr.rotation.x=Math.PI/2;gr.position.set(20,y+40,0);g.add(gr);}
+      const pin=cyl(8,8,h,M.steel);pin.position.set(20,h/2,0);g.add(pin);return {g,lab:`แร็คแรงต่ำ ${n} ช่อง`,note:"พร้อมลูกถ้วยลูกรอก"};},
+    spool(t,D){const g=G();const c=cyl(38,38,75,M.porc,28);g.add(c);[-26,26].forEach(y=>{const r=new THREE.Mesh(new THREE.TorusGeometry(36,6,8,28),M.porc);r.rotation.x=Math.PI/2;r.position.y=y;g.add(r);});
+      const hole=cyl(10,10,78,M.dark,16);g.add(hole);return {g,lab:"ลูกถ้วยลูกรอกแรงต่ำ"};},
+    pinins(t,D){const g=G();[0,40,80].forEach((y,i)=>{const s=cyl(70-i*12,40-i*6,30,M.porc,28);s.position.y=y;g.add(s);});const top=cyl(28,28,40,M.porc,24);top.position.y=120;g.add(top);
+      const pin=cyl(12,12,160,M.steel,16);pin.position.y=-60;g.add(pin);return {g,lab:"ลูกถ้วยก้านตรง"};},
+    disc(t,D){const g=G();for(let i=0;i<3;i++){const p=[[0,0],[20,0],[24,-25],[125,-70],[127,-76],[78,-74],[50,-82],[28,-78],[12,-90],[0,-90]].map(([x,y])=>new THREE.Vector2(x,y));
+      const d=new THREE.Mesh(new THREE.LatheGeometry(p,36),M.porc);d.position.y=-i*146;g.add(d);const c=cyl(28,32,32,M.steel);c.position.y=-i*146-4;g.add(c);}return {g,lab:"ลูกถ้วยแขวน"};},
+    rod(t,D){const g=G(),L=2400;g.add(cyl(8,8,L,M.cu,16).translateY(L/2));const tip=cyl(8,.5,40,M.cu,16);tip.position.y=-20;g.add(tip);const cl=box(30,40,30,M.cu);cl.position.y=L-60;g.add(cl);return {g,lab:"หลักดิน 2.4 ม."};},
+    channel(t,D){const L=Math.min(D.len?D.len*1000:2400,3000),g=G(),ang=/angle|ฉาก/i.test(t);const s=new THREE.Shape();
+      if(ang){const a=D.a||65,c=D.c||6;[[0,0],[a,0],[a,c],[c,c],[c,a],[0,a]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      else{const h=D.a||100,b=D.b||50,c=7;[[0,0],[b,0],[b,c],[c,c],[c,h-c],[b,h-c],[b,h],[0,h]].forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));}
+      const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:L,bevelEnabled:false}),M.steel);m.position.z=-L/2;g.add(m);g.rotation.y=Math.PI/2;
+      return {g,lab:(ang?"เหล็กฉาก":"เหล็กรางน้ำ (คอนสาย)")+(D.len?` ยาว ${D.len} ม.`:"")};},
+    pole(t,D){const g=G(),L=(D.pole||9)*1000;const p=cyl(70,130,L,M.conc,4);p.rotation.y=Math.PI/4;p.position.y=L/2;g.add(p);return {g,lab:`เสาคอนกรีต ${D.pole||9} ม.`};},
+    transformer(t,D){const g=G();const tk=cyl(220,220,700,M.grey,32);tk.position.y=350;g.add(tk);for(let i=0;i<12;i++){const f=box(8,560,90,M.grey);const a=i/12*Math.PI*2;f.position.set(Math.cos(a)*250,330,Math.sin(a)*250);f.rotation.y=-a;g.add(f);}
+      [-90,90].forEach(x=>{const b=cyl(22,30,180,M.porc);b.position.set(x,790,0);g.add(b);});return {g,lab:"หม้อแปลงจำหน่าย"};},
+    cutout(t,D){const g=G();const b=cyl(35,45,320,M.porc,20);b.rotation.z=.35;g.add(b);const tube=cyl(16,16,300,M.dark);tube.position.set(60,0,0);tube.rotation.z=.35;g.add(tube);
+      const br=box(20,20,200,M.steel);br.position.set(-40,0,0);g.add(br);return {g,lab:/arrester|กับดัก/i.test(t)?"กับดักเสิร์จ":"ฟิวส์คัตเอาต์"};},
+    generic(t,D){const g=G();const b=box(120,80,80,M.grey);g.add(b);return {g,lab:"รูปแบบทั่วไป",note:"ยังไม่มีแบบจำลองเฉพาะของวัสดุนี้"};}
+  };
+  function classify(t){const L=t.toLowerCase();
+    if(/nail|ตะปู/.test(L))return"nail";if(/screw|สกรู/.test(L))return"screw";
+    if(/eye\s*bolt|ตาเดียว|ตาไก่/.test(L))return"eyebolt";if(/double arming|สองหัว/.test(L))return"dabolt";
+    if(/\bbolt|สลักเกลียว/.test(L))return"bolt";
+    if(/washer.*(square|สี่เหลี่ยม)|แหวนสี่เหลี่ยม|square.*washer/.test(L))return"sqwasher";if(/spring|lock washer|แหวนสปริง/.test(L))return"spring";if(/washer|แหวน/.test(L))return"washer";
+    if(/\bnut\b|แป้นเกลียว|น็อต/.test(L))return"nut";
+    if(/strap|เข็มขัด/.test(L))return"strap";if(/tape|เทป/.test(L))return"tape";
+    if(/connector|คอนเนค|parallel groove/.test(L))return"connector";
+    if(/rack|แร็ค/.test(L))return"rack";if(/spool|ลูกรอก/.test(L))return"spool";
+    if(/suspension|disc|ลูกถ้วยแขวน/.test(L))return"disc";if(/pin.*insulator|insulator.*pin|ก้านตรง|line post/.test(L))return"pinins";
+    if(/transformer|หม้อแปลง/.test(L))return"transformer";if(/cutout|cut-out|fuse|arrester|ฟิวส์|กับดัก/.test(L))return"cutout";
+    if(/ground rod|หลักดิน/.test(L))return"rod";
+    if(/watthour|kwh|มิเตอร์|meter,/.test(L)&&!/plate|แป้น|board/.test(L))return"meter";
+    if(/cabinet|ตู้/.test(L))return"cabinet";if(/plate|แป้น|board/.test(L))return"plate";
+    if(/conductor|cable|\bwire\b|สาย/.test(L))return"cable";
+    if(/crossarm|คอน|channel|รางน้ำ|angle|ฉาก/.test(L))return"channel";if(/\bpole\b|เสา/.test(L))return"pole";
+    return"generic";}
+  function setup(){mats();R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.setClearColor(0,0);
+    scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(30,1,1,1e6);scene.add(new THREE.HemisphereLight(0xffffff,0x5a6470,.85));
+    const d=new THREE.DirectionalLight(0xffffff,.85);d.position.set(1,1.4,1.2);scene.add(d);const d2=new THREE.DirectionalLight(0xffffff,.3);d2.position.set(-1,-.4,-1);scene.add(d2);
+    const el=R.domElement;let drag=0,px=0,py=0;
+    el.addEventListener("pointerdown",e=>{drag=1;auto=false;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);e.stopPropagation();});
+    el.addEventListener("pointermove",e=>{if(!drag)return;ry+=(e.clientX-px)*.01;rx+=(e.clientY-py)*.01;rx=Math.max(-1.4,Math.min(1.4,rx));px=e.clientX;py=e.clientY;});
+    el.addEventListener("pointerup",()=>drag=0);el.addEventListener("click",e=>e.stopPropagation());
+    el.addEventListener("wheel",e=>{e.preventDefault();dist*=1+e.deltaY*.001;dist=Math.max(.4,Math.min(3,dist));},{passive:false});}
+  function loop(){raf=requestAnimationFrame(loop);if(!host||!host.isConnected){stop();return;}if(auto)ry+=.004;root.rotation.set(rx,ry,0);
+    const s=root.userData.size;cam.position.set(0,0,s*2.1*dist);cam.lookAt(0,0,0);R.render(scene,cam);}
+  function stop(){cancelAnimationFrame(raf);raf=0;}
+  function mount(el,it){
+    if(!window.THREE){el.remove();return;}if(!R)setup();stop();
+    const txt=(it.en||"")+" "+(it.th||""),D=dims(txt);let k=classify(it.en||"");if(k==="generic")k=classify(it.th||"");if(k==="generic"){el.remove();return;}const r=B[k](txt,D);
+    if(root)scene.remove(root);root=new THREE.Group();const inner=G();inner.add(r.g);
+    const bb=new THREE.Box3().setFromObject(inner),c=bb.getCenter(new THREE.Vector3()),sz=bb.getSize(new THREE.Vector3());inner.position.sub(c);root.add(inner);
+    root.userData.size=Math.max(sz.x,sz.y,sz.z);scene.add(root);rx=.38;ry=-.5;auto=true;dist=1;
+    el.innerHTML="";el.appendChild(R.domElement);const w=el.clientWidth||300,h=el.clientHeight||190;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+    const cap=document.createElement("div");cap.className="cap";cap.innerHTML="<span><b>"+r.lab+"</b>"+(r.note?" · "+r.note:"")+"</span>";el.appendChild(cap);
+    const tg=document.createElement("div");tg.className="tg";tg.textContent=(k==="generic"?"ภาพตัวแทน":"3D ตัวแทน")+" · ลากเพื่อหมุน";el.appendChild(tg);
+    host=el;loop();}
+  return {mount,classify,dims,stop};
+})();
+</script>
+<style id="hl3Css">
+#v3d .hl3bar{position:absolute;left:8px;right:8px;top:8px;display:none;align-items:center;gap:8px;background:var(--sheet,#fff);border:1px solid #ea580c;border-radius:10px;padding:6px 10px;font:13px/1.35 "IBM Plex Sans Thai",system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.15);z-index:2}
+#v3d .hl3bar .no{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #ea580c;color:#c2410c;display:grid;place-items:center;font:700 12px "IBM Plex Mono",monospace}
+#v3d .hl3bar .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#v3d .hl3bar button{flex:none;border:1px solid var(--line,#d4d4d8);background:var(--soft,#f5f7f9);border-radius:8px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer;color:inherit}
+#v3d .hl3pin{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#ea580c;color:#fff;font:700 11px "IBM Plex Mono",monospace;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(234,88,12,.25);pointer-events:none;z-index:1;animation:hl3p 1.6s ease-in-out infinite}
+@keyframes hl3p{50%{box-shadow:0 0 0 9px rgba(234,88,12,.08)}}
+#blnPop .loc{display:flex;align-items:center;gap:8px;margin:0 14px 10px;padding:8px 10px;border:1px solid #ea580c;border-radius:10px;background:rgba(234,88,12,.07);color:#c2410c;font:600 13.5px "IBM Plex Sans Thai",system-ui,sans-serif;cursor:pointer;width:calc(100% - 28px);text-align:left}
+#blnPop .loc small{font-weight:400;color:var(--muted,#666);margin-left:auto}
+#blnPop .loc.no{border-color:var(--line,#d4d4d8);background:var(--soft,#f5f7f9);color:var(--muted,#777);cursor:default}
+</style>
+<script>
+/* ===== HL3: highlight tagged parts inside the page's own 3D model ===== */
+window.HL3=(function(){
+  let on=null,saved=new Map(),ghost=null,hot=null,ret=null;
+  const box3=()=>document.getElementById("v3d");
+  function mats(){if(ghost)return;ghost=new THREE.MeshStandardMaterial({color:0x9aa3ad,transparent:true,opacity:.2,depthWrite:false,roughness:.9});
+    hot=new THREE.MeshStandardMaterial({color:0xff6a00,emissive:0xff5a00,emissiveIntensity:.55,roughness:.4,metalness:.1});}
+  const nk=t=>String(t).replace(/[*✱\s]/g,"").replace(/'/g,"′");
+  let LOOSE=false;function hasN(arr,n){n=nk(n);return arr.some(t=>{t=nk(t);return t===n||(LOOSE&&/^\d+$/.test(n)&&new RegExp("^"+n+"[a-z]$").test(t));});}
+  function tagged0(n){const out=[];if(typeof model==="undefined"||!model)return out;
+    model.traverse(o=>{if(!(o.userData&&o.userData.bn&&hasN(o.userData.bn,n)))return;let a=o.parent,dup=false;while(a){if(a.userData&&a.userData.bn&&hasN(a.userData.bn,n)){dup=true;break;}a=a.parent;}if(!dup)out.push(o);});return out;}
+  function tagged(n){LOOSE=false;let r=tagged0(n);if(!r.length){LOOSE=true;r=tagged0(n);}return r;}
+  function meshesOf(r,n){const set=[];(function walk(o){if(o!==r&&o.userData&&o.userData.bn&&!hasN(o.userData.bn,n))return;if(o.isMesh)set.push(o);o.children.forEach(walk);})(r);return set;}
+  function has(n){return tagged(n).length>0;}
+  let pins=[];
+  function drawPins(){const v=box3();v.querySelectorAll(".hl3pin").forEach(e=>e.remove());if(!on||typeof cam==="undefined")return;const W=v.clientWidth,H=v.clientHeight;
+    pins.forEach(o=>{const bb=new THREE.Box3().setFromObject(o),c=bb.getCenter(new THREE.Vector3()).project(cam);if(c.z>1)return;
+      const d=document.createElement("div");d.className="hl3pin";d.textContent=on;d.style.left=((c.x+1)/2*W)+"px";d.style.top=((1-c.y)/2*H)+"px";v.appendChild(d);});}
+  function clear(){pins=[];saved.forEach((m,o)=>o.material=m);saved.clear();on=null;const b=box3()?.querySelector(".hl3bar");if(b)b.style.display="none";}
+  function reset(){clear();if(ret){model.position.copy(ret.p);rx=ret.rx;ry=ret.ry;dist=ret.d;ret=null;}render();}
+  function show(n,it){mats();if(typeof model==="undefined"||!model)return false;clear();const roots=tagged(n);if(!roots.length)return false;
+    const hotSet=new Set();roots.forEach(r=>meshesOf(r,n).forEach(o=>hotSet.add(o)));
+    model.traverse(o=>{if(!o.isMesh&&!o.isLine)return;saved.set(o,o.material);o.material=hotSet.has(o)?hot:(o.isMesh?ghost:o.material);});
+    if(!ret)ret={p:model.position.clone(),rx,ry,d:dist};
+    /* fly to the parts: centre of their bounding box in model space */
+    pivot.updateMatrixWorld(true);const bb=new THREE.Box3();roots.forEach(r=>bb.expandByObject(r));const inv=new THREE.Matrix4().copy(pivot.matrixWorld).invert();
+    const c=bb.getCenter(new THREE.Vector3()).applyMatrix4(inv).sub(model.position),s=bb.getSize(new THREE.Vector3()).length();
+    model.position.set(-c.x,-c.y,-c.z);dist=Math.max(450,Math.min(9000,s*2.4));render();
+    on=n;pins=roots;const b=bar();b.querySelector(".no").textContent=n;b.querySelector(".tx").innerHTML="<b>"+(it?it.th:"")+"</b> · "+roots.length+" ตำแหน่ง";b.style.display="flex";render();
+    return true;}
+  function bar(){const v=box3();let b=v.querySelector(".hl3bar");if(!b){b=document.createElement("div");b.className="hl3bar";b.innerHTML='<span class="no"></span><span class="tx"></span><button type="button">ดูทั้งชุด</button>';
+      b.querySelector("button").onclick=e=>{e.stopPropagation();reset();};v.appendChild(b);}return b;}
+  /* re-apply after variant switch rebuilds the model */
+  const _b=window.build3d;if(_b)window.build3d=function(){const n=on;ret=null;clear();_b.apply(this,arguments);if(n&&has(n))setTimeout(()=>show(n,null),0);};
+  const _r=window.render;if(typeof _r==="function"){window.render=function(){_r.apply(this,arguments);drawPins();};try{render();}catch(e){}}
+  return {show,has,reset,count:n=>tagged(n).length};
+})();
+/* add a "locate in 3D" button to the item card */
+(function(){const pop=document.getElementById("blnPop");if(!pop)return;
+  new MutationObserver(()=>{if(pop.style.display!=="block"||pop.querySelector(".loc"))return;const no=pop.querySelector(".no");if(!no)return;const n=no.textContent.trim();
+    const b=document.createElement("button");b.type="button";const k=window.HL3?HL3.count(n):0;
+    if(k){b.className="loc";b.innerHTML="📍 ดูตำแหน่งในโมเดล 3 มิติของชุด<small>"+k+" ชิ้น</small>";
+      b.onclick=e=>{e.stopPropagation();const th=pop.querySelector(".th")?.textContent||"";pop.style.display="none";document.querySelectorAll(".bln-c.on,.bln-t.on").forEach(x=>x.classList.remove("on"));
+        const v=document.getElementById("v3d");v.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>HL3.show(n,{th}),350);};}
+    else if(window.HL3_BOUND){b.className="loc no";b.textContent="ชิ้นนี้ไม่ได้แสดงในโมเดล 3 มิติของชุด";}else return;
+    const q=pop.querySelector(".qty");q.parentNode.insertBefore(b,q);
+    if(window.blnPlace)blnPlace();
+  }).observe(pop,{childList:true});
+})();
+/* rebuild once so the tagged model is used */
+if(window.HL3_BOUND&&window.build3d)setTimeout(()=>{try{build3d();}catch(e){}},50);
+</script>

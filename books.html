@@ -1,0 +1,108 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><script src="/pea-hub.js" data-app="drawings" data-name="คลังแบบมาตรฐาน กฟภ."></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>หนังสือ คู่มือ ระเบียบ · คลังแบบมาตรฐาน กฟภ.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+:root{--paper:#eef1f4;--sheet:#fff;--ink:#18212b;--muted:#5a6573;--line:#cdd4dc;--soft:#f5f7f9;--accent:#7a1e6b;--accent-bg:#f6e9f3;--dim:#245f93;--dim-bg:#e8f0f8;
+--r:#b3261e;--r-bg:#fdecea;--c:#9a5200;--c-bg:#fff1df;--p:#1f7a4d;--p-bg:#e5f4ec;
+--f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;--f-body:"IBM Plex Sans Thai",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0f1318;--sheet:#161c23;--ink:#e3e8ee;--muted:#97a2b0;--line:#2b3440;--soft:#1b222b;--accent:#d98cc9;--accent-bg:#3a1f35;--dim:#7fb2e3;--dim-bg:#1b2a3a;
+--r:#f28b82;--r-bg:#3b1d1b;--c:#f0b05a;--c-bg:#3a2a14;--p:#7fd1a6;--p-bg:#16302a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);-webkit-text-size-adjust:100%}
+a{color:var(--dim)}
+.head{background:var(--sheet);border-bottom:1px solid var(--line);padding:16px max(16px,env(safe-area-inset-left)) 12px}
+.wrap{max-width:1200px;margin:0 auto}
+.eyebrow{font-size:12px;color:var(--muted)}
+h1{font-family:var(--f-display);font-size:24px;margin:2px 0 10px;color:var(--accent)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs a{height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--line);display:inline-flex;align-items:center;text-decoration:none;color:var(--ink);font-size:14px;background:var(--sheet)}
+.tabs a[aria-current]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+main{padding:16px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.bar input{flex:1 1 300px;height:46px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:var(--sheet);color:var(--ink)}
+.note{font-size:13px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chips button{height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--dim);border-color:var(--dim);color:#fff}
+.chips .n{opacity:.7;margin-left:4px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin-bottom:14px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-align:left;font:inherit;color:inherit;padding:0;cursor:pointer}
+.card:hover{border-color:var(--dim)}
+.spine{height:6px}
+.body{padding:12px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.meta{font-size:12px;color:var(--muted)}
+.t{font-weight:600;font-size:15px;line-height:1.45}
+.badge{align-self:flex-start;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px}
+.L-R .spine{background:var(--r)}.L-R .badge{color:var(--r);background:var(--r-bg)}
+.L-C .spine{background:var(--c)}.L-C .badge{color:var(--c);background:var(--c-bg)}
+.L-P .spine{background:var(--p)}.L-P .badge{color:var(--p);background:var(--p-bg)}
+.rel{font-size:12px;color:var(--dim);background:var(--dim-bg);border-radius:6px;padding:5px 8px}
+.missing{opacity:.6}
+.empty{padding:40px 10px;text-align:center;color:var(--muted)}
+.foot{font-size:13px;color:var(--muted);line-height:1.7;border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin-top:18px;background:var(--sheet)}
+dialog{border:0;padding:0;border-radius:16px;width:min(560px,calc(100vw - 24px));background:var(--sheet);color:var(--ink);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(10,15,20,.5)}
+@media (max-width:640px){dialog{margin:auto 0 0;width:100vw;max-width:100vw;border-radius:18px 18px 0 0}}
+.dlg{padding:18px 18px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
+.dlg h2{margin:0;font-size:19px;line-height:1.45}
+.dlg .go{height:48px;border-radius:10px;background:var(--dim);color:#fff;text-decoration:none;display:flex;align-items:center;justify-content:center;font-weight:600}
+.dlg .close{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:inherit;cursor:pointer}
+.dlg ul{margin:0;padding-left:18px;font-size:14px;line-height:1.8}
+.hint{font-size:12px;color:var(--muted);text-align:center}
+</style></head><body>
+<header class="head"><div class="wrap">
+<div class="eyebrow">การไฟฟ้าส่วนภูมิภาค · คลังแบบมาตรฐาน</div>
+<h1>หนังสือ คู่มือ ระเบียบ</h1>
+<nav class="tabs" aria-label="ส่วนของคลัง"><a href="index.html">แบบก่อสร้าง</a><a href="books.html" aria-current="page">หนังสือ คู่มือ ระเบียบ</a></nav>
+</div></header>
+<main class="wrap">
+<div class="bar"><input id="q" type="search" placeholder="ค้นชื่อเล่ม เช่น สายดิน, เคเบิลใต้ดิน, มิเตอร์, 115" aria-label="ค้นหาหนังสือ"><span class="note" id="cnt"></span></div>
+<div class="chips" id="cats" role="group" aria-label="หมวด"></div>
+<div class="legend"><span><i style="background:var(--r)"></i>สงวนลิขสิทธิ์ ห้ามเผยแพร่</span><span><i style="background:var(--c)"></i>เอกสารควบคุม ใช้ภายใน</span><span><i style="background:var(--p)"></i>เผยแพร่ได้</span></div>
+<div class="grid" id="grid"></div>
+<div class="foot">ไฟล์ทุกเล่มเก็บใน Google Drive แบบจำกัดสิทธิ์ ถ้ายังไม่ได้รับแชร์ Google จะให้กด “ขอสิทธิ์เข้าถึง” แล้วรอผู้ดูแลอนุมัติ · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
+</main>
+<dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
+<script>
+const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
+const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
+const CATS=["ก่อสร้าง/อุปกรณ์","ตรวจสอบ/บำรุงรักษา","ออกแบบ/ประมาณการ","มิเตอร์/ผู้ใช้ไฟ","ระเบียบ/บริหาร"];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm=s=>String(s).toLowerCase().replace(/\s+/g," ").trim();
+let B=[],cat="",q="";
+function relText(b){return b.r.map(c=>SER[c]?SER[c]:c);}
+function render(){
+  const toks=norm(q).split(" ").filter(Boolean);
+  const v=B.filter(b=>(!cat||b.c===cat)&&toks.every(t=>b._q.includes(t)));
+  document.getElementById("cnt").textContent=v.length+" เล่ม";
+  document.getElementById("grid").innerHTML=v.map(b=>`<button class="card L-${b.l}${b.id?"":" missing"}" data-n="${b.n}" type="button"><div class="spine"></div><div class="body">
+    <div class="meta">${esc(b.c)} · ${esc(b.y)}</div><div class="t">${esc(b.t)}</div><div class="meta">${esc(b.o)}</div>
+    <div class="badge">${b.id?LIC[b.l]:"ยังไม่มีไฟล์ (ต้นทางเสีย)"}</div>
+    ${b.r.length?`<div class="rel">แบบที่เกี่ยวข้อง: ${esc(relText(b).slice(0,2).join(", "))}${b.r.length>2?" …":""}</div>`:""}</div></button>`).join("")||`<div class="empty">ไม่พบหนังสือที่ตรงกับคำค้น</div>`;
+  const cnt={};B.forEach(b=>cnt[b.c]=(cnt[b.c]||0)+1);
+  document.getElementById("cats").innerHTML=[["","ทั้งหมด",B.length]].concat(CATS.map(c=>[c,c,cnt[c]||0])).map(([k,l,n])=>`<button type="button" data-k="${esc(k)}" aria-pressed="${k===cat}">${esc(l)}<span class="n">${n}</span></button>`).join("");
+}
+function openBook(n){
+  const b=B.find(x=>x.n==n); if(!b) return;
+  const url=b.id?`https://drive.google.com/file/d/${b.id}/view`:"";
+  document.getElementById("dlgBody").innerHTML=`<div class="meta">${esc(b.c)} · ${esc(b.y)} · เล่มที่ ${b.n}</div><h2>${esc(b.t)}</h2>
+   <div class="meta">${esc(b.o)} · ที่มา: Happy Pole</div><div class="badge L-${b.l}" style="${b.l==="R"?"color:var(--r);background:var(--r-bg)":b.l==="C"?"color:var(--c);background:var(--c-bg)":"color:var(--p);background:var(--p-bg)"}">${LIC[b.l]}</div>
+   ${b.r.length?`<div class="meta" style="margin-top:4px">แบบที่เกี่ยวข้องในคลัง</div><ul>${b.r.map(c=>`<li><a href="index.html#s-${c}">${c} ${esc(SER[c]||"")}</a></li>`).join("")}</ul>`:""}
+   ${url?`<a class="go" href="${url}" target="_blank" rel="noopener">เปิดอ่านใน Google Drive</a><div class="hint">ยังไม่ได้รับแชร์? Google จะให้กด “ขอสิทธิ์เข้าถึง”</div>`:`<div class="hint">ไฟล์เล่มนี้เสียที่ต้นทาง (Happy Pole) ยังดาวน์โหลดไม่ได้</div>`}
+   <button class="close" type="button" onclick="document.getElementById('dlg').close()">ปิด</button>`;
+  const d=document.getElementById("dlg"); d.showModal();
+}
+document.getElementById("grid").addEventListener("click",e=>{const c=e.target.closest(".card");if(c)openBook(c.dataset.n);});
+document.getElementById("cats").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cat=b.dataset.k;render();});
+let tm;document.getElementById("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{q=e.target.value;render();},120);});
+document.getElementById("dlg").addEventListener("click",e=>{if(e.target.id==="dlg")e.target.close();});
+fetch("books.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{B=d.map(b=>Object.assign(b,{_q:norm([b.t,b.o,b.c,b.y,b.n,relText(b).join(" "),b.r.join(" ")].join(" "))}));
+  const p=new URLSearchParams(location.search); if(p.get("q")){q=p.get("q");document.getElementById("q").value=q;}
+  render(); if(p.get("n")) openBook(p.get("n"));});
+</script>
+<a href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a>
+</body></html>

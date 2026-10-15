@@ -84,7 +84,7 @@ main{min-width:0}
   <header class="head">
     <div>
       <div class="eyebrow">การไฟฟ้าส่วนภูมิภาค · แบบมาตรฐานการก่อสร้าง<span class="e">Provincial Electricity Authority · Standard Construction Drawings</span></div>
-      <h1>คลังแบบมาตรฐาน กฟภ.</h1>
+      <h1>คลังแบบมาตรฐาน กฟภ.</h1><nav aria-label="ส่วนของคลัง" style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px"><a href="index.html" aria-current="page" style="height:38px;padding:0 14px;border-radius:19px;display:inline-flex;align-items:center;text-decoration:none;font-size:14px;font-weight:600;background:var(--accent);color:#fff">แบบก่อสร้าง</a><a href="books.html" style="height:38px;padding:0 14px;border-radius:19px;display:inline-flex;align-items:center;text-decoration:none;font-size:14px;border:1px solid var(--line);color:var(--ink);background:var(--sheet)">หนังสือ คู่มือ ระเบียบ (77)</a></nav>
       <div class="en">PEA STANDARD DRAWING LIBRARY</div>
     </div>
     <div class="stats">
@@ -168,5 +168,6 @@ let t;$("#q").addEventListener("input",e=>{clearTimeout(t);t=setTimeout(()=>{q=e
 $("#cats").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cat=b.dataset.k;document.querySelectorAll("#cats button").forEach(x=>x.setAttribute("aria-pressed",x===b));render();});
 $("#onlyDet").addEventListener("change",e=>{onlyDet=e.target.checked;render();});
 render();
+if(location.hash){setTimeout(()=>{const el=document.getElementById(location.hash.slice(1));if(el)el.scrollIntoView({block:"start"});},60);}
 </script>
 <a href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a></body></html>

@@ -68,6 +68,19 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 .hit mark{background:#ffe08a;color:#18212b;border-radius:3px;padding:0 2px}
 .hit .act{display:flex;gap:12px;margin-top:8px;font-size:14px;flex-wrap:wrap}
 .hit .act a,.hit .act button{color:var(--dim);background:none;border:0;font:inherit;padding:6px 0;cursor:pointer;text-decoration:underline}
+.sp{background:var(--sheet);border:1px solid var(--line);border-radius:12px;overflow-x:auto}
+.sp table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}
+.sp th{text-align:left;color:var(--muted);font-size:12px;font-weight:600;padding:10px 12px;position:sticky;top:0;background:var(--sheet)}
+.sp td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;line-height:1.5}
+.sp td.pg{white-space:nowrap;color:var(--muted)}
+.sp .en{font-size:12px;color:var(--muted)}
+.sp .rw{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px}
+.sp .rw .m{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:nowrap}
+.sp .rw .on{background:#ffe08a;border-radius:3px}
+.sp tr.hl td{background:#f6e9f3}
+.sp .dw a,.sp .dw span{display:inline-block;margin:0 6px 4px 0;padding:2px 9px;border-radius:12px;border:1px solid var(--line);font-size:13px;text-decoration:none}
+.sp .dw span{color:var(--muted)}
+.sp .us{font-size:12px;color:var(--muted);margin-top:4px}
 .ocr{font-size:11px;color:var(--c);margin-left:6px}
 </style></head><body>
 <header class="head"><div class="wrap">
@@ -76,11 +89,17 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <nav class="tabs" aria-label="ส่วนของคลัง"><a href="index.html">แบบก่อสร้าง</a><a href="books.html" aria-current="page">หนังสือ คู่มือ ระเบียบ</a></nav>
 </div></header>
 <main class="wrap">
-<div class="mode" role="group" aria-label="วิธีค้น"><button type="button" id="mT" aria-pressed="true">ค้นชื่อเล่ม</button><button type="button" id="mF" aria-pressed="false">ค้นในเนื้อหาหนังสือ</button></div>
+<div class="mode" role="group" aria-label="วิธีค้น"><button type="button" id="mT" aria-pressed="true">ค้นชื่อเล่ม</button><button type="button" id="mF" aria-pressed="false">ค้นในเนื้อหาหนังสือ</button><button type="button" id="mS" aria-pressed="false">รายการอุปกรณ์ คู่มือ 2565</button></div>
 <section id="full" aria-label="ค้นในเนื้อหาหนังสือ">
 <form class="fbar" id="fform"><input id="fq" type="search" placeholder="เช่น ระยะห่าง สายดิน, ความต้านทานดิน 5 โอห์ม, RCD 30 mA" aria-label="คำที่ต้องการค้นในเนื้อหา"><button type="submit">ค้นหา</button></form>
 <div class="fstat" id="fstat">ค้นข้อความในหนังสือทุกเล่ม (ประมาณ 7,000 หน้า) · เว้นวรรคระหว่างคำ = ต้องมีทุกคำในหน้าเดียวกัน</div>
 <div id="fres"></div>
+</section>
+<section id="spec" aria-label="รายการอุปกรณ์ คู่มืออุปกรณ์ไฟฟ้า 2565" style="display:none">
+<div class="fbar"><input id="sq" type="search" placeholder="ค้นชื่ออุปกรณ์ หรือวัสดุเลขที่ เช่น คอน, ลูกถ้วย, 1000110000" aria-label="ค้นอุปกรณ์"></div>
+<div class="fstat" id="sstat">คู่มืออุปกรณ์ไฟฟ้าสำหรับการก่อสร้างระบบจำหน่ายแรงสูงและแรงต่ำ (2565) · เลขแบบในช่องขวากดไปหน้าแบบได้</div>
+<div class="sp"><table><thead><tr><th>หน้า</th><th>อุปกรณ์</th><th>ขนาด/รุ่น · วัสดุเลขที่</th><th>แบบที่ใช้</th></tr></thead><tbody id="sbody"></tbody></table></div>
+<div class="fstat" style="margin-top:8px">ข้อมูลนี้ถอดจากหนังสือที่สงวนลิขสิทธิ์ จึงเข้ารหัสไว้ เปิดดูได้เฉพาะผู้ที่มีสิทธิ์คลังแบบ · ถ้าเห็นตัวเลขไม่ตรงกับเล่ม ให้ยึดตามเล่มจริง</div>
 </section>
 <div id="titleView">
 <div class="bar"><input id="q" type="search" placeholder="ค้นชื่อเล่ม เช่น สายดิน, เคเบิลใต้ดิน, มิเตอร์, 115" aria-label="ค้นหาหนังสือ"><span class="note" id="cnt"></span></div>
@@ -91,6 +110,7 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <div class="foot">ไฟล์ทุกเล่มเก็บใน Google Drive แบบจำกัดสิทธิ์ ถ้ายังไม่ได้รับแชร์ Google จะให้กด “ขอสิทธิ์เข้าถึง” แล้วรอผู้ดูแลอนุมัติ · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
+<script src="books-spec.js"></script>
 <script>
 const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
 const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
@@ -116,6 +136,7 @@ function openBook(n){
   document.getElementById("dlgBody").innerHTML=`<div class="meta">${esc(b.c)} · ${esc(b.y)} · เล่มที่ ${b.n}</div><h2>${esc(b.t)}</h2>
    <div class="meta">${esc(b.o)} · ที่มา: Happy Pole</div><div class="badge L-${b.l}" style="${b.l==="R"?"color:var(--r);background:var(--r-bg)":b.l==="C"?"color:var(--c);background:var(--c-bg)":"color:var(--p);background:var(--p-bg)"}">${LIC[b.l]}</div>
    ${b.r.length?`<div class="meta" style="margin-top:4px">แบบที่เกี่ยวข้องในคลัง</div><ul>${b.r.map(c=>`<li><a href="index.html#s-${c}">${c} ${esc(SER[c]||"")}</a></li>`).join("")}</ul>`:""}
+   ${b.n===3?`<button class="go" type="button" style="border:0;width:100%;cursor:pointer;margin-bottom:8px;background:#7a1e6b" onclick="document.getElementById('dlg').close();setMode('S')">ดูรายการอุปกรณ์ในเล่ม (ค้นด้วยชื่อ/เลขวัสดุ)</button>`:""}
    ${url?`<a class="go" href="${url}" target="_blank" rel="noopener">เปิดอ่านใน Google Drive</a><div class="hint">ยังไม่ได้รับแชร์? Google จะให้กด “ขอสิทธิ์เข้าถึง”</div>`:`<div class="hint">ไฟล์เล่มนี้เสียที่ต้นทาง (Happy Pole) ยังดาวน์โหลดไม่ได้</div>`}
    <button class="close" type="button" onclick="document.getElementById('dlg').close()">ปิด</button>`;
   const d=document.getElementById("dlg"); d.showModal();
@@ -128,9 +149,34 @@ document.getElementById("dlg").addEventListener("click",e=>{if(e.target.id==="dl
 const GAS=localStorage.getItem("sld_gas_url")||"https://script.google.com/macros/s/AKfycbzqsOqJJQlF4SS1UX_YM6hmhd3lUXCVocAJiK7l28Tzddms9SQ9Z7p-iYgrrgd2B2meWw/exec";
 let IDX=null, loading=null;
 const nz=s=>String(s).toLowerCase().replace(/\u0e4d\u0e32/g,"\u0e33").replace(/[\u0e47-\u0e4e]/g,"").replace(/\s+/g,"");
-function setMode(full){document.getElementById("mT").setAttribute("aria-pressed",!full);document.getElementById("mF").setAttribute("aria-pressed",full);
-  document.getElementById("full").style.display=full?"block":"none";document.getElementById("titleView").style.display=full?"none":"block";if(full)document.getElementById("fq").focus();}
-document.getElementById("mT").onclick=()=>setMode(false);document.getElementById("mF").onclick=()=>setMode(true);
+function setMode(m){m=m===true?"F":m===false?"T":m;
+  ["T","F","S"].forEach(k=>document.getElementById("m"+k).setAttribute("aria-pressed",k===m));
+  document.getElementById("full").style.display=m==="F"?"block":"none";document.getElementById("spec").style.display=m==="S"?"block":"none";
+  document.getElementById("titleView").style.display=m==="T"?"block":"none";
+  if(m==="F")document.getElementById("fq").focus(); if(m==="S")specOpen();}
+document.getElementById("mT").onclick=()=>setMode("T");document.getElementById("mF").onclick=()=>setMode("F");document.getElementById("mS").onclick=()=>setMode("S");
+/* ---------- รายการอุปกรณ์ คู่มือ 2565 (books-spec.bin เข้ารหัส) ---------- */
+let SPEC=null,sHL="";
+async function specOpen(){
+  const st=document.getElementById("sstat");
+  if(!SPEC){st.textContent="กำลังขอสิทธิ์และโหลดรายการอุปกรณ์…";
+    try{SPEC=await PEASpec.load();SPEC.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));}
+    catch(e){st.textContent="เปิดรายการอุปกรณ์ไม่ได้: "+e.message;return;}}
+  specRender();
+}
+function specRender(){
+  const raw=document.getElementById("sq").value.trim(), toks=raw.split(/\s+/).map(nz).filter(Boolean);
+  const v=SPEC.items.filter(it=>toks.every(t=>it._z.includes(t)));
+  document.getElementById("sstat").textContent=(toks.length?`พบ ${v.length} จาก `:"")+`${SPEC.items.length} รายการ · ${SPEC.items.reduce((a,i)=>a+i.rows.length,0)} ขนาด/รุ่น · กดเลขแบบเพื่อไปหน้าแบบ`;
+  const mq=raw.replace(/\D/g,"").length>=4?raw.replace(/\D/g,""):"";
+  document.getElementById("sbody").innerHTML=v.map(it=>{const hl=sHL&&it.rows.some(r=>r[2]===sHL);
+    return `<tr${hl?' class="hl" id="sHL"':""}><td class="pg">${esc(it.bp||"")}<div class="en">PDF ${it.p}</div></td>
+    <td><b style="font-weight:600">${esc(it.th)}</b>${it.en?`<div class="en">${esc(it.en)}</div>`:""}${it.s?`<div class="us">เก็บ: ${esc(it.s)}</div>`:""}${it.u.length?`<details class="us"><summary>การใช้งาน ${it.u.length} ข้อ</summary>${it.u.map(esc).join("<br>")}</details>`:""}</td>
+    <td><div class="rw">${it.rows.map(r=>`<span>${esc(r[1])}</span><span class="m${(sHL&&r[2]===sHL)||(mq&&r[2].includes(mq))?" on":""}">${esc(r[2])}</span>`).join("")}</div></td>
+    <td class="dw">${it.d.map(x=>x[1]?`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`:`<span title="ยังไม่มีแบบนี้ในคลัง">${esc(x[0])}</span>`).join("")||'<span style="border:0">–</span>'}</td></tr>`;}).join("")
+    ||`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">ไม่พบอุปกรณ์ที่ตรงกับคำค้น</td></tr>`;
+}
+let stm;document.getElementById("sq").addEventListener("input",()=>{clearTimeout(stm);stm=setTimeout(()=>{sHL="";if(SPEC)specRender();},120);});
 async function loadIndex(){
   if(IDX) return IDX; if(loading) return loading;
   loading=(async()=>{
@@ -174,7 +220,8 @@ document.getElementById("fform").addEventListener("submit",e=>{e.preventDefault(
 document.getElementById("fres").addEventListener("click",e=>{const b=e.target.closest("button[data-n]");if(b)openBook(b.dataset.n);});
 fetch("books.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{B=d.map(b=>Object.assign(b,{_q:norm([b.t,b.o,b.c,b.y,b.n,relText(b).join(" "),b.r.join(" ")].join(" "))}));
   const p=new URLSearchParams(location.search); if(p.get("q")){q=p.get("q");document.getElementById("q").value=q;}
-  render(); if(p.get("n")) openBook(p.get("n")); if(p.get("fq")){setMode(true);document.getElementById("fq").value=p.get("fq");fullSearch(p.get("fq"));}});
+  render(); if(p.get("n")) openBook(p.get("n")); if(p.get("spec")){sHL=p.get("spec");document.getElementById("sq").value=sHL;setMode("S");specOpen().then(()=>{const r=document.getElementById("sHL");if(r)r.scrollIntoView({block:"center"});});}
+  if(p.get("fq")){setMode(true);document.getElementById("fq").value=p.get("fq");fullSearch(p.get("fq"));}});
 </script>
 <a href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a>
 </body></html>

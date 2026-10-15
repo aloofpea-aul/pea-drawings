@@ -68,19 +68,34 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 .hit mark{background:#ffe08a;color:#18212b;border-radius:3px;padding:0 2px}
 .hit .act{display:flex;gap:12px;margin-top:8px;font-size:14px;flex-wrap:wrap}
 .hit .act a,.hit .act button{color:var(--dim);background:none;border:0;font:inherit;padding:6px 0;cursor:pointer;text-decoration:underline}
-.sp{background:var(--sheet);border:1px solid var(--line);border-radius:12px;overflow-x:auto}
-.sp table{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}
-.sp th{text-align:left;color:var(--muted);font-size:12px;font-weight:600;padding:10px 12px;position:sticky;top:0;background:var(--sheet)}
-.sp td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;line-height:1.5}
-.sp td.pg{white-space:nowrap;color:var(--muted)}
-.sp .en{font-size:12px;color:var(--muted)}
-.sp .rw{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px}
-.sp .rw .m{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:nowrap}
-.sp .rw .on{background:#ffe08a;border-radius:3px}
-.sp tr.hl td{background:#f6e9f3}
-.sp .dw a,.sp .dw span{display:inline-block;margin:0 6px 4px 0;padding:2px 9px;border-radius:12px;border:1px solid var(--line);font-size:13px;text-decoration:none}
-.sp .dw span{color:var(--muted)}
-.sp .us{font-size:12px;color:var(--muted);margin-top:4px}
+.sx{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:14px;align-items:start}
+.sl{display:flex;flex-direction:column;gap:8px}
+.si{display:flex;gap:12px;align-items:center;text-align:left;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;color:var(--ink);cursor:pointer;width:100%}
+.si[aria-current="true"]{border:2px solid #7a1e6b;padding:9px 11px}
+.si .tb{width:72px;height:56px;flex:none;border-radius:8px;border:1px solid #e3e7ec;background:#fff center/contain no-repeat}
+.si .t{font-weight:600;line-height:1.4}
+.si .m{font-size:12px;color:var(--muted);line-height:1.5;word-break:break-word}
+.si .k{font-size:12px;color:#7a1e6b}
+.sd{position:sticky;top:12px;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:16px 18px;max-height:calc(100vh - 24px);overflow:auto}
+.sd .grid2{display:grid;grid-template-columns:minmax(220px,340px) minmax(0,1fr);gap:18px}
+.sd .pg img{width:100%;border:1px solid #e3e7ec;border-radius:8px;cursor:zoom-in;background:#fff;min-height:200px}
+.sd .cap{font-size:12px;color:var(--muted);text-align:center;margin-top:4px}
+.sd .src{font-size:12px;color:#7a1e6b;font-weight:700}
+.sd h3{margin:4px 0 2px;font-size:21px;line-height:1.35}
+.sd .en{font-size:13px;color:var(--muted)}
+.sd table{border-collapse:collapse;font-size:14px;width:100%;margin:10px 0}
+.sd td{padding:5px 8px 5px 0;border-top:1px solid var(--line);vertical-align:top}
+.sd td.mt{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:nowrap}
+.sd td.on{background:#ffe08a}
+.sd .lab{font-size:12px;color:var(--muted);margin:10px 0 6px}
+.sd .btns{display:flex;flex-wrap:wrap;gap:8px}
+.sd .btns a{padding:8px 12px;border-radius:10px;background:var(--dim);color:#fff;text-decoration:none;font-size:14px}
+.sd .btns span{padding:8px 12px;border-radius:10px;border:1px dashed var(--line);color:var(--muted);font-size:14px}
+.sd .x{display:none}
+.lb{position:fixed;inset:0;background:rgba(10,14,20,.85);z-index:10002;overflow:auto;display:none}
+.lb img{display:block;margin:12px auto;max-width:min(1000px,96vw);background:#fff}
+.lb button{position:fixed;top:10px;right:12px;height:44px;padding:0 16px;border-radius:22px;border:0;background:#fff;font:inherit;font-weight:600;cursor:pointer}
+@media (max-width:860px){.sx{grid-template-columns:1fr}.sd{position:fixed;inset:0;max-height:none;border-radius:0;z-index:10000;display:none}.sd.open{display:block}.sd .grid2{grid-template-columns:1fr}.sd .x{display:block;position:sticky;top:0;margin:-4px 0 8px auto;height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--line);background:#fff;font:inherit;cursor:pointer}}
 .ocr{font-size:11px;color:var(--c);margin-left:6px}
 </style></head><body>
 <header class="head"><div class="wrap">
@@ -98,7 +113,8 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <section id="spec" aria-label="รายการอุปกรณ์ คู่มืออุปกรณ์ไฟฟ้า 2565" style="display:none">
 <div class="fbar"><input id="sq" type="search" placeholder="ค้นชื่ออุปกรณ์ หรือวัสดุเลขที่ เช่น คอน, ลูกถ้วย, 1000110000" aria-label="ค้นอุปกรณ์"></div>
 <div class="fstat" id="sstat">คู่มืออุปกรณ์ไฟฟ้าสำหรับการก่อสร้างระบบจำหน่ายแรงสูงและแรงต่ำ (2565) · เลขแบบในช่องขวากดไปหน้าแบบได้</div>
-<div class="sp"><table><thead><tr><th>หน้า</th><th>อุปกรณ์</th><th>ขนาด/รุ่น · วัสดุเลขที่</th><th>แบบที่ใช้</th></tr></thead><tbody id="sbody"></tbody></table></div>
+<div class="sx"><div class="sl" id="slist"></div><div class="sd" id="sdet"><div class="fstat">เลือกอุปกรณ์ทางซ้ายเพื่อดูหน้าคู่มือและแบบที่ใช้</div></div></div>
+<div class="lb" id="lb"><button type="button">ปิด ✕</button><img alt=""></div>
 <div class="fstat" style="margin-top:8px">ข้อมูลนี้ถอดจากหนังสือที่สงวนลิขสิทธิ์ จึงเข้ารหัสไว้ เปิดดูได้เฉพาะผู้ที่มีสิทธิ์คลังแบบ · ถ้าเห็นตัวเลขไม่ตรงกับเล่ม ให้ยึดตามเล่มจริง</div>
 </section>
 <div id="titleView">
@@ -163,21 +179,44 @@ async function specOpen(){
     try{SPEC=await PEASpec.load();SPEC.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));}
     catch(e){st.textContent="เปิดรายการอุปกรณ์ไม่ได้: "+e.message;return;}}
   specRender();
+  if(!Object.keys(THB).length) PEASpec.thumbs().then(t=>{THB=t;specRender();}).catch(()=>{});
 }
+let THB={},sCur=null,sV=[];
 function specRender(){
   const raw=document.getElementById("sq").value.trim(), toks=raw.split(/\s+/).map(nz).filter(Boolean);
-  const v=SPEC.items.filter(it=>toks.every(t=>it._z.includes(t)));
-  document.getElementById("sstat").textContent=(toks.length?`พบ ${v.length} จาก `:"")+`${SPEC.items.length} รายการ · ${SPEC.items.reduce((a,i)=>a+i.rows.length,0)} ขนาด/รุ่น · กดเลขแบบสีน้ำเงินเพื่อเปิดหน้าแบบ (สีเทา = แบบชุดเก่าที่ยังไม่มีในคลัง)`;
-  const mq=raw.replace(/\D/g,"").length>=4?raw.replace(/\D/g,""):"";
-  document.getElementById("sbody").innerHTML=v.map(it=>{const hl=sHL&&it.rows.some(r=>r[2]===sHL);
-    return `<tr${hl?' class="hl" id="sHL"':""}><td class="pg">${esc(it.bp||"")}<div class="en">PDF ${it.p}</div></td>
-    <td><b style="font-weight:600">${esc(it.th)}</b>${it.en?`<div class="en">${esc(it.en)}</div>`:""}${it.s?`<div class="us">เก็บ: ${esc(it.s)}</div>`:""}${it.u.length?`<details class="us"><summary>การใช้งาน ${it.u.length} ข้อ</summary>${it.u.map(esc).join("<br>")}</details>`:""}</td>
-    <td><div class="rw">${it.rows.map(r=>`<span>${esc(r[1])}</span><span class="m${(sHL&&r[2]===sHL)||(mq&&r[2].includes(mq))?" on":""}">${esc(r[2])}</span>`).join("")}</div></td>
-    <td class="dw">${it.d.length?`<div class="us" style="margin:0 0 4px">ตามคู่มือ</div>`+it.d.map(x=>x[1]?`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`:`<span title="แบบชุดเก่า ยังไม่มีในคลัง">${esc(x[0])}</span>`).join(""):""}
-      ${it.b&&it.b.length?`<div class="us" style="margin:6px 0 4px">พบเลขวัสดุนี้ในแบบ</div>`+it.b.slice(0,8).map(x=>`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`).join("")+(it.b.length>8?`<details class="us" style="display:inline"><summary>อีก ${it.b.length-8} แบบ</summary>${it.b.slice(8).map(x=>`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`).join("")}</details>`:""):""}
-      ${!it.d.length&&!(it.b&&it.b.length)?'<span style="border:0">–</span>':""}</td></tr>`;}).join("")
-    ||`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">ไม่พบอุปกรณ์ที่ตรงกับคำค้น</td></tr>`;
+  sV=SPEC.items.filter(it=>toks.every(t=>it._z.includes(t)));
+  document.getElementById("sstat").textContent=(toks.length?`พบ ${sV.length} จาก `:"")+`${SPEC.items.length} รายการ · กดรายการเพื่อดูหน้าคู่มือและเปิดแบบที่ใช้`;
+  const nl=it=>(it.d.filter(x=>x[1]).length+(it.b||[]).length);
+  document.getElementById("slist").innerHTML=sV.map((it,i)=>{const n=nl(it);
+    return `<button type="button" class="si" data-i="${SPEC.items.indexOf(it)}"><span class="tb" style="${THB[it.p]?`background-image:url(data:image/jpeg;base64,${THB[it.p]})`:""}"></span>
+      <span><div class="t">${esc(it.th||it.en||"(ไม่มีชื่อในตาราง)")}</div>
+      <div class="m">${it.rows.length>1?it.rows.length+" ขนาด/รุ่น":esc(it.rows[0]?it.rows[0][1]:"")} · ${esc(it.rows.slice(0,2).map(r=>r[2]).join(", "))}${it.rows.length>2?" …":""}</div>
+      <div class="k">หน้า ${esc(it.bp||it.p)}${n?` · เปิดแบบได้ ${n} แบบ`:""}</div></span></button>`;}).join("")||`<div class="fstat">ไม่พบอุปกรณ์ที่ตรงกับคำค้น</div>`;
+  markCur();
+  if(!sCur||!sV.includes(sCur)){ if(sV.length&&innerWidth>860) specShow(sV[0]); }
 }
+function markCur(){document.querySelectorAll("#slist .si").forEach(b=>b.setAttribute("aria-current",SPEC.items[b.dataset.i]===sCur));}
+function specShow(it){
+  sCur=it; markCur(); const raw=document.getElementById("sq").value.replace(/\D/g,""), mq=sHL||(raw.length>=4?raw:"");
+  const lnk=[...it.d.map(x=>({l:x[0],f:x[1],k:1})),...(it.b||[]).map(x=>({l:x[0],f:x[1],k:2}))];
+  const box=document.getElementById("sdet");
+  box.innerHTML=`<button type="button" class="x">ปิด ✕</button><div class="grid2"><div class="pg"><img id="spimg" alt="หน้า ${esc(it.bp||it.p)} คู่มืออุปกรณ์ไฟฟ้า 2565"><div class="cap" id="spcap">กำลังโหลดหน้าคู่มือ… · กดรูปเพื่อขยาย</div></div>
+  <div><div class="src">คู่มืออุปกรณ์ไฟฟ้า 2565 · หน้า ${esc(it.bp||"-")} (PDF ${it.p})</div><h3>${esc(it.th||"(ไม่มีชื่อในตาราง)")}</h3>${it.en?`<div class="en">${esc(it.en)}</div>`:""}
+  <table>${it.rows.map(r=>`<tr><td>${esc(r[1])}</td><td class="mt${mq&&r[2].includes(mq)?" on":""}">${esc(r[2])}</td></tr>`).join("")}</table>
+  ${it.s?`<div><span class="en">การจัดเก็บ</span> ${esc(it.s)}</div>`:""}
+  ${it.u.length?`<div class="lab">การใช้งาน</div><div style="font-size:14px;line-height:1.7">${it.u.map(u=>"• "+esc(u)).join("<br>")}</div>`:""}
+  <div class="lab">เปิดแบบในคลังที่ใช้ชิ้นนี้</div><div class="btns">${lnk.filter(x=>x.f).map(x=>`<a href="d/${esc(x.f)}">${esc(x.l)} →</a>`).join("")}
+   ${it.d.filter(x=>!x[1]).map(x=>`<span>${esc(x[0])} (ชุดเก่า ยังไม่มีในคลัง)</span>`).join("")}${!lnk.length?`<span>คู่มือไม่ได้ระบุแบบ และไม่พบเลขวัสดุนี้ในแบบในคลัง</span>`:""}</div>
+  ${it.nt?`<div class="lab">หมายเหตุการถอดข้อมูล: ${esc(it.nt)}</div>`:""}
+  <div class="lab"><a href="https://drive.google.com/file/d/${PEASpec.BOOK3}/view" target="_blank" rel="noopener">เปิดคู่มือทั้งเล่มใน Drive</a></div></div></div>`;
+  box.classList.add("open"); box.scrollTop=0;
+  box.querySelector(".x").onclick=()=>box.classList.remove("open");
+  PEASpec.page(it.p).then(u=>{if(sCur!==it)return;const im=document.getElementById("spimg");im.src=u;document.getElementById("spcap").textContent="หน้า "+(it.bp||it.p)+" จากคู่มือ · กดรูปเพื่อขยายเต็มจอ";
+    im.onclick=()=>{const lb=document.getElementById("lb");lb.querySelector("img").src=u;lb.style.display="block";};}).catch(e=>{document.getElementById("spcap").textContent="โหลดหน้าคู่มือไม่ได้: "+e.message;});
+}
+document.getElementById("slist").addEventListener("click",e=>{const b=e.target.closest(".si");if(b)specShow(SPEC.items[b.dataset.i]);});
+document.getElementById("lb").addEventListener("click",e=>{if(e.target.tagName!=="IMG")e.currentTarget.style.display="none";});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("lb").style.display="none";});
 let stm;document.getElementById("sq").addEventListener("input",()=>{clearTimeout(stm);stm=setTimeout(()=>{sHL="";if(SPEC)specRender();},120);});
 async function loadIndex(){
   if(IDX) return IDX; if(loading) return loading;
@@ -222,7 +261,7 @@ document.getElementById("fform").addEventListener("submit",e=>{e.preventDefault(
 document.getElementById("fres").addEventListener("click",e=>{const b=e.target.closest("button[data-n]");if(b)openBook(b.dataset.n);});
 fetch("books.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{B=d.map(b=>Object.assign(b,{_q:norm([b.t,b.o,b.c,b.y,b.n,relText(b).join(" "),b.r.join(" ")].join(" "))}));
   const p=new URLSearchParams(location.search); if(p.get("q")){q=p.get("q");document.getElementById("q").value=q;}
-  render(); if(p.get("n")) openBook(p.get("n")); if(p.get("spec")){sHL=p.get("spec");document.getElementById("sq").value=sHL;setMode("S");specOpen().then(()=>{const r=document.getElementById("sHL");if(r)r.scrollIntoView({block:"center"});});}
+  render(); if(p.get("n")) openBook(p.get("n")); if(p.get("spec")){sHL=p.get("spec");document.getElementById("sq").value=sHL;setMode("S");specOpen().then(()=>{const it=SPEC&&SPEC.items.find(x=>x.rows.some(r=>r[2]===sHL));if(it)specShow(it);});}
   if(p.get("fq")){setMode(true);document.getElementById("fq").value=p.get("fq");fullSearch(p.get("fq"));}});
 </script>
 <a href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a>

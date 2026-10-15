@@ -31,6 +31,16 @@
     }).then(function(gz){return new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream("gzip"))).text();})
       .then(JSON.parse);
   }
+  function raw(file,k,cache){
+    return fetch(BASE+file,{cache:cache||"no-cache"}).then(function(x){if(!x.ok)throw new Error("ยังไม่มีไฟล์");return x.arrayBuffer();}).then(function(ab){
+      var buf=new Uint8Array(ab);
+      return crypto.subtle.importKey("raw",Uint8Array.from(atob(k),function(c){return c.charCodeAt(0);}),"AES-GCM",false,["decrypt"])
+        .then(function(ck){return crypto.subtle.decrypt({name:"AES-GCM",iv:buf.slice(0,12)},ck,buf.slice(12));});});
+  }
+  var thP=null, pgC={};
+  function thumbs(){ if(!thP){thP=key().then(function(k){return raw("books-spec-th.bin",k);}).then(function(b){return JSON.parse(new TextDecoder().decode(b));});thP.catch(function(){thP=null;});} return thP; }
+  function page(n){ if(!pgC[n]){pgC[n]=key().then(function(k){return raw("books3/"+String(n).padStart(3,"0")+".bin",k,"force-cache");})
+      .then(function(b){return URL.createObjectURL(new Blob([b],{type:"image/jpeg"}));});pgC[n].catch(function(){delete pgC[n];});} return pgC[n]; }
   function load(){
     if(dataP) return dataP;
     dataP=key().then(function(k){return decrypt("books-spec.bin",k).catch(function(e){
@@ -40,7 +50,7 @@
     return dataP;
   }
   var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
-  window.PEASpec={key:key,load:load,decrypt:decrypt,BOOK3:BOOK3,esc:esc};
+  window.PEASpec={key:key,load:load,thumbs:thumbs,page:page,decrypt:decrypt,BOOK3:BOOK3,esc:esc};
 
   /* ---------- หน้าแบบ: เสริมกล่องสเปกในป๊อปอัปรายการวัสดุ ---------- */
   var pop=document.getElementById("blnPop"); if(!pop) return;

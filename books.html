@@ -53,6 +53,22 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 .dlg .close{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:inherit;cursor:pointer}
 .dlg ul{margin:0;padding-left:18px;font-size:14px;line-height:1.8}
 .hint{font-size:12px;color:var(--muted);text-align:center}
+.mode{display:flex;gap:6px;margin-bottom:10px}
+.mode button{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.mode button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+#full{display:none}
+.fbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.fbar input{flex:1 1 280px;height:46px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font:inherit;font-size:16px;background:var(--sheet);color:var(--ink)}
+.fbar button{height:46px;padding:0 18px;border-radius:10px;border:0;background:var(--accent);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.fstat{font-size:13px;color:var(--muted);margin-bottom:10px;min-height:20px}
+.hit{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.hit .bk{font-weight:600;line-height:1.45}
+.hit .pg{font-size:12px;color:var(--muted);margin:2px 0 6px}
+.hit .sn{font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.hit mark{background:#ffe08a;color:#18212b;border-radius:3px;padding:0 2px}
+.hit .act{display:flex;gap:12px;margin-top:8px;font-size:14px;flex-wrap:wrap}
+.hit .act a,.hit .act button{color:var(--dim);background:none;border:0;font:inherit;padding:6px 0;cursor:pointer;text-decoration:underline}
+.ocr{font-size:11px;color:var(--c);margin-left:6px}
 </style></head><body>
 <header class="head"><div class="wrap">
 <div class="eyebrow">การไฟฟ้าส่วนภูมิภาค · คลังแบบมาตรฐาน</div>
@@ -60,10 +76,18 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <nav class="tabs" aria-label="ส่วนของคลัง"><a href="index.html">แบบก่อสร้าง</a><a href="books.html" aria-current="page">หนังสือ คู่มือ ระเบียบ</a></nav>
 </div></header>
 <main class="wrap">
+<div class="mode" role="group" aria-label="วิธีค้น"><button type="button" id="mT" aria-pressed="true">ค้นชื่อเล่ม</button><button type="button" id="mF" aria-pressed="false">ค้นในเนื้อหาหนังสือ</button></div>
+<section id="full" aria-label="ค้นในเนื้อหาหนังสือ">
+<form class="fbar" id="fform"><input id="fq" type="search" placeholder="เช่น ระยะห่าง สายดิน, ความต้านทานดิน 5 โอห์ม, RCD 30 mA" aria-label="คำที่ต้องการค้นในเนื้อหา"><button type="submit">ค้นหา</button></form>
+<div class="fstat" id="fstat">ค้นข้อความในหนังสือทุกเล่ม (ประมาณ 7,000 หน้า) · เว้นวรรคระหว่างคำ = ต้องมีทุกคำในหน้าเดียวกัน</div>
+<div id="fres"></div>
+</section>
+<div id="titleView">
 <div class="bar"><input id="q" type="search" placeholder="ค้นชื่อเล่ม เช่น สายดิน, เคเบิลใต้ดิน, มิเตอร์, 115" aria-label="ค้นหาหนังสือ"><span class="note" id="cnt"></span></div>
 <div class="chips" id="cats" role="group" aria-label="หมวด"></div>
 <div class="legend"><span><i style="background:var(--r)"></i>สงวนลิขสิทธิ์ ห้ามเผยแพร่</span><span><i style="background:var(--c)"></i>เอกสารควบคุม ใช้ภายใน</span><span><i style="background:var(--p)"></i>เผยแพร่ได้</span></div>
 <div class="grid" id="grid"></div>
+</div>
 <div class="foot">ไฟล์ทุกเล่มเก็บใน Google Drive แบบจำกัดสิทธิ์ ถ้ายังไม่ได้รับแชร์ Google จะให้กด “ขอสิทธิ์เข้าถึง” แล้วรอผู้ดูแลอนุมัติ · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
@@ -100,9 +124,57 @@ document.getElementById("grid").addEventListener("click",e=>{const c=e.target.cl
 document.getElementById("cats").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cat=b.dataset.k;render();});
 let tm;document.getElementById("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{q=e.target.value;render();},120);});
 document.getElementById("dlg").addEventListener("click",e=>{if(e.target.id==="dlg")e.target.close();});
+/* ---------- ค้นในเนื้อหา: ดัชนีเข้ารหัส ขอกุญแจจากหลังบ้านเฉพาะผู้มีสิทธิ์ ---------- */
+const GAS=localStorage.getItem("sld_gas_url")||"https://script.google.com/macros/s/AKfycbzqsOqJJQlF4SS1UX_YM6hmhd3lUXCVocAJiK7l28Tzddms9SQ9Z7p-iYgrrgd2B2meWw/exec";
+let IDX=null, loading=null;
+const nz=s=>String(s).toLowerCase().replace(/\u0e4d\u0e32/g,"\u0e33").replace(/[\u0e47-\u0e4e]/g,"").replace(/\s+/g,"");
+function setMode(full){document.getElementById("mT").setAttribute("aria-pressed",!full);document.getElementById("mF").setAttribute("aria-pressed",full);
+  document.getElementById("full").style.display=full?"block":"none";document.getElementById("titleView").style.display=full?"none":"block";if(full)document.getElementById("fq").focus();}
+document.getElementById("mT").onclick=()=>setMode(false);document.getElementById("mF").onclick=()=>setMode(true);
+async function loadIndex(){
+  if(IDX) return IDX; if(loading) return loading;
+  loading=(async()=>{
+    const st=document.getElementById("fstat");
+    st.textContent="กำลังขอสิทธิ์ค้นเนื้อหา…";
+    const name=localStorage.getItem("pea_aoluek_username")||"", pass=localStorage.getItem("pea_aoluek_password")||"";
+    const r=await fetch(GAS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"booksKey",changedBy:name,changedByPassword:pass})}).then(x=>x.json());
+    if(!r||!r.ok||!r.key) throw new Error((r&&(r.error||r.message))||"ไม่ได้รับสิทธิ์ค้นเนื้อหา");
+    st.textContent="กำลังโหลดดัชนี (ครั้งแรกประมาณ 10–20 MB)…";
+    const buf=new Uint8Array(await fetch("books-index.bin",{cache:"force-cache"}).then(x=>{if(!x.ok)throw new Error("ยังไม่มีไฟล์ดัชนี");return x.arrayBuffer();}));
+    const k=await crypto.subtle.importKey("raw",Uint8Array.from(atob(r.key),c=>c.charCodeAt(0)),"AES-GCM",false,["decrypt"]);
+    const gz=await crypto.subtle.decrypt({name:"AES-GCM",iv:buf.slice(0,12)},k,buf.slice(12));
+    const txt=await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+    const raw=JSON.parse(txt); const out=[];
+    Object.keys(raw).forEach(n=>raw[n].forEach((t,i)=>out.push({n:+n,p:i+1,t,z:nz(t)})));
+    IDX=out; return out;
+  })();
+  try{return await loading;}catch(e){loading=null;throw e;}
+}
+function snippet(t,tok){
+  // หาตำแหน่งในข้อความจริงที่ตรงกับคำค้น (เทียบแบบตัดวรรณยุกต์และช่องว่าง)
+  const map=[];let z="";for(let i=0;i<t.length;i++){const c=nz(t[i]);for(let j=0;j<c.length;j++){z+=c[j];map.push(i);}}
+  const at=z.indexOf(tok); if(at<0) return esc(t.slice(0,220));
+  const s0=map[at], s1=map[at+tok.length-1]+1, a=Math.max(0,s0-90), b=Math.min(t.length,s1+130);
+  return (a>0?"…":"")+esc(t.slice(a,s0))+"<mark>"+esc(t.slice(s0,s1))+"</mark>"+esc(t.slice(s1,b))+(b<t.length?"…":"");
+}
+async function fullSearch(q){
+  const st=document.getElementById("fstat"), box=document.getElementById("fres");
+  const toks=q.split(/\s+/).map(nz).filter(Boolean); if(!toks.length){box.innerHTML="";return;}
+  let idx; try{idx=await loadIndex();}catch(e){st.textContent="ค้นเนื้อหาไม่ได้: "+e.message;return;}
+  const hits=[];
+  for(const x of idx){ if(toks.every(t=>x.z.includes(t))){ let sc=0; toks.forEach(t=>{let i=-1;while((i=x.z.indexOf(t,i+1))>=0)sc++;}); hits.push([sc,x]); } }
+  hits.sort((a,b)=>b[0]-a[0]);
+  const books=new Set(hits.map(h=>h[1].n));
+  st.textContent=hits.length?`พบ ${hits.length} หน้า ใน ${books.size} เล่ม`+(hits.length>150?" (แสดง 150 หน้าแรกที่ตรงที่สุด)":""):"ไม่พบคำนี้ในเนื้อหา ลองคำที่สั้นลง หรือสะกดแบบอื่น";
+  box.innerHTML=hits.slice(0,150).map(([sc,x])=>{const b=B.find(y=>y.n===x.n)||{t:"เล่ม "+x.n,y:""};
+    return `<div class="hit"><div class="bk">${esc(b.t)} <span class="meta">(${esc(b.y)})</span></div><div class="pg">หน้า ${x.p} ของไฟล์ PDF · พบ ${sc} ครั้ง</div>
+    <div class="sn">${snippet(x.t,toks[0])}</div><div class="act">${b.id?`<a href="https://drive.google.com/file/d/${b.id}/view" target="_blank" rel="noopener">เปิดเล่มใน Drive (ดูหน้า ${x.p})</a>`:""}<button type="button" data-n="${x.n}">รายละเอียดเล่ม</button></div></div>`;}).join("");
+}
+document.getElementById("fform").addEventListener("submit",e=>{e.preventDefault();fullSearch(document.getElementById("fq").value.trim());});
+document.getElementById("fres").addEventListener("click",e=>{const b=e.target.closest("button[data-n]");if(b)openBook(b.dataset.n);});
 fetch("books.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{B=d.map(b=>Object.assign(b,{_q:norm([b.t,b.o,b.c,b.y,b.n,relText(b).join(" "),b.r.join(" ")].join(" "))}));
   const p=new URLSearchParams(location.search); if(p.get("q")){q=p.get("q");document.getElementById("q").value=q;}
-  render(); if(p.get("n")) openBook(p.get("n"));});
+  render(); if(p.get("n")) openBook(p.get("n")); if(p.get("fq")){setMode(true);document.getElementById("fq").value=p.get("fq");fullSearch(p.get("fq"));}});
 </script>
 <a href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a>
 </body></html>

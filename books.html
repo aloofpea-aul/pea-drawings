@@ -167,13 +167,15 @@ async function specOpen(){
 function specRender(){
   const raw=document.getElementById("sq").value.trim(), toks=raw.split(/\s+/).map(nz).filter(Boolean);
   const v=SPEC.items.filter(it=>toks.every(t=>it._z.includes(t)));
-  document.getElementById("sstat").textContent=(toks.length?`พบ ${v.length} จาก `:"")+`${SPEC.items.length} รายการ · ${SPEC.items.reduce((a,i)=>a+i.rows.length,0)} ขนาด/รุ่น · กดเลขแบบเพื่อไปหน้าแบบ`;
+  document.getElementById("sstat").textContent=(toks.length?`พบ ${v.length} จาก `:"")+`${SPEC.items.length} รายการ · ${SPEC.items.reduce((a,i)=>a+i.rows.length,0)} ขนาด/รุ่น · กดเลขแบบสีน้ำเงินเพื่อเปิดหน้าแบบ (สีเทา = แบบชุดเก่าที่ยังไม่มีในคลัง)`;
   const mq=raw.replace(/\D/g,"").length>=4?raw.replace(/\D/g,""):"";
   document.getElementById("sbody").innerHTML=v.map(it=>{const hl=sHL&&it.rows.some(r=>r[2]===sHL);
     return `<tr${hl?' class="hl" id="sHL"':""}><td class="pg">${esc(it.bp||"")}<div class="en">PDF ${it.p}</div></td>
     <td><b style="font-weight:600">${esc(it.th)}</b>${it.en?`<div class="en">${esc(it.en)}</div>`:""}${it.s?`<div class="us">เก็บ: ${esc(it.s)}</div>`:""}${it.u.length?`<details class="us"><summary>การใช้งาน ${it.u.length} ข้อ</summary>${it.u.map(esc).join("<br>")}</details>`:""}</td>
     <td><div class="rw">${it.rows.map(r=>`<span>${esc(r[1])}</span><span class="m${(sHL&&r[2]===sHL)||(mq&&r[2].includes(mq))?" on":""}">${esc(r[2])}</span>`).join("")}</div></td>
-    <td class="dw">${it.d.map(x=>x[1]?`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`:`<span title="ยังไม่มีแบบนี้ในคลัง">${esc(x[0])}</span>`).join("")||'<span style="border:0">–</span>'}</td></tr>`;}).join("")
+    <td class="dw">${it.d.length?`<div class="us" style="margin:0 0 4px">ตามคู่มือ</div>`+it.d.map(x=>x[1]?`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`:`<span title="แบบชุดเก่า ยังไม่มีในคลัง">${esc(x[0])}</span>`).join(""):""}
+      ${it.b&&it.b.length?`<div class="us" style="margin:6px 0 4px">พบเลขวัสดุนี้ในแบบ</div>`+it.b.slice(0,8).map(x=>`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`).join("")+(it.b.length>8?`<details class="us" style="display:inline"><summary>อีก ${it.b.length-8} แบบ</summary>${it.b.slice(8).map(x=>`<a href="d/${esc(x[1])}">${esc(x[0])}</a>`).join("")}</details>`:""):""}
+      ${!it.d.length&&!(it.b&&it.b.length)?'<span style="border:0">–</span>':""}</td></tr>`;}).join("")
     ||`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">ไม่พบอุปกรณ์ที่ตรงกับคำค้น</td></tr>`;
 }
 let stm;document.getElementById("sq").addEventListener("input",()=>{clearTimeout(stm);stm=setTimeout(()=>{sHL="";if(SPEC)specRender();},120);});

@@ -58,6 +58,8 @@
       +(it.d.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:12px;color:#5a6573">แบบที่ใช้ชิ้นนี้:</span>'
         +it.d.map(function(x){return x[1]&&x[1]!==here?'<a href="'+esc(x[1])+'" style="font-size:13px;padding:3px 10px;border-radius:14px;background:#fff;border:1px solid #cdd4dc;text-decoration:none;color:#245f93">'+esc(x[0])+'</a>'
           :'<span style="font-size:13px;padding:3px 10px;border-radius:14px;border:1px solid #e3e7ec;color:#5a6573">'+esc(x[0])+(x[1]?" (หน้านี้)":"")+'</span>';}).join("")+'</div>':"")
+      +((it.b||[]).filter(function(x){return x[1]!==here;}).length?'<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:12px;color:#5a6573">แบบอื่นที่ใช้เลขวัสดุนี้:</span>'
+        +it.b.filter(function(x){return x[1]!==here;}).slice(0,6).map(function(x){return '<a href="'+esc(x[1])+'" style="font-size:13px;padding:3px 10px;border-radius:14px;background:#fff;border:1px solid #cdd4dc;text-decoration:none;color:#245f93">'+esc(x[0])+'</a>';}).join("")+'</div>':"")
       +'<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px">'
       +'<a href="https://drive.google.com/file/d/'+BOOK3+'/view" target="_blank" rel="noopener" style="color:#245f93">เปิดคู่มือใน Drive (ดูหน้า '+esc(it.bp||it.p)+')</a>'
       +'<a href="../books.html?spec='+encodeURIComponent(mat)+'" style="color:#245f93">รายการอุปกรณ์ทั้งเล่ม</a></div></div>';

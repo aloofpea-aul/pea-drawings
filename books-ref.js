@@ -1,7 +1,7 @@
 /* books-ref.js — กล่อง "หนังสืออ้างอิง" ท้ายหน้าแบบ: หาหมวดของแบบจากเลขแบบในชื่อหน้า แล้วแสดงหนังสือที่เกี่ยวข้อง */
 (function(){
   /* สเปกจากคู่มืออุปกรณ์ 2565 ในป๊อปอัปรายการวัสดุ */
-  var sp=document.createElement('script'); sp.src='../books-spec.js'; sp.defer=true; document.head.appendChild(sp);
+  var sp=document.createElement('script'); sp.src='../books-spec.js?v=20261016a'; sp.defer=true; document.head.appendChild(sp);
   var m=(document.title||'').match(/^\s*(\d{4})/); if(!m) return;
   var num=parseInt(m[1],10);
   var CODES=[100,200,300,400,500,600,700,800,900,3100,3200,3300,3400,3500,3600,3700,3800,3900,5100,5200,5250,5300,5350,5400,5425,5600,5625,5635,5650,5660,5700,5800,5900];

@@ -126,7 +126,7 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <div class="foot">ไฟล์ทุกเล่มเก็บใน Google Drive แบบจำกัดสิทธิ์ ถ้ายังไม่ได้รับแชร์ Google จะให้กด “ขอสิทธิ์เข้าถึง” แล้วรอผู้ดูแลอนุมัติ · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
-<script src="books-spec.js"></script>
+<script src="books-spec.js?v=20261016a"></script>
 <script>
 const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
 const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
@@ -179,7 +179,7 @@ async function specOpen(){
     try{SPEC=await PEASpec.load();SPEC.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));}
     catch(e){st.textContent="เปิดรายการอุปกรณ์ไม่ได้: "+e.message;return;}}
   specRender();
-  if(!Object.keys(THB).length) PEASpec.thumbs().then(t=>{THB=t;specRender();}).catch(()=>{});
+  if(!Object.keys(THB).length&&PEASpec.thumbs) PEASpec.thumbs().then(t=>{THB=t;specRender();}).catch(()=>{});
 }
 let THB={},sCur=null,sV=[];
 function specRender(){
@@ -211,6 +211,7 @@ function specShow(it){
   <div class="lab"><a href="https://drive.google.com/file/d/${PEASpec.BOOK3}/view" target="_blank" rel="noopener">เปิดคู่มือทั้งเล่มใน Drive</a></div></div></div>`;
   box.classList.add("open"); box.scrollTop=0;
   box.querySelector(".x").onclick=()=>box.classList.remove("open");
+  if(!PEASpec.page){document.getElementById("spcap").textContent="หน้านี้ยังเป็นรุ่นเก่า กด Ctrl+F5 เพื่อโหลดใหม่";return;}
   PEASpec.page(it.p).then(u=>{if(sCur!==it)return;const im=document.getElementById("spimg");im.src=u;document.getElementById("spcap").textContent="หน้า "+(it.bp||it.p)+" จากคู่มือ · กดรูปเพื่อขยายเต็มจอ";
     im.onclick=()=>{const lb=document.getElementById("lb");lb.querySelector("img").src=u;lb.style.display="block";};}).catch(e=>{document.getElementById("spcap").textContent="โหลดหน้าคู่มือไม่ได้: "+e.message;});
 }

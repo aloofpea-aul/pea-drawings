@@ -212,8 +212,8 @@ function specShow(it){
   <table>${it.rows.map(r=>`<tr><td>${it.k==2?"<span class=en>สเปกเลขที่</span> ":""}${esc(r[1])}</td><td class="mt${mq&&r[2].includes(mq)?" on":""}">${esc(r[2])}</td></tr>`).join("")}</table>
   ${it.s?`<div><span class="en">การจัดเก็บ</span> ${esc(it.s)}</div>`:""}
   ${it.u.length?`<div class="lab">การใช้งาน</div><div style="font-size:14px;line-height:1.7">${it.u.map(u=>"• "+esc(u)).join("<br>")}</div>`:""}
-  <div class="lab">เปิดแบบในคลังที่ใช้ชิ้นนี้</div><div class="btns">${lnk.filter(x=>x.f).map(x=>`<a href="d/${esc(x.f)}">${esc(x.l)} →</a>`).join("")}
-   ${it.d.filter(x=>!x[1]).map(x=>`<span>${esc(x[0])} (ชุดเก่า ยังไม่มีในคลัง)</span>`).join("")}${!lnk.length?`<span>คู่มือไม่ได้ระบุแบบ และไม่พบเลขวัสดุนี้ในแบบในคลัง</span>`:""}</div>
+  ${it.k==2&&!lnk.length?"":`<div class="lab">เปิดแบบในคลังที่ใช้ชิ้นนี้</div><div class="btns">${lnk.filter(x=>x.f).map(x=>`<a href="d/${esc(x.f)}">${esc(x.l)} →</a>`).join("")}
+   ${it.d.filter(x=>!x[1]).map(x=>`<span>${esc(x[0])} (ชุดเก่า ยังไม่มีในคลัง)</span>`).join("")}${!lnk.length?`<span>คู่มือไม่ได้ระบุแบบ และไม่พบเลขวัสดุนี้ในแบบในคลัง</span>`:""}</div>`}
   ${it.nt?`<div class="lab">หมายเหตุการถอดข้อมูล: ${esc(it.nt)}</div>`:""}
   <div class="lab"><a href="https://drive.google.com/file/d/${BKN(it).id}/view" target="_blank" rel="noopener">เปิดคู่มือทั้งเล่มใน Drive</a></div></div></div>`;
   box.classList.add("open"); box.scrollTop=0;

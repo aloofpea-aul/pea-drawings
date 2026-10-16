@@ -129,7 +129,7 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <div class="foot">ไฟล์ทุกเล่มเก็บใน Google Drive แบบจำกัดสิทธิ์ ถ้ายังไม่ได้รับแชร์ Google จะให้กด “ขอสิทธิ์เข้าถึง” แล้วรอผู้ดูแลอนุมัติ · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
-<script src="books-spec.js?v=20261016c"></script>
+<script src="books-spec.js?v=20261016d"></script>
 <script>
 const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
 const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
@@ -155,7 +155,7 @@ function openBook(n){
   document.getElementById("dlgBody").innerHTML=`<div class="meta">${esc(b.c)} · ${esc(b.y)} · เล่มที่ ${b.n}</div><h2>${esc(b.t)}</h2>
    <div class="meta">${esc(b.o)} · ที่มา: Happy Pole</div><div class="badge L-${b.l}" style="${b.l==="R"?"color:var(--r);background:var(--r-bg)":b.l==="C"?"color:var(--c);background:var(--c-bg)":"color:var(--p);background:var(--p-bg)"}">${LIC[b.l]}</div>
    ${b.r.length?`<div class="meta" style="margin-top:4px">แบบที่เกี่ยวข้องในคลัง</div><ul>${b.r.map(c=>`<li><a href="index.html#s-${c}">${c} ${esc(SER[c]||"")}</a></li>`).join("")}</ul>`:""}
-   ${b.n===3||b.n===26?`<button class="go" type="button" style="border:0;width:100%;cursor:pointer;margin-bottom:8px;background:#7a1e6b" onclick="document.getElementById('dlg').close();sBook='${b.n}';sCur=null;setMode('S')">ดูรายการอุปกรณ์ในเล่ม (ค้นด้วยชื่อ/เลขวัสดุ)</button>`:""}
+   ${[2,3,26].includes(b.n)?`<button class="go" type="button" style="border:0;width:100%;cursor:pointer;margin-bottom:8px;background:#7a1e6b" onclick="document.getElementById('dlg').close();sBook='${b.n}';sCur=null;setMode('S')">ดูรายการอุปกรณ์ในเล่ม (ค้นด้วยชื่อ/เลขวัสดุ)</button>`:""}
    ${url?`<a class="go" href="${url}" target="_blank" rel="noopener">เปิดอ่านใน Google Drive</a><div class="hint">ยังไม่ได้รับแชร์? Google จะให้กด “ขอสิทธิ์เข้าถึง”</div>`:`<div class="hint">ไฟล์เล่มนี้เสียที่ต้นทาง (Happy Pole) ยังดาวน์โหลดไม่ได้</div>`}
    <button class="close" type="button" onclick="document.getElementById('dlg').close()">ปิด</button>`;
   const d=document.getElementById("dlg"); d.showModal();
@@ -177,11 +177,11 @@ document.getElementById("mT").onclick=()=>setMode("T");document.getElementById("
 /* ---------- รายการอุปกรณ์ คู่มือ 2565 (books-spec.bin เข้ารหัส) ---------- */
 let SPEC=null,sHL="",sBook="";
 const BKN=it=>(SPEC.books&&SPEC.books[it.k]?SPEC.books[it.k]:{short:"คู่มืออุปกรณ์ไฟฟ้า 2565",lbl:"22–33 kV",id:PEASpec.BOOK3});
-const TK=it=>THB[(it.k||3)+"-"+it.p]||THB[it.p];
+const TK=it=>THB[(it.k||3)+"-"+it.p+"-"+it.pi]||THB[(it.k||3)+"-"+it.p]||THB[it.p];
 async function specOpen(){
   const st=document.getElementById("sstat");
   if(!SPEC){st.textContent="กำลังขอสิทธิ์และโหลดรายการอุปกรณ์…";
-    try{SPEC=await PEASpec.load();SPEC.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));}
+    try{SPEC=await PEASpec.load();SPEC.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.c||"",it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));}
     catch(e){st.textContent="เปิดรายการอุปกรณ์ไม่ได้: "+e.message;return;}}
   specRender();
   if(!Object.keys(THB).length&&PEASpec.thumbs) PEASpec.thumbs().then(t=>{THB=t;specRender();}).catch(()=>{});
@@ -196,7 +196,7 @@ function specRender(){
   document.getElementById("slist").innerHTML=sV.map((it,i)=>{const n=nl(it);
     return `<button type="button" class="si" data-i="${SPEC.items.indexOf(it)}"><span class="tb" style="${TK(it)?`background-image:url(data:image/jpeg;base64,${TK(it)})`:""}"></span>
       <span><div class="t">${esc(it.th||it.en||"(ไม่มีชื่อในตาราง)")}</div>
-      <div class="m">${it.rows.length>1?it.rows.length+" ขนาด/รุ่น":esc(it.rows[0]?it.rows[0][1]:"")} · ${esc(it.rows.slice(0,2).map(r=>r[2]).join(", "))}${it.rows.length>2?" …":""}</div>
+      <div class="m">${it.rows.length>1?it.rows.length+" ขนาด/รุ่น":esc(it.rows[0]?it.rows[0][1]:"")}${it.rows.some(r=>r[2])?" · "+esc(it.rows.filter(r=>r[2]).slice(0,2).map(r=>r[2]).join(", "))+(it.rows.length>2?" …":""):""}</div>
       <div class="k">${Object.keys(SPEC.books||{}).length>1?esc(BKN(it).lbl||"")+" · ":""}${it.bp?"หน้า "+esc(it.bp):"PDF หน้า "+it.p}${n?` · เปิดแบบได้ ${n} แบบ`:""}</div></span></button>`;}).join("")||`<div class="fstat">ไม่พบอุปกรณ์ที่ตรงกับคำค้น</div>`;
   markCur();
   if(!sCur||!sV.includes(sCur)){ if(sV.length&&innerWidth>860) specShow(sV[0]); }
@@ -208,7 +208,8 @@ function specShow(it){
   const box=document.getElementById("sdet");
   box.innerHTML=`<button type="button" class="x">ปิด ✕</button><div class="grid2"><div class="pg"><img id="spimg" alt="หน้า ${esc(it.bp||it.p)} ${esc(BKN(it).short)}"><div class="cap" id="spcap">กำลังโหลดหน้าคู่มือ… · กดรูปเพื่อขยาย</div></div>
   <div><div class="src">${esc(BKN(it).short)} · หน้า ${esc(it.bp||"-")} (PDF ${it.p})</div><h3>${esc(it.th||"(ไม่มีชื่อในตาราง)")}</h3>${it.en?`<div class="en">${esc(it.en)}</div>`:""}
-  <table>${it.rows.map(r=>`<tr><td>${esc(r[1])}</td><td class="mt${mq&&r[2].includes(mq)?" on":""}">${esc(r[2])}</td></tr>`).join("")}</table>
+  ${it.c?`<div class="en" style="margin-top:4px">หมวด: ${esc(it.c)}${it.rows[0]&&it.rows[0][0]?" · ลำดับที่ "+esc(it.rows[0][0]):""}</div>`:""}
+  <table>${it.rows.map(r=>`<tr><td>${it.k==2?"<span class=en>สเปกเลขที่</span> ":""}${esc(r[1])}</td><td class="mt${mq&&r[2].includes(mq)?" on":""}">${esc(r[2])}</td></tr>`).join("")}</table>
   ${it.s?`<div><span class="en">การจัดเก็บ</span> ${esc(it.s)}</div>`:""}
   ${it.u.length?`<div class="lab">การใช้งาน</div><div style="font-size:14px;line-height:1.7">${it.u.map(u=>"• "+esc(u)).join("<br>")}</div>`:""}
   <div class="lab">เปิดแบบในคลังที่ใช้ชิ้นนี้</div><div class="btns">${lnk.filter(x=>x.f).map(x=>`<a href="d/${esc(x.f)}">${esc(x.l)} →</a>`).join("")}

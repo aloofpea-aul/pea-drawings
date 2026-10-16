@@ -39,13 +39,13 @@
   }
   var thP=null, pgC={};
   function thumbs(){ if(!thP){thP=key().then(function(k){return raw("books-spec-th.bin",k);}).then(function(b){return JSON.parse(new TextDecoder().decode(b));});thP.catch(function(){thP=null;});} return thP; }
-  function page(n){ if(!pgC[n]){pgC[n]=key().then(function(k){return raw("books3/"+String(n).padStart(3,"0")+".bin",k,"force-cache");})
-      .then(function(b){return URL.createObjectURL(new Blob([b],{type:"image/jpeg"}));});pgC[n].catch(function(){delete pgC[n];});} return pgC[n]; }
+  function page(bk,n){ if(n===undefined){n=bk;bk=3;} var id=bk+"-"+n; if(!pgC[id]){pgC[id]=key().then(function(k){return raw("books"+bk+"/"+String(n).padStart(3,"0")+".bin",k,"force-cache");})
+      .then(function(b){return URL.createObjectURL(new Blob([b],{type:"image/jpeg"}));});pgC[id].catch(function(){delete pgC[id];});} return pgC[id]; }
   function load(){
     if(dataP) return dataP;
     dataP=key().then(function(k){return decrypt("books-spec.bin",k).catch(function(e){
       if(e&&e.name==="OperationError"){try{localStorage.removeItem(KC);}catch(_){}} throw e;});})
-      .then(function(d){d.byMat={};d.items.forEach(function(it){it.rows.forEach(function(r){if(r[2]&&!d.byMat[r[2]])d.byMat[r[2]]=[it,r];});});return d;});
+      .then(function(d){d.books=d.books||{3:{short:"คู่มืออุปกรณ์ไฟฟ้า 2565",id:BOOK3}};d.byMat={};d.items.forEach(function(it){it.k=it.k||3;it.rows.forEach(function(r){if(!r[2])return;var L=d.byMat[r[2]]||(d.byMat[r[2]]=[]);if(!L.some(function(h){return h[0]===it;}))L.push([it,r]);});});return d;});
     dataP.catch(function(){dataP=null;});
     return dataP;
   }
@@ -55,10 +55,11 @@
   /* ---------- หน้าแบบ: เสริมกล่องสเปกในป๊อปอัปรายการวัสดุ ---------- */
   var pop=document.getElementById("blnPop"); if(!pop) return;
   var here=(location.pathname.split("/").pop()||"");
-  function box(it,row,mat){
+  var BKS={};
+  function box(it,row,mat){ var bk=BKS[it.k]||{short:"คู่มืออุปกรณ์",id:BOOK3};
     var other=it.rows.length>1?'<div style="font-size:12px;color:#5a6573">มีในคู่มือ '+it.rows.length+' ขนาด/รุ่น</div>':"";
     return '<div class="bk-spec" style="margin:10px 0 4px;border:1px solid #d9c3d4;background:#f6e9f3;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-family:inherit;color:#18212b">'
-      +'<div style="font-size:12px;font-weight:700;color:#7a1e6b">จากคู่มืออุปกรณ์ไฟฟ้า 2565 · หน้า '+esc(it.bp||it.p)+'</div>'
+      +'<div style="font-size:12px;font-weight:700;color:#7a1e6b">จาก'+esc(bk.short)+' · '+(it.bp?'หน้า '+esc(it.bp):'PDF หน้า '+it.p)+'</div>'
       +'<div style="font-size:13px">'+esc(it.th)+(it.en?' · <span style="color:#5a6573">'+esc(it.en)+'</span>':"")+'</div>'
       +'<div style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;font-size:13px">'
       +(row[1]?'<span style="color:#5a6573">ขนาด/รุ่น</span><span>'+esc(row[1])+'</span>':"")
@@ -71,7 +72,7 @@
       +((it.b||[]).filter(function(x){return x[1]!==here;}).length?'<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:12px;color:#5a6573">แบบอื่นที่ใช้เลขวัสดุนี้:</span>'
         +it.b.filter(function(x){return x[1]!==here;}).slice(0,6).map(function(x){return '<a href="'+esc(x[1])+'" style="font-size:13px;padding:3px 10px;border-radius:14px;background:#fff;border:1px solid #cdd4dc;text-decoration:none;color:#245f93">'+esc(x[0])+'</a>';}).join("")+'</div>':"")
       +'<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px">'
-      +'<a href="https://drive.google.com/file/d/'+BOOK3+'/view" target="_blank" rel="noopener" style="color:#245f93">เปิดคู่มือใน Drive (ดูหน้า '+esc(it.bp||it.p)+')</a>'
+      +'<a href="https://drive.google.com/file/d/'+bk.id+'/view" target="_blank" rel="noopener" style="color:#245f93">เปิดคู่มือใน Drive (ดู'+(it.bp?'หน้า '+esc(it.bp):'PDF หน้า '+it.p)+')</a>'
       +'<a href="../books.html?spec='+encodeURIComponent(mat)+'" style="color:#245f93">รายการอุปกรณ์ทั้งเล่ม</a></div></div>';
   }
   function matsIn(){
@@ -86,9 +87,11 @@
     load().then(function(d){
       if(pop.style.display!=="block"||pop.querySelector(".bk-spec")) return;
       var now=matsIn(); if(now.join()!==ms.join()) return;
-      for(var i=0;i<ms.length;i++){var h=d.byMat[ms[i]]; if(h){
-        var ft=pop.querySelector(".ft"); var w=document.createElement("div"); w.innerHTML=box(h[0],h[1],ms[i]);
-        busy=true; if(ft) pop.insertBefore(w.firstChild,ft); else pop.appendChild(w.firstChild); busy=false;
+      BKS=d.books||{};
+      for(var i=0;i<ms.length;i++){var H=d.byMat[ms[i]]; if(H&&H.length){
+        var ft=pop.querySelector(".ft"); var w=document.createElement("div"); var pref=/^\s*5\d{3}/.test(document.title)?26:3; H=H.slice().sort(function(a,b){return (b[0].k===pref)-(a[0].k===pref);});
+        w.innerHTML=H.slice(0,2).map(function(h){return box(h[0],h[1],ms[i]);}).join("");
+        busy=true; while(w.firstChild){ if(ft) pop.insertBefore(w.firstChild,ft); else pop.appendChild(w.firstChild);} busy=false;
         if(window.blnPlace) window.blnPlace(); return;}}
     }).catch(function(){});
   }

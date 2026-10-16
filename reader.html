@@ -106,7 +106,7 @@ async function show(){
     const wm=document.createElement("div"); wm.className="wm"; const t=wmText(); wm.innerHTML="<div>"+Array(24).fill("<span>"+t.replace(/</g,"&lt;")+"</span>").join("")+"</div>";
     pg.append(cv,wm); view.innerHTML=""; view.append(pg); view.scrollTop=0;
     clearTimeout(logT); logT=setTimeout(()=>api({action:"bookLog",book:N,page:P,kind:"read"}).catch(()=>{}),1500);
-    if(P<COUNT) pageBitmap(P+1).catch(()=>{});   /* โหลดหน้าถัดไปล่วงหน้า */
+    [P+1,P+2,P-1].filter(x=>x>=1&&x<=COUNT).forEach(x=>fetch(pageUrl(x),{cache:"force-cache"}).catch(()=>{}));   /* โหลดหน้าถัดไป 2 หน้าและหน้าก่อนไว้ล่วงหน้า ให้เปิดได้ทันที */
   }catch(e){ if(tok===loadTok) view.innerHTML='<div class="msg">โหลดหน้าไม่ได้: '+e.message+'</div>'; }
 }
 function go(p){ if(!COUNT)return; p=Math.min(COUNT,Math.max(1,p)); if(p===P&&$("view").querySelector(".pg"))return; P=p; show(); }

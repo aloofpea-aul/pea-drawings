@@ -1,0 +1,180 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><script src="/pea-hub.js" data-app="drawings" data-name="คลังแบบมาตรฐาน กฟภ."></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>อ่านหนังสือ · คลังแบบมาตรฐาน กฟภ.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#2b3138;--bar:#fff;--ink:#18212b;--muted:#5a6573;--line:#cdd4dc;--accent:#7a1e6b;--dim:#245f93;--r:#b3261e;--ok:#1f7a3f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bar:#161c23;--ink:#e3e8ee;--muted:#97a2b0;--line:#2b3440;--accent:#d98cc9;--dim:#7fb2e3;--r:#f28b82;--ok:#7fd1a6}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;display:flex;flex-direction:column}
+@media print{body *{display:none!important}body:after{content:"เอกสารสงวนลิขสิทธิ์ กฟภ. ไม่อนุญาตให้พิมพ์";display:block;padding:40px;font-size:20px}}
+.top{background:var(--bar);border-bottom:1px solid var(--line);padding:8px max(12px,env(safe-area-inset-left));display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.top a.back{font-size:22px;text-decoration:none;color:var(--ink);padding:4px 8px}
+.ttl{flex:1 1 280px;min-width:0}
+.ttl b{display:block;font-size:15px;line-height:1.4}
+.ttl span{font-size:12px;color:var(--r);font-weight:600}
+.nav{display:flex;gap:6px;align-items:center;font-size:14px}
+.nav button,.top .btn{height:38px;min-width:38px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--bar);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.nav input{width:64px;height:38px;border:1px solid var(--line);border-radius:9px;text-align:center;font:inherit;background:var(--bar);color:var(--ink)}
+.top .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.top .btn.ok{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:600}
+.view{flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:16px;position:relative}
+.pg{position:relative;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.5);max-width:min(900px,100%);width:100%}
+.pg.zoom{max-width:none;width:1600px}
+.pg canvas{display:block;width:100%;height:auto}
+.wm{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.wm div{position:absolute;left:-25%;top:-25%;width:150%;height:150%;transform:rotate(-28deg);display:flex;flex-wrap:wrap;align-content:space-around;justify-content:space-around;gap:40px 60px;opacity:.13;color:#7a1e6b;font-weight:700;font-size:clamp(12px,1.8vw,20px)}
+.msg{color:#dfe5ec;font-size:15px;padding:40px 16px;text-align:center}
+.shield{position:fixed;inset:0;background:#1d2228;color:#dfe5ec;display:none;align-items:center;justify-content:center;z-index:50;font-size:16px;text-align:center;padding:20px}
+body.hidden .shield{display:flex}
+.modal{position:fixed;inset:0;background:rgba(10,14,20,.7);display:none;align-items:center;justify-content:center;z-index:60;padding:16px}
+.modal.on{display:flex}
+.box{background:var(--bar);color:var(--ink);border-radius:14px;padding:18px;max-width:440px;width:100%;display:flex;flex-direction:column;gap:10px}
+.box h2{margin:0;font-size:18px}
+.box p{margin:0;font-size:14px;line-height:1.7;color:var(--muted)}
+.box textarea{font:inherit;font-size:15px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;min-height:70px;background:var(--bar);color:var(--ink);-webkit-user-select:text;user-select:text}
+.box .row{display:flex;gap:8px;flex-wrap:wrap}
+.box .row button{height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--line);background:var(--bar);color:var(--ink);font:inherit;cursor:pointer}
+.box .row button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.box .go{height:44px;border-radius:10px;border:0;background:var(--dim);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.box .sec{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bar);color:var(--ink);font:inherit;cursor:pointer}
+.st{font-size:13px;color:var(--muted);min-height:18px}
+.foot{background:var(--bar);border-top:1px solid var(--line);font-size:12px;color:var(--muted);padding:6px 12px;display:flex;flex-wrap:wrap;gap:4px 14px}
+</style></head><body>
+<div class="top">
+  <a class="back" href="books.html" aria-label="กลับไปหน้าหนังสือ">←</a>
+  <div class="ttl"><b id="ttl">กำลังโหลด…</b><span>สงวนลิขสิทธิ์ กฟภ. · อ่านได้อย่างเดียว ดาวน์โหลด/พิมพ์ต้องขออนุญาต</span></div>
+  <div class="nav"><button type="button" id="prev" aria-label="หน้าก่อน">‹</button><span>หน้า</span><input id="pno" inputmode="numeric" aria-label="เลขหน้า"><span id="pcount">/ –</span><button type="button" id="next" aria-label="หน้าถัดไป">›</button><button type="button" id="zoom">🔍 ขยาย</button></div>
+  <button type="button" class="btn pri" id="dl">ขออนุญาตดาวน์โหลด</button>
+  <a class="btn" id="drive" target="_blank" rel="noopener" style="display:none;align-items:center;text-decoration:none">Drive (ผู้ดูแล)</a>
+</div>
+<div class="view" id="view"><div class="msg" id="msg">กำลังขอสิทธิ์อ่าน…</div></div>
+<div class="foot"><span>✓ เปิดได้เฉพาะผู้มีสิทธิ์คลังแบบ</span><span>✓ ลายน้ำชื่อผู้อ่านทุกหน้า</span><span>✓ ระบบบันทึกการเปิดอ่าน</span><span>ปุ่มลูกศรซ้าย/ขวาบนคีย์บอร์ดใช้เปลี่ยนหน้าได้</span></div>
+<div class="shield">ซ่อนเนื้อหาชั่วคราว · กลับมาที่หน้านี้เพื่ออ่านต่อ</div>
+<div class="modal" id="ack"><div class="box"><h2>เอกสารสงวนลิขสิทธิ์ กฟภ.</h2>
+<p>หนังสือนี้ให้อ่านเพื่อใช้ในงานของ กฟภ. เท่านั้น ห้ามบันทึก ถ่ายภาพหน้าจอ หรือเผยแพร่ต่อ ทุกหน้ามีลายน้ำชื่อของท่าน และระบบบันทึกการเปิดอ่านของท่านไว้</p>
+<button type="button" class="go" id="ackOk">รับทราบ และเปิดอ่าน</button></div></div>
+<div class="modal" id="req"><div class="box"><h2 id="reqH">ขออนุญาตดาวน์โหลดเล่มนี้</h2>
+<p id="reqP">ส่งคำขอถึงผู้ดูแลระบบ เมื่ออนุมัติแล้วปุ่มจะเปลี่ยนเป็น “ดาวน์โหลด PDF” ไฟล์ที่ได้มีชื่อผู้ขอและวันที่ทุกหน้า</p>
+<div id="reqForm" style="display:flex;flex-direction:column;gap:10px">
+<label for="reason" style="font-size:13px;color:var(--muted)">เหตุผล / นำไปใช้งาน</label><textarea id="reason" maxlength="300" placeholder="เช่น ใช้ประกอบการตรวจรับงานที่หน้างานไม่มีสัญญาณ"></textarea>
+<div class="row" id="days" role="group" aria-label="ระยะเวลา"><button type="button" data-d="7" aria-pressed="true">7 วัน</button><button type="button" data-d="30" aria-pressed="false">30 วัน</button><button type="button" data-d="0" aria-pressed="false">ถาวร</button></div>
+<button type="button" class="go" id="reqSend">ส่งคำขอถึงผู้ดูแล</button></div>
+<div class="st" id="reqSt"></div>
+<button type="button" class="sec" id="reqClose">ปิด</button></div></div>
+<script src="books-spec.js?v=20261016e"></script>
+<script>
+(function(){
+const GAS=localStorage.getItem("sld_gas_url")||"https://script.google.com/macros/s/AKfycbzqsOqJJQlF4SS1UX_YM6hmhd3lUXCVocAJiK7l28Tzddms9SQ9Z7p-iYgrrgd2B2meWw/exec";
+const LOCAL={2:"books2/",3:"books3/",26:"books26/"}, REMOTE="../pea-books/";
+const Q=new URLSearchParams(location.search), N=parseInt(Q.get("n"),10)||0;
+let P=Math.max(1,parseInt(Q.get("p"),10)||1), COUNT=0, BOOK=null, KEY=null, MINE=null, days=7, logT=null, loadTok=0;
+const $=id=>document.getElementById(id);
+const user=()=>localStorage.getItem("pea_aoluek_username")||"";
+const auth=()=>{try{return JSON.parse(localStorage.getItem("pea_hub_auth")||"null")||{};}catch(e){return {};}};
+const isAdmin=()=>auth().role==="admin";
+function api(o){return fetch(GAS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({changedBy:user(),changedByPassword:localStorage.getItem("pea_aoluek_password")||""},o))}).then(r=>r.json());}
+/* ---------- กันบันทึก/พิมพ์ (เท่าที่หน้าเว็บทำได้) ---------- */
+["contextmenu","dragstart","copy","cut"].forEach(ev=>document.addEventListener(ev,e=>{if(!e.target.closest("textarea"))e.preventDefault();}));
+document.addEventListener("keydown",e=>{const k=e.key.toLowerCase();
+  if((e.ctrlKey||e.metaKey)&&["s","p","c","u"].includes(k)){e.preventDefault();return;}
+  if(e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT")return;
+  if(e.key==="ArrowRight"||e.key==="PageDown")go(P+1); if(e.key==="ArrowLeft"||e.key==="PageUp")go(P-1);});
+const hide=h=>document.body.classList.toggle("hidden",h);
+document.addEventListener("visibilitychange",()=>hide(document.hidden));
+addEventListener("blur",()=>hide(true)); addEventListener("focus",()=>hide(false));
+addEventListener("beforeprint",()=>hide(true)); addEventListener("afterprint",()=>hide(false));
+/* ---------- ลายน้ำ ---------- */
+function wmText(){const d=new Date();return (user()||"ไม่ระบุชื่อ")+" · "+d.toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"2-digit"})+" "+d.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});}
+/* ---------- โหลดหน้า ---------- */
+async function decryptFile(url){
+  const ab=await fetch(url,{cache:"force-cache"}).then(r=>{if(!r.ok)throw new Error("ไม่พบหน้านี้");return r.arrayBuffer();});
+  const buf=new Uint8Array(ab), k=await crypto.subtle.importKey("raw",Uint8Array.from(atob(KEY),c=>c.charCodeAt(0)),"AES-GCM",false,["decrypt"]);
+  return new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM",iv:buf.slice(0,12)},k,buf.slice(12)));
+}
+const pageUrl=p=>(LOCAL[N]||REMOTE+N+"/")+String(p).padStart(3,"0")+".bin";
+async function pageBitmap(p){const b=await decryptFile(pageUrl(p));return await createImageBitmap(new Blob([b],{type:"image/jpeg"}));}
+async function show(){
+  const tok=++loadTok; $("pno").value=P; history.replaceState(null,"","?n="+N+"&p="+P);
+  const view=$("view"); view.innerHTML='<div class="msg">กำลังโหลดหน้า '+P+'…</div>';
+  try{
+    const bm=await pageBitmap(P); if(tok!==loadTok)return;
+    const pg=document.createElement("div"); pg.className="pg"+($("zoom").getAttribute("aria-pressed")==="true"?" zoom":"");
+    const cv=document.createElement("canvas"); cv.width=bm.width; cv.height=bm.height; cv.getContext("2d").drawImage(bm,0,0);
+    const wm=document.createElement("div"); wm.className="wm"; const t=wmText(); wm.innerHTML="<div>"+Array(24).fill("<span>"+t.replace(/</g,"&lt;")+"</span>").join("")+"</div>";
+    pg.append(cv,wm); view.innerHTML=""; view.append(pg); view.scrollTop=0;
+    clearTimeout(logT); logT=setTimeout(()=>api({action:"bookLog",book:N,page:P,kind:"read"}).catch(()=>{}),1500);
+    if(P<COUNT) pageBitmap(P+1).catch(()=>{});   /* โหลดหน้าถัดไปล่วงหน้า */
+  }catch(e){ if(tok===loadTok) view.innerHTML='<div class="msg">โหลดหน้าไม่ได้: '+e.message+'</div>'; }
+}
+function go(p){ if(!COUNT)return; p=Math.min(COUNT,Math.max(1,p)); if(p===P&&$("view").querySelector(".pg"))return; P=p; show(); }
+$("prev").onclick=()=>go(P-1); $("next").onclick=()=>go(P+1);
+$("pno").addEventListener("change",e=>go(parseInt(e.target.value,10)||1));
+$("zoom").onclick=e=>{const z=e.target.getAttribute("aria-pressed")!=="true";e.target.setAttribute("aria-pressed",z);e.target.textContent=z?"🔍 พอดีจอ":"🔍 ขยาย";const pg=document.querySelector(".pg");if(pg)pg.classList.toggle("zoom",z);};
+let sx=null; $("view").addEventListener("touchstart",e=>{sx=e.touches.length===1?e.touches[0].clientX:null;},{passive:true});
+$("view").addEventListener("touchend",e=>{if(sx===null||document.querySelector(".pg.zoom"))return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>70)go(P+(dx<0?1:-1));sx=null;});
+/* ---------- คำขอดาวน์โหลด ---------- */
+function dlButton(){
+  const b=$("dl"); const m=MINE&&MINE[N];
+  if(isAdmin()||(m&&m.status==="approved")){b.className="btn ok";b.textContent="ดาวน์โหลด PDF"+(m&&m.expires&&m.expires!=="ถาวร"?" (ถึง "+m.expires.slice(0,10)+")":"");b.dataset.mode="dl";return;}
+  b.className="btn pri";b.dataset.mode="req";
+  b.textContent=m&&m.status==="pending"?"รอผู้ดูแลอนุมัติ…":m&&m.status==="denied"?"ไม่อนุมัติ · ขอใหม่":m&&(m.status==="expired"||m.status==="revoked")?"สิทธิ์หมดแล้ว · ขอใหม่":"ขออนุญาตดาวน์โหลด";
+}
+function openReq(){
+  const m=MINE&&MINE[N]; $("reqSt").textContent="";
+  if(m&&m.status==="pending"){ $("reqForm").style.display="none"; $("reqP").textContent="ส่งคำขอไปแล้วเมื่อ "+m.at+" กำลังรอผู้ดูแลอนุมัติ"; }
+  else { $("reqForm").style.display="flex"; $("reqP").textContent="ส่งคำขอถึงผู้ดูแลระบบ เมื่ออนุมัติแล้วปุ่มจะเปลี่ยนเป็น “ดาวน์โหลด PDF” ไฟล์ที่ได้มีชื่อผู้ขอและวันที่ทุกหน้า"; }
+  $("req").classList.add("on");
+}
+$("days").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;days=+b.dataset.d;[...$("days").children].forEach(x=>x.setAttribute("aria-pressed",x===b));});
+$("reqClose").onclick=()=>$("req").classList.remove("on");
+$("reqSend").onclick=async()=>{const r=$("reason").value.trim(); if(!r){$("reqSt").textContent="กรุณาระบุเหตุผล";return;}
+  $("reqSt").textContent="กำลังส่ง…";
+  try{const x=await api({action:"bookDlRequest",book:N,title:BOOK?BOOK.t:"",reason:r,days});
+    if(!x.ok)throw new Error(x.error||"ส่งไม่สำเร็จ"); $("reqSt").textContent="ส่งคำขอแล้ว รอผู้ดูแลอนุมัติ";
+    MINE=MINE||{}; MINE[N]={status:"pending",at:"เมื่อสักครู่"}; dlButton(); $("reqForm").style.display="none";
+  }catch(e){$("reqSt").textContent="ส่งไม่สำเร็จ: "+e.message;}};
+$("dl").onclick=()=>{ if($("dl").dataset.mode==="dl") buildPdf(); else openReq(); };
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>no(new Error("โหลดตัวสร้าง PDF ไม่ได้"));document.head.appendChild(s);});}
+async function buildPdf(){
+  const b=$("dl"), old=b.textContent; b.disabled=true;
+  try{
+    const ok=await api({action:"bookLog",book:N,page:0,kind:"download"}); if(!ok.ok) throw new Error(ok.error||"ไม่ได้รับอนุญาต");
+    if(!window.jspdf) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+    const {jsPDF}=window.jspdf; let doc=null; const stamp="ดาวน์โหลดโดย "+wmText()+" · สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่";
+    for(let p=1;p<=COUNT;p++){
+      b.textContent="กำลังสร้าง PDF "+p+"/"+COUNT;
+      const bm=await pageBitmap(p), cv=document.createElement("canvas"); cv.width=bm.width; cv.height=bm.height;
+      const c=cv.getContext("2d"); c.drawImage(bm,0,0);
+      c.save(); c.globalAlpha=.12; c.fillStyle="#7a1e6b"; c.font="bold "+Math.round(bm.width/34)+"px 'IBM Plex Sans Thai',sans-serif";
+      c.translate(bm.width/2,bm.height/2); c.rotate(-0.49); for(let y=-bm.height;y<bm.height;y+=bm.width/5) c.fillText(stamp.split(" · ")[0].replace("ดาวน์โหลดโดย ",""),-bm.width*.6,y);
+      c.restore(); c.globalAlpha=.85; c.fillStyle="#7a1e6b"; c.font=Math.round(bm.width/70)+"px 'IBM Plex Sans Thai',sans-serif"; c.fillText(stamp,bm.width*.03,bm.height-bm.width*.02);
+      const o=bm.width>bm.height?"l":"p";
+      if(!doc) doc=new jsPDF({orientation:o,unit:"px",format:[bm.width,bm.height],compress:true}); else doc.addPage([bm.width,bm.height],o);
+      doc.addImage(cv.toDataURL("image/jpeg",.7),"JPEG",0,0,bm.width,bm.height);
+    }
+    doc.save(String(N).padStart(2,"0")+" "+(BOOK?BOOK.t:"หนังสือ").slice(0,80)+".pdf");
+  }catch(e){ alert("ดาวน์โหลดไม่สำเร็จ: "+e.message); }
+  b.disabled=false; b.textContent=old;
+}
+/* ---------- เริ่ม ---------- */
+async function start(){
+  if(!N){$("msg").textContent="ไม่ได้ระบุเล่ม";return;}
+  const books=await fetch("books.json",{cache:"no-cache"}).then(r=>r.json());
+  BOOK=books.find(b=>b.n===N); $("ttl").textContent=BOOK?BOOK.t+" ("+BOOK.y+")":"เล่ม "+N; document.title=($("ttl").textContent)+" · อ่านหนังสือ";
+  if(isAdmin()&&BOOK&&BOOK.id){const a=$("drive");a.href="https://drive.google.com/file/d/"+BOOK.id+"/view";a.style.display="inline-flex";}
+  const counts=await fetch(REMOTE+"pages.json",{cache:"no-cache"}).then(r=>r.json()).catch(()=>({}));
+  COUNT=counts[N]||0; $("pcount").textContent="/ "+(COUNT||"–");
+  if(!COUNT){$("msg").textContent="เล่มนี้ยังไม่พร้อมให้อ่านในเว็บ";return;}
+  try{KEY=await PEASpec.key();}catch(e){$("msg").textContent="ยังไม่ได้รับสิทธิ์อ่าน: "+e.message;return;}
+  P=Math.min(P,COUNT);
+  const go2=()=>{ $("ack").classList.remove("on"); show(); };
+  if(sessionStorage.getItem("pea_book_ack")) go2(); else { $("ack").classList.add("on"); $("ackOk").onclick=()=>{try{sessionStorage.setItem("pea_book_ack","1");}catch(e){} go2();}; }
+  dlButton(); api({action:"bookDlMine"}).then(r=>{if(r&&r.ok){MINE=r.mine;dlButton();}}).catch(()=>{});
+}
+start();
+})();
+</script>
+</body></html>

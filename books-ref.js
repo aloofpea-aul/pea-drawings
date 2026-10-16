@@ -1,7 +1,7 @@
 /* books-ref.js — กล่อง "หนังสืออ้างอิง" ท้ายหน้าแบบ: หาหมวดของแบบจากเลขแบบในชื่อหน้า แล้วแสดงหนังสือที่เกี่ยวข้อง */
 (function(){
   /* สเปกจากคู่มืออุปกรณ์ 2565 ในป๊อปอัปรายการวัสดุ */
-  var sp=document.createElement('script'); sp.src='../books-spec.js?v=20261016d'; sp.defer=true; document.head.appendChild(sp);
+  var sp=document.createElement('script'); sp.src='../books-spec.js?v=20261016e'; sp.defer=true; document.head.appendChild(sp);
   /* หัวข้อตรวจงานที่อ้างอิงแบบนี้ (จากคู่มือตรวจสอบมาตรฐานงานก่อสร้างฯ หน้า 6–7) */
   var im=(document.title||'').match(/^\s*([0-9]{4})(?: ?([A-Za-z])(?![A-Za-z]))?/);
   if(im){ var dn=im[1]+(im[2]||'').toUpperCase();

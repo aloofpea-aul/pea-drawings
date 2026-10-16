@@ -126,10 +126,10 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <div class="legend"><span><i style="background:var(--r)"></i>สงวนลิขสิทธิ์ ห้ามเผยแพร่</span><span><i style="background:var(--c)"></i>เอกสารควบคุม ใช้ภายใน</span><span><i style="background:var(--p)"></i>เผยแพร่ได้</span></div>
 <div class="grid" id="grid"></div>
 </div>
-<div class="foot">ไฟล์ทุกเล่มเก็บใน Google Drive แบบจำกัดสิทธิ์ ถ้ายังไม่ได้รับแชร์ Google จะให้กด “ขอสิทธิ์เข้าถึง” แล้วรอผู้ดูแลอนุมัติ · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
+<div class="foot">ทุกเล่มอ่านในเว็บได้ด้วยบัญชีศูนย์รวมงาน (สิทธิ์คลังแบบ) · อ่านได้อย่างเดียว ดาวน์โหลดต้องขออนุญาตผู้ดูแล · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
-<script src="books-spec.js?v=20261016d"></script>
+<script src="books-spec.js?v=20261016e"></script>
 <script>
 const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
 const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
@@ -149,6 +149,7 @@ function render(){
   const cnt={};B.forEach(b=>cnt[b.c]=(cnt[b.c]||0)+1);
   document.getElementById("cats").innerHTML=[["","ทั้งหมด",B.length]].concat(CATS.map(c=>[c,c,cnt[c]||0])).map(([k,l,n])=>`<button type="button" data-k="${esc(k)}" aria-pressed="${k===cat}">${esc(l)}<span class="n">${n}</span></button>`).join("");
 }
+const ISADMIN=()=>{try{return (JSON.parse(localStorage.getItem("pea_hub_auth")||"null")||{}).role==="admin";}catch(e){return false;}};
 function openBook(n){
   const b=B.find(x=>x.n==n); if(!b) return;
   const url=b.id?`https://drive.google.com/file/d/${b.id}/view`:"";
@@ -156,7 +157,7 @@ function openBook(n){
    <div class="meta">${esc(b.o)} · ที่มา: Happy Pole</div><div class="badge L-${b.l}" style="${b.l==="R"?"color:var(--r);background:var(--r-bg)":b.l==="C"?"color:var(--c);background:var(--c-bg)":"color:var(--p);background:var(--p-bg)"}">${LIC[b.l]}</div>
    ${b.r.length?`<div class="meta" style="margin-top:4px">แบบที่เกี่ยวข้องในคลัง</div><ul>${b.r.map(c=>`<li><a href="index.html#s-${c}">${c} ${esc(SER[c]||"")}</a></li>`).join("")}</ul>`:""}
    ${[2,3,26].includes(b.n)?`<button class="go" type="button" style="border:0;width:100%;cursor:pointer;margin-bottom:8px;background:#7a1e6b" onclick="document.getElementById('dlg').close();sBook='${b.n}';sCur=null;setMode('S')">ดูรายการอุปกรณ์ในเล่ม (ค้นด้วยชื่อ/เลขวัสดุ)</button>`:""}
-   ${url?`<a class="go" href="${url}" target="_blank" rel="noopener">เปิดอ่านใน Google Drive</a><div class="hint">ยังไม่ได้รับแชร์? Google จะให้กด “ขอสิทธิ์เข้าถึง”</div>`:`<div class="hint">ไฟล์เล่มนี้เสียที่ต้นทาง (Happy Pole) ยังดาวน์โหลดไม่ได้</div>`}
+   ${url?`<a class="go" href="reader.html?n=${b.n}">อ่านในเว็บ</a><div class="hint">อ่านได้อย่างเดียว · ดาวน์โหลดต้องขออนุญาตจากผู้ดูแลในหน้าอ่าน</div>${ISADMIN()?`<div class="hint"><a href="${url}" target="_blank" rel="noopener">เปิดใน Google Drive (เฉพาะผู้ดูแล)</a></div>`:""}`:`<div class="hint">ไฟล์เล่มนี้เสียที่ต้นทาง (Happy Pole) ยังดาวน์โหลดไม่ได้</div>`}
    <button class="close" type="button" onclick="document.getElementById('dlg').close()">ปิด</button>`;
   const d=document.getElementById("dlg"); d.showModal();
 }
@@ -215,7 +216,7 @@ function specShow(it){
   ${it.k==2&&!lnk.length?"":`<div class="lab">เปิดแบบในคลังที่ใช้ชิ้นนี้</div><div class="btns">${lnk.filter(x=>x.f).map(x=>`<a href="d/${esc(x.f)}">${esc(x.l)} →</a>`).join("")}
    ${it.d.filter(x=>!x[1]).map(x=>`<span>${esc(x[0])} (ชุดเก่า ยังไม่มีในคลัง)</span>`).join("")}${!lnk.length?`<span>คู่มือไม่ได้ระบุแบบ และไม่พบเลขวัสดุนี้ในแบบในคลัง</span>`:""}</div>`}
   ${it.nt?`<div class="lab">หมายเหตุการถอดข้อมูล: ${esc(it.nt)}</div>`:""}
-  <div class="lab"><a href="https://drive.google.com/file/d/${BKN(it).id}/view" target="_blank" rel="noopener">เปิดคู่มือทั้งเล่มใน Drive</a></div></div></div>`;
+  <div class="lab"><a href="reader.html?n=${it.k||3}&p=${it.p}">อ่านคู่มือเล่มนี้ต่อจากหน้านี้</a></div></div></div>`;
   box.classList.add("open"); box.scrollTop=0;
   box.querySelector(".x").onclick=()=>box.classList.remove("open");
   if(!PEASpec.page){document.getElementById("spcap").textContent="หน้านี้ยังเป็นรุ่นเก่า กด Ctrl+F5 เพื่อโหลดใหม่";return;}
@@ -264,7 +265,7 @@ async function fullSearch(q){
   st.textContent=hits.length?`พบ ${hits.length} หน้า ใน ${books.size} เล่ม`+(hits.length>150?" (แสดง 150 หน้าแรกที่ตรงที่สุด)":""):"ไม่พบคำนี้ในเนื้อหา ลองคำที่สั้นลง หรือสะกดแบบอื่น";
   box.innerHTML=hits.slice(0,150).map(([sc,x])=>{const b=B.find(y=>y.n===x.n)||{t:"เล่ม "+x.n,y:""};
     return `<div class="hit"><div class="bk">${esc(b.t)} <span class="meta">(${esc(b.y)})</span></div><div class="pg">หน้า ${x.p} ของไฟล์ PDF · พบ ${sc} ครั้ง</div>
-    <div class="sn">${snippet(x.t,toks[0])}</div><div class="act">${b.id?`<a href="https://drive.google.com/file/d/${b.id}/view" target="_blank" rel="noopener">เปิดเล่มใน Drive (ดูหน้า ${x.p})</a>`:""}<button type="button" data-n="${x.n}">รายละเอียดเล่ม</button></div></div>`;}).join("");
+    <div class="sn">${snippet(x.t,toks[0])}</div><div class="act">${b.id?`<a href="reader.html?n=${x.n}&p=${x.p}">อ่านหน้า ${x.p}</a>`:""}<button type="button" data-n="${x.n}">รายละเอียดเล่ม</button></div></div>`;}).join("");
 }
 document.getElementById("fform").addEventListener("submit",e=>{e.preventDefault();fullSearch(document.getElementById("fq").value.trim());});
 document.getElementById("fres").addEventListener("click",e=>{const b=e.target.closest("button[data-n]");if(b)openBook(b.dataset.n);});

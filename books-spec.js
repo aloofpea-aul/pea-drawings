@@ -72,7 +72,7 @@
       +((it.b||[]).filter(function(x){return x[1]!==here;}).length?'<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="font-size:12px;color:#5a6573">แบบอื่นที่ใช้เลขวัสดุนี้:</span>'
         +it.b.filter(function(x){return x[1]!==here;}).slice(0,6).map(function(x){return '<a href="'+esc(x[1])+'" style="font-size:13px;padding:3px 10px;border-radius:14px;background:#fff;border:1px solid #cdd4dc;text-decoration:none;color:#245f93">'+esc(x[0])+'</a>';}).join("")+'</div>':"")
       +'<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px">'
-      +'<a href="https://drive.google.com/file/d/'+bk.id+'/view" target="_blank" rel="noopener" style="color:#245f93">เปิดคู่มือใน Drive (ดู'+(it.bp?'หน้า '+esc(it.bp):'PDF หน้า '+it.p)+')</a>'
+      +'<a href="../reader.html?n='+(it.k||3)+'&p='+it.p+'" style="color:#245f93">อ่านคู่มือ'+(it.bp?' หน้า '+esc(it.bp):' PDF หน้า '+it.p)+'</a>'
       +'<a href="../books.html?spec='+encodeURIComponent(mat)+'" style="color:#245f93">รายการอุปกรณ์ทั้งเล่ม</a></div></div>';
   }
   function matsIn(){

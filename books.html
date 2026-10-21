@@ -129,7 +129,7 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <div class="foot">ทุกเล่มอ่านในเว็บได้ด้วยบัญชีศูนย์รวมงาน (สิทธิ์คลังแบบ) · อ่านได้อย่างเดียว ดาวน์โหลดต้องขออนุญาตผู้ดูแล · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
-<script src="books-spec.js?v=20261016e"></script>
+<script src="books-spec.js?v=20261021a"></script>
 <script>
 const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
 const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
@@ -139,13 +139,13 @@ const norm=s=>String(s).toLowerCase().replace(/\s+/g," ").trim();
 let B=[],cat="",q="";
 function relText(b){return b.r.map(c=>SER[c]?SER[c]:c);}
 function render(){
-  const toks=norm(q).split(" ").filter(Boolean);
-  const v=B.filter(b=>(!cat||b.c===cat)&&toks.every(t=>b._q.includes(t)));
+  const toks=qToks(q);
+  const v=B.filter(b=>(!cat||b.c===cat)&&qHit(b._z,toks));
   document.getElementById("cnt").textContent=v.length+" เล่ม";
   document.getElementById("grid").innerHTML=v.map(b=>`<button class="card L-${b.l}${b.id?"":" missing"}" data-n="${b.n}" type="button"><div class="spine"></div><div class="body">
     <div class="meta">${esc(b.c)} · ${esc(b.y)}</div><div class="t">${esc(b.t)}</div><div class="meta">${esc(b.o)}</div>
     <div class="badge">${b.id?LIC[b.l]:"ยังไม่มีไฟล์ (ต้นทางเสีย)"}</div>
-    ${b.r.length?`<div class="rel">แบบที่เกี่ยวข้อง: ${esc(relText(b).slice(0,2).join(", "))}${b.r.length>2?" …":""}</div>`:""}</div></button>`).join("")||`<div class="empty">ไม่พบหนังสือที่ตรงกับคำค้น</div>`;
+    ${b.r.length?`<div class="rel">แบบที่เกี่ยวข้อง: ${esc(relText(b).slice(0,2).join(", "))}${b.r.length>2?" …":""}</div>`:""}</div></button>`).join("")||`<div class="empty">ไม่พบชื่อเล่มที่ตรงกับคำค้น${q.trim()?`<br><button type="button" class="tofull" style="margin-top:10px;font:inherit;padding:8px 14px;border-radius:10px;border:1px solid #c9d2dd;background:#fff;cursor:pointer">ค้น “${esc(q.trim())}” ในเนื้อหาหนังสือทุกเล่ม</button>`:""}</div>`;
   const cnt={};B.forEach(b=>cnt[b.c]=(cnt[b.c]||0)+1);
   document.getElementById("cats").innerHTML=[["","ทั้งหมด",B.length]].concat(CATS.map(c=>[c,c,cnt[c]||0])).map(([k,l,n])=>`<button type="button" data-k="${esc(k)}" aria-pressed="${k===cat}">${esc(l)}<span class="n">${n}</span></button>`).join("");
 }
@@ -161,14 +161,31 @@ function openBook(n){
    <button class="close" type="button" onclick="document.getElementById('dlg').close()">ปิด</button>`;
   const d=document.getElementById("dlg"); d.showModal();
 }
-document.getElementById("grid").addEventListener("click",e=>{const c=e.target.closest(".card");if(c)openBook(c.dataset.n);});
+document.getElementById("grid").addEventListener("click",e=>{const c=e.target.closest(".card");if(c)openBook(c.dataset.n);
+  if(e.target.closest(".tofull")){setMode("F");document.getElementById("fq").value=q.trim();fullSearch(q.trim());}});
 document.getElementById("cats").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cat=b.dataset.k;render();});
 let tm;document.getElementById("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{q=e.target.value;render();},120);});
 document.getElementById("dlg").addEventListener("click",e=>{if(e.target.id==="dlg")e.target.close();});
 /* ---------- ค้นในเนื้อหา: ดัชนีเข้ารหัส ขอกุญแจจากหลังบ้านเฉพาะผู้มีสิทธิ์ ---------- */
 const GAS=localStorage.getItem("sld_gas_url")||"https://script.google.com/macros/s/AKfycbzqsOqJJQlF4SS1UX_YM6hmhd3lUXCVocAJiK7l28Tzddms9SQ9Z7p-iYgrrgd2B2meWw/exec";
-let IDX=null, loading=null;
+let IDX=null, loading=null, IDXQUIET=false;
 const nz=s=>String(s).toLowerCase().replace(/\u0e4d\u0e32/g,"\u0e33").replace(/[\u0e47-\u0e4e]/g,"").replace(/\s+/g,"");
+/* คำพ้อง ไทย/อังกฤษ/ตัวย่อ — พิมพ์คำไหนก็เจอทั้งกลุ่ม (เทียบแบบตัดวรรณยุกต์/ช่องว่าง เพราะข้อความที่อ่านจาก PDF มักไม่มีวรรณยุกต์) */
+const SYN=[["สายดิน","ground wire","grounding","earthing"],["หลักดิน","ground rod","แท่งกราวด์"],["ความต้านทานดิน","ground resistance","ค่าความต้านทานดิน"],
+ ["หม้อแปลง","transformer","หม้อแปลงไฟฟ้า"],["ลูกถ้วย","insulator","ฉนวน"],["คอน","crossarm","cross arm","คอนคอนกรีต"],["เสา","pole","เสาไฟ"],
+ ["ล่อฟ้า","arrester","กับดักเสิร์จ","surge arrester","lightning arrester"],["ฟิวส์","fuse","ดร็อปเอาท์","dropout","cutout","คัตเอาท์"],
+ ["มิเตอร์","meter","มาตรวัด"],["เคเบิลใต้ดิน","underground cable","สายใต้ดิน","underground"],["ระยะห่าง","clearance","ระยะปลอดภัย"],
+ ["รีโคลสเซอร์","recloser"],["สวิตช์","switch","สวิทช์","สวิตซ์"],["คาปาซิเตอร์","capacitor","ตัวเก็บประจุ"],["โอห์ม","ohm","Ω"],
+ ["สายส่ง","transmission line"],["สายเคเบิล","cable"],["ตัวนำ","conductor"],["พาดสาย","สายสื่อสาร","communication cable"],
+ ["ชิงเกิลเฟส","single phase","1 เฟส"],["สามเฟส","three phase","3 เฟส"],["แรงต่ำ","low voltage","lv"],["แรงสูง","high voltage","hv"],
+ ["สเตย์","stay","guy","ยึดโยง"],["คอนเนคเตอร์","connector","ข้อต่อสาย","หัวต่อ"],["ตู้","cabinet"],["ล่อฟ้าแรงต่ำ","lv arrester"]
+].map(g=>g.map(nz));
+/* แปลงคำค้นเป็นกลุ่มคำ: แต่ละคำ (คั่นด้วยวรรค) ต้องเจออย่างน้อยหนึ่งคำในกลุ่มคำพ้องของมัน */
+function qToks(q){
+  const words=String(q).trim().split(/\s+/).filter(Boolean).map(nz).filter(Boolean);
+  return words.map(w=>{const al=new Set([w]);SYN.forEach(g=>{if(g.some(x=>x===w||(w.length>=4&&x.startsWith(w))))g.forEach(x=>al.add(x));});return [...al];});
+}
+const qHit=(z,toks)=>toks.every(al=>al.some(a=>z.includes(a)));
 function setMode(m){m=m===true?"F":m===false?"T":m;
   ["T","F","S"].forEach(k=>document.getElementById("m"+k).setAttribute("aria-pressed",k===m));
   document.getElementById("full").style.display=m==="F"?"block":"none";document.getElementById("spec").style.display=m==="S"?"block":"none";
@@ -185,12 +202,19 @@ async function specOpen(){
     try{SPEC=await PEASpec.load();SPEC.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.c||"",it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));}
     catch(e){st.textContent="เปิดรายการอุปกรณ์ไม่ได้: "+e.message;return;}}
   specRender();
-  if(!Object.keys(THB).length&&PEASpec.thumbs) PEASpec.thumbs().then(t=>{THB=t;specRender();}).catch(()=>{});
+  loadThumbs();
 }
-let THB={},sCur=null,sV=[];
+let THB={},sCur=null,sV=[],THL={};
+/* รูปย่อโหลดทีละเล่ม: เล่มที่เลือกก่อน แล้วค่อยเล่มอื่น (เล่ม 2 ไฟล์ใหญ่สุดไว้ท้าย) */
+function loadThumbs(){
+  if(!PEASpec.thumbs) return;
+  const order=(sBook?[sBook]:[]).concat(["3","26","2"]).filter((k,i,a)=>a.indexOf(k)===i);
+  order.reduce((p,k)=>p.then(()=>{ if(THL[k]) return; THL[k]=1;
+    return PEASpec.thumbs(k).then(t=>{Object.assign(THB,t);if(SPEC)specRender();}).catch(()=>{delete THL[k];}); }),Promise.resolve());
+}
 function specRender(){
-  const raw=document.getElementById("sq").value.trim(), toks=raw.split(/\s+/).map(nz).filter(Boolean);
-  sV=SPEC.items.filter(it=>(!sBook||String(it.k)===sBook)&&toks.every(t=>it._z.includes(t)));
+  const raw=document.getElementById("sq").value.trim(), toks=qToks(raw);
+  sV=SPEC.items.filter(it=>(!sBook||String(it.k)===sBook)&&qHit(it._z,toks));
   const bks=SPEC.books||{};document.getElementById("sbk").innerHTML=[["","ทั้งหมด",SPEC.items.length]].concat(Object.keys(bks).map(k=>[k,bks[k].short,SPEC.items.filter(i=>String(i.k)===k).length])).map(([k,l,n])=>`<button type="button" data-k="${k}" aria-pressed="${k===sBook}">${esc(l)}<span class="n">${n}</span></button>`).join("");
   document.getElementById("sstat").textContent=(toks.length?`พบ ${sV.length} จาก `:"")+`${SPEC.items.length} รายการ · กดรายการเพื่อดูหน้าคู่มือและเปิดแบบที่ใช้`;
   const nl=it=>(it.d.filter(x=>x[1]).length+(it.b||[]).length);
@@ -223,7 +247,7 @@ function specShow(it){
   PEASpec.page(it.k||3,it.p).then(u=>{if(sCur!==it)return;const im=document.getElementById("spimg");im.src=u;document.getElementById("spcap").textContent="หน้า "+(it.bp||it.p)+" จากคู่มือ · กดรูปเพื่อขยายเต็มจอ";
     im.onclick=()=>{const lb=document.getElementById("lb");lb.querySelector("img").src=u;lb.style.display="block";};}).catch(e=>{document.getElementById("spcap").textContent="โหลดหน้าคู่มือไม่ได้: "+e.message;});
 }
-document.getElementById("sbk").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;sBook=b.dataset.k;sCur=null;specRender();});
+document.getElementById("sbk").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;sBook=b.dataset.k;sCur=null;specRender();loadThumbs();});
 document.getElementById("slist").addEventListener("click",e=>{const b=e.target.closest(".si");if(b)specShow(SPEC.items[b.dataset.i]);});
 document.getElementById("lb").addEventListener("click",e=>{if(e.target.tagName!=="IMG")e.currentTarget.style.display="none";});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("lb").style.display="none";});
@@ -232,11 +256,9 @@ async function loadIndex(){
   if(IDX) return IDX; if(loading) return loading;
   loading=(async()=>{
     const st=document.getElementById("fstat");
-    st.textContent="กำลังขอสิทธิ์ค้นเนื้อหา…";
-    const name=localStorage.getItem("pea_aoluek_username")||"", pass=localStorage.getItem("pea_aoluek_password")||"";
-    const r=await fetch(GAS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"booksKey",changedBy:name,changedByPassword:pass})}).then(x=>x.json());
-    if(!r||!r.ok||!r.key) throw new Error((r&&(r.error||r.message))||"ไม่ได้รับสิทธิ์ค้นเนื้อหา");
-    st.textContent="กำลังโหลดดัชนี (ครั้งแรกประมาณ 10–20 MB)…";
+    if(!IDXQUIET) st.textContent="กำลังขอสิทธิ์ค้นเนื้อหา…";
+    const r={key:await PEASpec.key()};   // ใช้กุญแจที่จำไว้ในเครื่อง 7 วัน ไม่ต้องถามหลังบ้านทุกครั้ง
+    if(!IDXQUIET) st.textContent="กำลังโหลดดัชนีเนื้อหา (ครั้งแรกประมาณ 4 MB ครั้งต่อไปใช้ของในเครื่อง)…";
     const buf=new Uint8Array(await fetch("books-index.bin",{cache:"force-cache"}).then(x=>{if(!x.ok)throw new Error("ยังไม่มีไฟล์ดัชนี");return x.arrayBuffer();}));
     const k=await crypto.subtle.importKey("raw",Uint8Array.from(atob(r.key),c=>c.charCodeAt(0)),"AES-GCM",false,["decrypt"]);
     const gz=await crypto.subtle.decrypt({name:"AES-GCM",iv:buf.slice(0,12)},k,buf.slice(12));
@@ -255,23 +277,30 @@ function snippet(t,tok){
   return (a>0?"…":"")+esc(t.slice(a,s0))+"<mark>"+esc(t.slice(s0,s1))+"</mark>"+esc(t.slice(s1,b))+(b<t.length?"…":"");
 }
 async function fullSearch(q){
+  IDXQUIET=false;
   const st=document.getElementById("fstat"), box=document.getElementById("fres");
-  const toks=q.split(/\s+/).map(nz).filter(Boolean); if(!toks.length){box.innerHTML="";return;}
+  const toks=qToks(q); if(!toks.length){box.innerHTML="";st.textContent="";return;}
   let idx; try{idx=await loadIndex();}catch(e){st.textContent="ค้นเนื้อหาไม่ได้: "+e.message;return;}
   const hits=[];
-  for(const x of idx){ if(toks.every(t=>x.z.includes(t))){ let sc=0; toks.forEach(t=>{let i=-1;while((i=x.z.indexOf(t,i+1))>=0)sc++;}); hits.push([sc,x]); } }
+  for(const x of idx){ if(qHit(x.z,toks)){ let sc=0; toks.forEach(al=>al.forEach(t=>{let i=-1;while((i=x.z.indexOf(t,i+1))>=0)sc++;})); hits.push([sc,x]); } }
   hits.sort((a,b)=>b[0]-a[0]);
   const books=new Set(hits.map(h=>h[1].n));
   st.textContent=hits.length?`พบ ${hits.length} หน้า ใน ${books.size} เล่ม`+(hits.length>150?" (แสดง 150 หน้าแรกที่ตรงที่สุด)":""):"ไม่พบคำนี้ในเนื้อหา ลองคำที่สั้นลง หรือสะกดแบบอื่น";
   box.innerHTML=hits.slice(0,150).map(([sc,x])=>{const b=B.find(y=>y.n===x.n)||{t:"เล่ม "+x.n,y:""};
     return `<div class="hit"><div class="bk">${esc(b.t)} <span class="meta">(${esc(b.y)})</span></div><div class="pg">หน้า ${x.p} ของไฟล์ PDF · พบ ${sc} ครั้ง</div>
-    <div class="sn">${snippet(x.t,toks[0])}</div><div class="act">${b.id?`<a href="reader.html?n=${x.n}&p=${x.p}">อ่านหน้า ${x.p}</a>`:""}<button type="button" data-n="${x.n}">รายละเอียดเล่ม</button></div></div>`;}).join("");
+    <div class="sn">${snippet(x.t,toks[0].find(t=>x.z.includes(t))||toks[0][0])}</div><div class="act">${b.id?`<a href="reader.html?n=${x.n}&p=${x.p}">อ่านหน้า ${x.p}</a>`:""}<button type="button" data-n="${x.n}">รายละเอียดเล่ม</button></div></div>`;}).join("");
 }
 document.getElementById("fform").addEventListener("submit",e=>{e.preventDefault();fullSearch(document.getElementById("fq").value.trim());});
+/* พิมพ์แล้วค้นเลย ไม่ต้องกดปุ่ม (เมื่อดัชนีพร้อมแล้ว) */
+let ftm;document.getElementById("fq").addEventListener("input",e=>{clearTimeout(ftm);const v=e.target.value.trim();ftm=setTimeout(()=>{if(IDX&&(nz(v).length>=2||!v))fullSearch(v);},250);});
 document.getElementById("fres").addEventListener("click",e=>{const b=e.target.closest("button[data-n]");if(b)openBook(b.dataset.n);});
-fetch("books.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{B=d.map(b=>Object.assign(b,{_q:norm([b.t,b.o,b.c,b.y,b.n,relText(b).join(" "),b.r.join(" ")].join(" "))}));
+fetch("books.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{B=d.map(b=>Object.assign(b,{_z:nz([b.t,b.o,b.c,b.y,b.n,relText(b).join(" "),b.r.join(" ")].join(" "))}));
   const p=new URLSearchParams(location.search); if(p.get("q")){q=p.get("q");document.getElementById("q").value=q;}
   render(); if(p.get("n")) openBook(p.get("n")); if(p.get("spec")){sHL=p.get("spec");document.getElementById("sq").value=sHL;setMode("S");specOpen().then(()=>{const it=SPEC&&SPEC.items.find(x=>x.rows.some(r=>r[2]===sHL));if(it)specShow(it);});}
+  /* โหลดล่วงหน้าตอนว่าง (เฉพาะผู้ที่เข้าระบบแล้ว) — กดค้นเนื้อหา/รายการอุปกรณ์แล้วขึ้นทันที */
+  if(localStorage.getItem("pea_aoluek_username")) (window.requestIdleCallback||setTimeout)(()=>{
+    PEASpec.load().catch(()=>{}); IDXQUIET=true; loadIndex().then(()=>{IDXQUIET=false;const st=document.getElementById("fstat");if(!document.getElementById("fres").innerHTML)st.textContent="พร้อมค้นข้อความในหนังสือทุกเล่ม — พิมพ์แล้วผลขึ้นทันที";}).catch(()=>{IDXQUIET=false;});
+  },{timeout:2500});
   if(p.get("fq")){setMode(true);document.getElementById("fq").value=p.get("fq");fullSearch(p.get("fq"));}});
 </script>
 <a href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a>

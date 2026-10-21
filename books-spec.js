@@ -37,8 +37,9 @@
       return crypto.subtle.importKey("raw",Uint8Array.from(atob(k),function(c){return c.charCodeAt(0);}),"AES-GCM",false,["decrypt"])
         .then(function(ck){return crypto.subtle.decrypt({name:"AES-GCM",iv:buf.slice(0,12)},ck,buf.slice(12));});});
   }
-  var thP=null, pgC={};
-  function thumbs(){ if(!thP){thP=key().then(function(k){return raw("books-spec-th.bin",k);}).then(function(b){return JSON.parse(new TextDecoder().decode(b));});thP.catch(function(){thP=null;});} return thP; }
+  var thP={}, pgC={};
+  /* รูปย่อแยกไฟล์ตามเล่ม (เล่ม 2 ใหญ่สุด ~3 MB) — โหลดเฉพาะเล่มที่ต้องใช้ */
+  function thumbs(bk){ if(bk===undefined) bk=3; if(!thP[bk]){thP[bk]=key().then(function(k){return raw("books-spec-th-"+bk+".bin",k,"force-cache");}).then(function(b){return JSON.parse(new TextDecoder().decode(b));});thP[bk].catch(function(){delete thP[bk];});} return thP[bk]; }
   function page(bk,n){ if(n===undefined){n=bk;bk=3;} var id=bk+"-"+n; if(!pgC[id]){pgC[id]=key().then(function(k){return raw("books"+bk+"/"+String(n).padStart(3,"0")+".bin",k,"force-cache");})
       .then(function(b){return URL.createObjectURL(new Blob([b],{type:"image/jpeg"}));});pgC[id].catch(function(){delete pgC[id];});} return pgC[id]; }
   function load(){

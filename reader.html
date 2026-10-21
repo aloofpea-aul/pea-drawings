@@ -64,7 +64,7 @@ body.hidden .shield{display:flex}
 <button type="button" class="go" id="reqSend">ส่งคำขอถึงผู้ดูแล</button></div>
 <div class="st" id="reqSt"></div>
 <button type="button" class="sec" id="reqClose">ปิด</button></div></div>
-<script src="books-spec.js?v=20261021a"></script>
+<script src="books-spec.js?v=20261021b"></script>
 <script>
 (function(){
 const GAS=localStorage.getItem("sld_gas_url")||"https://script.google.com/macros/s/AKfycbzqsOqJJQlF4SS1UX_YM6hmhd3lUXCVocAJiK7l28Tzddms9SQ9Z7p-iYgrrgd2B2meWw/exec";
@@ -106,6 +106,7 @@ async function show(){
     const wm=document.createElement("div"); wm.className="wm"; const t=wmText(); wm.innerHTML="<div>"+Array(24).fill("<span>"+t.replace(/</g,"&lt;")+"</span>").join("")+"</div>";
     pg.append(cv,wm); view.innerHTML=""; view.append(pg); view.scrollTop=0;
     clearTimeout(logT); logT=setTimeout(()=>api({action:"bookLog",book:N,page:P,kind:"read"}).catch(()=>{}),1500);
+    try{const L=JSON.parse(localStorage.getItem("pea_book_recent")||"[]").filter(x=>x.n!==N);L.unshift({n:N,p:P,c:COUNT,at:Date.now()});localStorage.setItem("pea_book_recent",JSON.stringify(L.slice(0,12)));}catch(e){}  /* จำหน้าที่อ่านค้าง (เฉพาะในเครื่องนี้) */
     [P+1,P+2,P-1].filter(x=>x>=1&&x<=COUNT).forEach(x=>fetch(pageUrl(x),{cache:"force-cache"}).catch(()=>{}));   /* โหลดหน้าถัดไป 2 หน้าและหน้าก่อนไว้ล่วงหน้า ให้เปิดได้ทันที */
   }catch(e){ if(tok===loadTok) view.innerHTML='<div class="msg">โหลดหน้าไม่ได้: '+e.message+'</div>'; }
 }

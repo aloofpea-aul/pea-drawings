@@ -99,14 +99,112 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 .lb button{position:fixed;top:10px;right:12px;height:44px;padding:0 16px;border-radius:22px;border:0;background:#fff;font:inherit;font-weight:600;cursor:pointer}
 @media (max-width:860px){.sx{grid-template-columns:1fr}.sd{position:fixed;inset:0;max-height:none;border-radius:0;z-index:10000;display:none}.sd.open{display:block}.sd .grid2{grid-template-columns:1fr}.sd .x{display:block;position:sticky;top:0;margin:-4px 0 8px auto;height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--line);background:#fff;font:inherit;cursor:pointer}}
 .ocr{font-size:11px;color:var(--c);margin-left:6px}
+/* ---------- หน้าใหม่: ช่องค้นเดียว ---------- */
+.hubm{display:none;font-size:13px;text-decoration:none;margin-bottom:2px}
+.hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}
+.usearch{display:flex;align-items:center;gap:10px;height:54px;background:var(--sheet);border:2px solid var(--dim);border-radius:14px;padding:0 4px 0 14px;margin:12px 0 10px}
+.usearch input{flex:1;border:0;outline:0;font:inherit;font-size:17px;background:transparent;color:var(--ink);min-width:0;height:100%}
+.usearch input::-webkit-search-cancel-button{display:none}
+.usearch .x{width:46px;height:46px;border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer;border-radius:10px;display:none}
+.usearch.has .x{display:block}
+.uhelp{font-size:12px;color:var(--muted);margin:-4px 0 10px}
+.vnav{display:flex;gap:6px;flex-wrap:wrap}
+.vnav button{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:inherit;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.vnav button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.vnav svg{width:18px;height:18px;flex:none}
+.sh{font-size:15px;font-weight:700;margin:20px 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sh small{font-size:12px;font-weight:400;color:var(--muted)}
+.qchips{display:flex;flex-wrap:wrap;gap:8px}
+.qchips button{height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.qchips button.h{border-style:dashed}
+.cont{display:flex;gap:12px;align-items:center;background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:14px;text-decoration:none;color:var(--ink);margin-top:16px}
+.cont .ic{width:48px;height:64px;flex:none;border-radius:6px;background:var(--dim-bg);display:flex;align-items:center;justify-content:center;color:var(--dim)}
+.cont .k{font-size:12px;font-weight:700;color:var(--accent)}
+.cont .t{font-size:15px;font-weight:600;line-height:1.4}
+.cont .m{font-size:13px;color:var(--muted)}
+.pins{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.pins button{text-align:left;background:var(--sheet);border:1px solid var(--line);border-top:4px solid var(--dim);border-radius:12px;padding:10px 12px;min-height:84px;font:inherit;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;gap:6px}
+.pins b{font-size:14px;font-weight:600;line-height:1.4}.pins span{font-size:12px;color:var(--muted)}
+.pins .none{grid-column:1/-1;font-size:13px;color:var(--muted);padding:10px 0}
+.clist{background:var(--sheet);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.clist button{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:50px;padding:0 16px;border:0;border-bottom:1px solid var(--line);background:none;font:inherit;font-size:15px;color:var(--ink);cursor:pointer;text-align:left}
+.clist button:last-child{border-bottom:0}.clist span{font-size:13px;color:var(--muted)}
+.ux{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}
+@media (min-width:1000px){.ux.pvon{grid-template-columns:minmax(360px,470px) minmax(0,1fr)}}
+.ug h3{font-size:13px;color:var(--muted);margin:16px 0 6px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.ug h3:first-child{margin-top:4px}
+.ug h3 button{border:0;background:none;color:var(--dim);font:inherit;font-weight:600;cursor:pointer;padding:0}
+.ur{display:block;width:100%;text-align:left;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font:inherit;color:var(--ink);cursor:pointer}
+.ur:hover{border-color:var(--dim)}
+.ur[aria-current="true"]{border:2px solid var(--dim);padding:9px 11px}
+.ur .a{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ur .t{font-size:14px;font-weight:600;line-height:1.45}
+.ur .pgn{font-size:13px;font-weight:600;color:var(--dim);white-space:nowrap}
+.ur .m{font-size:12px;color:var(--muted);margin-top:2px}
+.ur .sn{font-size:13px;line-height:1.6;color:var(--ink);opacity:.85;margin-top:4px;word-break:break-word}
+.ur mark,.cont mark{background:#ffe08a;color:#18212b;border-radius:3px;padding:0 1px}
+.unote{font-size:13px;color:var(--muted);background:var(--sheet);border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.pv{display:none;position:sticky;top:12px;background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:14px;max-height:calc(100vh - 24px);flex-direction:column;gap:10px}
+.ux.pvon .pv{display:flex}
+.pv .ph{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pv .ph .tt{flex:1 1 200px;min-width:0}
+.pv .ph b{display:block;font-size:15px;line-height:1.4}.pv .ph span{font-size:12px;color:var(--muted)}
+.pv .ph button,.pv .ph a{height:42px;min-width:42px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:inherit;font-size:14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.pv .ph a.go{background:var(--dim);border-color:var(--dim);color:#fff;font-weight:600}
+.pv .box{flex:1;min-height:300px;background:#2b3138;border-radius:10px;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:12px;position:relative;-webkit-user-select:none;user-select:none}
+.pv .pg{position:relative;max-width:100%}
+.pv .pg img{display:block;max-width:100%;max-height:calc(100vh - 150px);background:#fff;pointer-events:none}
+.pv .wm{position:absolute;inset:0;overflow:hidden;pointer-events:none;display:flex;flex-wrap:wrap;align-content:space-around;justify-content:space-around;transform:rotate(-24deg);opacity:.13;font-weight:700;color:#7a1e6b;font-size:14px;gap:30px}
+.pv .msg{color:#cfd6df;font-size:14px;padding:30px}
+.rl{display:flex;flex-direction:column;gap:8px}
+.rl a{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.rl b{font-size:14px;font-weight:600;line-height:1.4}.rl span{font-size:12px;color:var(--muted);white-space:nowrap}
+#home,#recent{display:none}
+@media (max-width:760px){
+ .head{padding-top:12px}.eyebrow{display:none}h1{font-size:20px;margin:0}.hrow .tabs a{height:34px;padding:0 12px;font-size:13px}
+ .vnav{position:fixed;left:0;right:0;bottom:0;z-index:9000;background:var(--sheet);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+ .vnav button{flex-direction:column;height:56px;border:0;border-radius:10px;font-size:12px;gap:2px;padding:0;background:none}
+ .vnav button[aria-pressed="true"]{background:var(--dim-bg);color:var(--dim)}
+ body{padding-bottom:84px}#hubBack{display:none!important}.hubm{display:inline-block}
+ .qchips{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:0 16px 4px;scrollbar-width:none}.qchips button{flex:none}
+ .uhelp{font-size:11px}
+ .ur{padding:12px 14px}.ur[aria-current="true"]{padding:11px 13px}
+}
 </style></head><body>
 <header class="head"><div class="wrap">
-<div class="eyebrow">การไฟฟ้าส่วนภูมิภาค · คลังแบบมาตรฐาน</div>
-<h1>หนังสือ คู่มือ ระเบียบ</h1>
-<nav class="tabs" aria-label="ส่วนของคลัง"><a href="index.html">แบบก่อสร้าง</a><a href="books.html" aria-current="page">หนังสือ คู่มือ ระเบียบ</a></nav>
+<div class="hrow"><div><a class="hubm" href="../index.html">← ศูนย์รวมงาน</a><div class="eyebrow">การไฟฟ้าส่วนภูมิภาค · คลังแบบมาตรฐาน</div><h1>หนังสือ คู่มือ ระเบียบ</h1></div>
+<nav class="tabs" aria-label="ส่วนของคลัง"><a href="index.html">แบบก่อสร้าง</a><a href="books.html" aria-current="page">หนังสือ</a></nav></div>
+<label class="usearch" id="usb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true" style="color:var(--dim)"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+<input id="uq" type="search" enterkeyhint="search" autocomplete="off" placeholder="ค้นได้ทุกอย่างในช่องเดียว" aria-label="ค้นหาชื่อเล่ม เนื้อหา อุปกรณ์ หรือวัสดุเลขที่"><button type="button" class="x" id="uqx" aria-label="ล้างคำค้น">✕</button></label>
+<div class="uhelp">ค้นชื่อเล่ม · ข้อความในหนังสือ · อุปกรณ์ · วัสดุเลขที่ (ไทย/อังกฤษ)</div>
+<nav class="vnav" id="vnav" aria-label="เมนูหลัก">
+<button type="button" data-v="H" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>ค้นหา</button>
+<button type="button" data-v="T" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l3.5-1 2.5 15.5-3.5 1z"/></svg>ชั้นหนังสือ</button>
+<button type="button" data-v="S" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>อุปกรณ์</button>
+<button type="button" data-v="R" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>อ่านล่าสุด</button>
+</nav>
 </div></header>
 <main class="wrap">
-<div class="mode" role="group" aria-label="วิธีค้น"><button type="button" id="mT" aria-pressed="true">ค้นชื่อเล่ม</button><button type="button" id="mF" aria-pressed="false">ค้นในเนื้อหาหนังสือ</button><button type="button" id="mS" aria-pressed="false">รายการอุปกรณ์จากคู่มือ</button></div>
+<section id="home" aria-label="ค้นหา">
+<div id="hHome">
+<div class="qchips" id="qchips"></div>
+<div id="cont"></div>
+<div class="sh">เล่มที่ปักหมุดไว้ <small>ปักหมุดได้ที่ปุ่มในรายละเอียดเล่ม</small></div>
+<div class="pins" id="pins"></div>
+<div class="sh">ชั้นหนังสือตามหมวด</div>
+<div class="clist" id="catlist"></div>
+</div>
+<div id="hRes" style="display:none">
+<div class="chips" id="ufil" role="group" aria-label="แสดงผล"></div>
+<div class="ux" id="ux"><div class="ug" id="ulist"></div><aside class="pv" id="pv" aria-label="ดูหน้าหนังสือ"></aside></div>
+</div>
+</section>
+<section id="recent" aria-label="อ่านล่าสุด">
+<div class="sh" style="margin-top:4px">อ่านล่าสุดในเครื่องนี้ <small id="rclr"></small></div>
+<div class="rl" id="rlist"></div>
+<div class="sh">เล่มที่ปักหมุดไว้</div>
+<div class="pins" id="pins2"></div>
+</section>
 <section id="full" aria-label="ค้นในเนื้อหาหนังสือ">
 <form class="fbar" id="fform"><input id="fq" type="search" placeholder="เช่น ระยะห่าง สายดิน, ความต้านทานดิน 5 โอห์ม, RCD 30 mA" aria-label="คำที่ต้องการค้นในเนื้อหา"><button type="submit">ค้นหา</button></form>
 <div class="fstat" id="fstat">ค้นข้อความในหนังสือทุกเล่ม (ประมาณ 7,000 หน้า) · เว้นวรรคระหว่างคำ = ต้องมีทุกคำในหน้าเดียวกัน</div>
@@ -120,7 +218,7 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <div class="lb" id="lb"><button type="button">ปิด ✕</button><img alt=""></div>
 <div class="fstat" style="margin-top:8px">ข้อมูลนี้ถอดจากหนังสือที่สงวนลิขสิทธิ์ จึงเข้ารหัสไว้ เปิดดูได้เฉพาะผู้ที่มีสิทธิ์คลังแบบ · ถ้าเห็นตัวเลขไม่ตรงกับเล่ม ให้ยึดตามเล่มจริง</div>
 </section>
-<div id="titleView">
+<div id="titleView" style="display:none">
 <div class="bar"><input id="q" type="search" placeholder="ค้นชื่อเล่ม เช่น สายดิน, เคเบิลใต้ดิน, มิเตอร์, 115" aria-label="ค้นหาหนังสือ"><span class="note" id="cnt"></span></div>
 <div class="chips" id="cats" role="group" aria-label="หมวด"></div>
 <div class="legend"><span><i style="background:var(--r)"></i>สงวนลิขสิทธิ์ ห้ามเผยแพร่</span><span><i style="background:var(--c)"></i>เอกสารควบคุม ใช้ภายใน</span><span><i style="background:var(--p)"></i>เผยแพร่ได้</span></div>
@@ -129,7 +227,7 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 <div class="foot">ทุกเล่มอ่านในเว็บได้ด้วยบัญชีศูนย์รวมงาน (สิทธิ์คลังแบบ) · อ่านได้อย่างเดียว ดาวน์โหลดต้องขออนุญาตผู้ดูแล · ที่มา: Happy Pole (แฟ้ม BOOKS) · ห้ามส่งต่อไฟล์ออกนอกองค์กร</div>
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
-<script src="books-spec.js?v=20261021a"></script>
+<script src="books-spec.js?v=20261021b"></script>
 <script>
 const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
 const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
@@ -158,6 +256,7 @@ function openBook(n){
    ${b.r.length?`<div class="meta" style="margin-top:4px">แบบที่เกี่ยวข้องในคลัง</div><ul>${b.r.map(c=>`<li><a href="index.html#s-${c}">${c} ${esc(SER[c]||"")}</a></li>`).join("")}</ul>`:""}
    ${[2,3,26].includes(b.n)?`<button class="go" type="button" style="border:0;width:100%;cursor:pointer;margin-bottom:8px;background:#7a1e6b" onclick="document.getElementById('dlg').close();sBook='${b.n}';sCur=null;setMode('S')">ดูรายการอุปกรณ์ในเล่ม (ค้นด้วยชื่อ/เลขวัสดุ)</button>`:""}
    ${url?`<a class="go" href="reader.html?n=${b.n}">อ่านในเว็บ</a><div class="hint">อ่านได้อย่างเดียว · ดาวน์โหลดต้องขออนุญาตจากผู้ดูแลในหน้าอ่าน</div>${ISADMIN()?`<div class="hint"><a href="${url}" target="_blank" rel="noopener">เปิดใน Google Drive (เฉพาะผู้ดูแล)</a></div>`:""}`:`<div class="hint">ไฟล์เล่มนี้เสียที่ต้นทาง (Happy Pole) ยังดาวน์โหลดไม่ได้</div>`}
+   <button class="close" type="button" data-pin="${b.n}">${PINS.includes(b.n)?"เลิกปักหมุดเล่มนี้":"ปักหมุดเล่มนี้ไว้หน้าแรก"}</button>
    <button class="close" type="button" onclick="document.getElementById('dlg').close()">ปิด</button>`;
   const d=document.getElementById("dlg"); d.showModal();
 }
@@ -165,7 +264,8 @@ document.getElementById("grid").addEventListener("click",e=>{const c=e.target.cl
   if(e.target.closest(".tofull")){setMode("F");document.getElementById("fq").value=q.trim();fullSearch(q.trim());}});
 document.getElementById("cats").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cat=b.dataset.k;render();});
 let tm;document.getElementById("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{q=e.target.value;render();},120);});
-document.getElementById("dlg").addEventListener("click",e=>{if(e.target.id==="dlg")e.target.close();});
+document.getElementById("dlg").addEventListener("click",e=>{if(e.target.id==="dlg")e.target.close();
+  const pb=e.target.closest("[data-pin]"); if(pb){togglePin(+pb.dataset.pin); pb.textContent=PINS.includes(+pb.dataset.pin)?"เลิกปักหมุดเล่มนี้":"ปักหมุดเล่มนี้ไว้หน้าแรก";}});
 /* ---------- ค้นในเนื้อหา: ดัชนีเข้ารหัส ขอกุญแจจากหลังบ้านเฉพาะผู้มีสิทธิ์ ---------- */
 const GAS=localStorage.getItem("sld_gas_url")||"https://script.google.com/macros/s/AKfycbzqsOqJJQlF4SS1UX_YM6hmhd3lUXCVocAJiK7l28Tzddms9SQ9Z7p-iYgrrgd2B2meWw/exec";
 let IDX=null, loading=null, IDXQUIET=false;
@@ -186,20 +286,26 @@ function qToks(q){
   return words.map(w=>{const al=new Set([w]);SYN.forEach(g=>{if(g.some(x=>x===w||(w.length>=4&&x.startsWith(w))))g.forEach(x=>al.add(x));});return [...al];});
 }
 const qHit=(z,toks)=>toks.every(al=>al.some(a=>z.includes(a)));
-function setMode(m){m=m===true?"F":m===false?"T":m;
-  ["T","F","S"].forEach(k=>document.getElementById("m"+k).setAttribute("aria-pressed",k===m));
+let VIEW="H";
+function setMode(m){m=m===true?"F":m===false?"T":m; VIEW=m;
+  document.querySelectorAll("#vnav button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===(m==="F"?"H":m)));
+  document.getElementById("home").style.display=m==="H"?"block":"none";document.getElementById("recent").style.display=m==="R"?"block":"none";
   document.getElementById("full").style.display=m==="F"?"block":"none";document.getElementById("spec").style.display=m==="S"?"block":"none";
   document.getElementById("titleView").style.display=m==="T"?"block":"none";
-  if(m==="F")document.getElementById("fq").focus(); if(m==="S")specOpen();}
-document.getElementById("mT").onclick=()=>setMode("T");document.getElementById("mF").onclick=()=>setMode("F");document.getElementById("mS").onclick=()=>setMode("S");
+  if(m==="S")specOpen(); if(m==="H"&&window.uRefresh)uRefresh(); if(m==="R"&&window.renderRecent)renderRecent(); window.scrollTo(0,0);}
+document.getElementById("vnav").addEventListener("click",e=>{const b=e.target.closest("button[data-v]");if(b)setMode(b.dataset.v);});
 /* ---------- รายการอุปกรณ์ คู่มือ 2565 (books-spec.bin เข้ารหัส) ---------- */
 let SPEC=null,sHL="",sBook="";
 const BKN=it=>(SPEC.books&&SPEC.books[it.k]?SPEC.books[it.k]:{short:"คู่มืออุปกรณ์ไฟฟ้า 2565",lbl:"22–33 kV",id:PEASpec.BOOK3});
 const TK=it=>THB[(it.k||3)+"-"+it.p+"-"+it.pi]||THB[(it.k||3)+"-"+it.p]||THB[it.p];
+let specP=null;
+function specPrep(){ if(SPEC) return Promise.resolve(SPEC);
+  if(!specP){specP=PEASpec.load().then(d=>{d.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.c||"",it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));SPEC=d;return d;});specP.catch(()=>{specP=null;});}
+  return specP; }
 async function specOpen(){
   const st=document.getElementById("sstat");
   if(!SPEC){st.textContent="กำลังขอสิทธิ์และโหลดรายการอุปกรณ์…";
-    try{SPEC=await PEASpec.load();SPEC.items.forEach(it=>it._z=nz([it.th,it.en,it.s,it.c||"",it.u.join(" "),it.rows.map(r=>r[1]+" "+r[2]).join(" "),it.d.map(x=>x[0]).join(" ")].join(" ")));}
+    try{await specPrep();}
     catch(e){st.textContent="เปิดรายการอุปกรณ์ไม่ได้: "+e.message;return;}}
   specRender();
   loadThumbs();
@@ -276,14 +382,17 @@ function snippet(t,tok){
   const s0=map[at], s1=map[at+tok.length-1]+1, a=Math.max(0,s0-90), b=Math.min(t.length,s1+130);
   return (a>0?"…":"")+esc(t.slice(a,s0))+"<mark>"+esc(t.slice(s0,s1))+"</mark>"+esc(t.slice(s1,b))+(b<t.length?"…":"");
 }
+function pageHits(idx,toks){
+  const hits=[];
+  for(const x of idx){ if(qHit(x.z,toks)){ let sc=0; toks.forEach(al=>al.forEach(t=>{let i=-1;while((i=x.z.indexOf(t,i+1))>=0)sc++;})); hits.push([sc,x]); } }
+  hits.sort((a,b)=>b[0]-a[0]); return hits;
+}
 async function fullSearch(q){
   IDXQUIET=false;
   const st=document.getElementById("fstat"), box=document.getElementById("fres");
   const toks=qToks(q); if(!toks.length){box.innerHTML="";st.textContent="";return;}
   let idx; try{idx=await loadIndex();}catch(e){st.textContent="ค้นเนื้อหาไม่ได้: "+e.message;return;}
-  const hits=[];
-  for(const x of idx){ if(qHit(x.z,toks)){ let sc=0; toks.forEach(al=>al.forEach(t=>{let i=-1;while((i=x.z.indexOf(t,i+1))>=0)sc++;})); hits.push([sc,x]); } }
-  hits.sort((a,b)=>b[0]-a[0]);
+  const hits=pageHits(idx,toks);
   const books=new Set(hits.map(h=>h[1].n));
   st.textContent=hits.length?`พบ ${hits.length} หน้า ใน ${books.size} เล่ม`+(hits.length>150?" (แสดง 150 หน้าแรกที่ตรงที่สุด)":""):"ไม่พบคำนี้ในเนื้อหา ลองคำที่สั้นลง หรือสะกดแบบอื่น";
   box.innerHTML=hits.slice(0,150).map(([sc,x])=>{const b=B.find(y=>y.n===x.n)||{t:"เล่ม "+x.n,y:""};
@@ -295,13 +404,155 @@ document.getElementById("fform").addEventListener("submit",e=>{e.preventDefault(
 let ftm;document.getElementById("fq").addEventListener("input",e=>{clearTimeout(ftm);const v=e.target.value.trim();ftm=setTimeout(()=>{if(IDX&&(nz(v).length>=2||!v))fullSearch(v);},250);});
 document.getElementById("fres").addEventListener("click",e=>{const b=e.target.closest("button[data-n]");if(b)openBook(b.dataset.n);});
 fetch("books.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{B=d.map(b=>Object.assign(b,{_z:nz([b.t,b.o,b.c,b.y,b.n,relText(b).join(" "),b.r.join(" ")].join(" "))}));
-  const p=new URLSearchParams(location.search); if(p.get("q")){q=p.get("q");document.getElementById("q").value=q;}
-  render(); if(p.get("n")) openBook(p.get("n")); if(p.get("spec")){sHL=p.get("spec");document.getElementById("sq").value=sHL;setMode("S");specOpen().then(()=>{const it=SPEC&&SPEC.items.find(x=>x.rows.some(r=>r[2]===sHL));if(it)specShow(it);});}
+  const p=new URLSearchParams(location.search);
+  render(); if(p.get("q")){document.getElementById("uq").value=p.get("q");}
+  if(p.get("v")&&!p.get("q")) setMode(p.get("v")); else setMode("H"); if(p.get("n")) openBook(p.get("n")); if(p.get("spec")){sHL=p.get("spec");document.getElementById("sq").value=sHL;setMode("S");specOpen().then(()=>{const it=SPEC&&SPEC.items.find(x=>x.rows.some(r=>r[2]===sHL));if(it)specShow(it);});}
   /* โหลดล่วงหน้าตอนว่าง (เฉพาะผู้ที่เข้าระบบแล้ว) — กดค้นเนื้อหา/รายการอุปกรณ์แล้วขึ้นทันที */
   if(localStorage.getItem("pea_aoluek_username")) (window.requestIdleCallback||setTimeout)(()=>{
-    PEASpec.load().catch(()=>{}); IDXQUIET=true; loadIndex().then(()=>{IDXQUIET=false;const st=document.getElementById("fstat");if(!document.getElementById("fres").innerHTML)st.textContent="พร้อมค้นข้อความในหนังสือทุกเล่ม — พิมพ์แล้วผลขึ้นทันที";}).catch(()=>{IDXQUIET=false;});
+    specPrep().then(()=>{if(VIEW==="H")uRefresh();}).catch(()=>{}); IDXQUIET=true; loadIndex().then(()=>{IDXQUIET=false;if(VIEW==="H")uRefresh();const st=document.getElementById("fstat");if(!document.getElementById("fres").innerHTML)st.textContent="พร้อมค้นข้อความในหนังสือทุกเล่ม — พิมพ์แล้วผลขึ้นทันที";}).catch(()=>{IDXQUIET=false;});
   },{timeout:2500});
   if(p.get("fq")){setMode(true);document.getElementById("fq").value=p.get("fq");fullSearch(p.get("fq"));}});
 </script>
-<a href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a>
+<script>
+/* ===================== หน้าค้นหาใหม่: ช่องค้นเดียว ผลแยกกลุ่ม ดูหน้าหนังสือข้างๆ ===================== */
+const LSJ={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v;}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+let PINS=LSJ.get("pea_book_pins",[]);
+const QUICK=["สายดิน","ความต้านทานดิน","หม้อแปลง","ลูกถ้วย","ระยะห่าง","มิเตอร์","ล่อฟ้า","เคเบิลใต้ดิน"];
+const $u=id=>document.getElementById(id);
+const bookOf=n=>B.find(b=>b.n===+n)||{n:+n,t:"เล่ม "+n,y:"",c:""};
+function togglePin(n){n=+n;PINS=PINS.includes(n)?PINS.filter(x=>x!==n):[n].concat(PINS).slice(0,12);LSJ.set("pea_book_pins",PINS);renderPins();}
+function pinHtml(){
+  const L=PINS.map(bookOf).filter(b=>b.t);
+  return L.length?L.map(b=>`<button type="button" data-b="${b.n}"><b>${esc(b.t)}</b><span>${esc(b.y)}</span></button>`).join("")
+    :`<div class="none">ยังไม่ได้ปักหมุด — เปิดรายละเอียดเล่มที่ใช้บ่อย แล้วกด “ปักหมุดเล่มนี้ไว้หน้าแรก”</div>`;
+}
+function renderPins(){ $u("pins").innerHTML=pinHtml(); $u("pins2").innerHTML=pinHtml(); }
+function ago(t){const m=Math.round((Date.now()-t)/6e4);return m<1?"เมื่อสักครู่":m<60?m+" นาทีที่แล้ว":m<1440?Math.round(m/60)+" ชม.ที่แล้ว":Math.round(m/1440)+" วันที่แล้ว";}
+function renderHome(){
+  const hist=LSJ.get("pea_book_qhist",[]);
+  $u("qchips").innerHTML=hist.slice(0,4).map(w=>`<button type="button" class="h" data-q="${esc(w)}" title="ค้นล่าสุด">${esc(w)}</button>`).join("")
+    +QUICK.filter(w=>!hist.includes(w)).slice(0,8-Math.min(4,hist.length)).map(w=>`<button type="button" data-q="${esc(w)}">${esc(w)}</button>`).join("");
+  const R=LSJ.get("pea_book_recent",[]); const r=R[0];
+  $u("cont").innerHTML=r?`<a class="cont" href="reader.html?n=${r.n}&p=${r.p}"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M4 19V5"/></svg></span>
+    <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span class="k">อ่านต่อจากครั้งก่อน</span><span class="t">${esc(bookOf(r.n).t)}</span><span class="m">หน้า ${r.p}${r.c?" จาก "+r.c:""} · ${ago(r.at)}</span></span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>`:"";
+  renderPins();
+  const cnt={};B.forEach(b=>cnt[b.c]=(cnt[b.c]||0)+1);
+  $u("catlist").innerHTML=CATS.map(c=>`<button type="button" data-cat="${esc(c)}">${esc(c.replace("/"," / "))}<span>${cnt[c]||0} เล่ม</span></button>`).join("")
+    +`<button type="button" data-cat="">ทุกเล่ม<span>${B.length} เล่ม</span></button>`;
+}
+function renderRecent(){
+  const R=LSJ.get("pea_book_recent",[]);
+  $u("rlist").innerHTML=R.length?R.map(r=>`<a href="reader.html?n=${r.n}&p=${r.p}"><b>${esc(bookOf(r.n).t)}</b><span>หน้า ${r.p} · ${ago(r.at)}</span></a>`).join("")
+    :`<div class="unote">ยังไม่มีประวัติการอ่านในเครื่องนี้ — เปิดอ่านเล่มไหน ระบบจะจำหน้าที่อ่านค้างไว้ให้</div>`;
+  $u("rclr").innerHTML=R.length?`<button type="button" id="rclrb" style="border:0;background:none;color:var(--dim);font:inherit;cursor:pointer">ล้างประวัติ</button>`:"";
+  renderPins();
+}
+/* ทำเครื่องหมายคำที่ตรงในข้อความ (เทียบแบบตัดวรรณยุกต์) */
+function markIn(t,toks,around){
+  const map=[];let z="";for(let i=0;i<t.length;i++){const c=nz(t[i]);for(let j=0;j<c.length;j++){z+=c[j];map.push(i);}}
+  let at=-1,len=0;for(const al of toks){for(const a of al){const k=z.indexOf(a);if(k>=0&&(at<0||k<at)){at=k;len=a.length;}}if(at>=0)break;}
+  if(at<0) return esc(around?t.slice(0,around):t);
+  const s0=map[at],s1=map[at+len-1]+1;
+  if(!around) return esc(t.slice(0,s0))+"<mark>"+esc(t.slice(s0,s1))+"</mark>"+esc(t.slice(s1));
+  const a=Math.max(0,s0-70),b=Math.min(t.length,s1+110);
+  return (a>0?"…":"")+esc(t.slice(a,s0).replace(/\s+/g," "))+"<mark>"+esc(t.slice(s0,s1))+"</mark>"+esc(t.slice(s1,b).replace(/\s+/g," "))+(b<t.length?"…":"");
+}
+let UF="all", PVK="", UR={}, SPECERR="", IDXERR="";
+function loggedIn(){return !!localStorage.getItem("pea_aoluek_username");}
+function uRefresh(){
+  const v=$u("uq").value.trim(); $u("usb").classList.toggle("has",!!v);
+  if(!qToks(v).length){ $u("hHome").style.display="block"; $u("hRes").style.display="none"; renderHome(); return; }
+  $u("hHome").style.display="none"; $u("hRes").style.display="block"; uSearch(v);
+}
+function uSearch(v){
+  const toks=qToks(v), long=nz(v).length>=2;
+  const tb=B.filter(b=>qHit(b._z,toks));
+  let ti=null, tp=null, ni="", np="";
+  if(!loggedIn()){ ni=np=`<div class="unote">เข้าสู่ระบบศูนย์รวมงาน (สิทธิ์คลังแบบ) เพื่อค้นในเนื้อหาและรายการอุปกรณ์</div>`; }
+  else{
+    if(SPEC){ ti=SPEC.items.filter(it=>qHit(it._z,toks));
+      const nm=it=>(qHit(nz((it.th||"")+" "+(it.en||"")),toks)?2:0)+(qHit(nz(it.rows.map(r=>r[1]+" "+r[2]).join(" ")),toks)?1:0);   /* ตรงที่ชื่อก่อน แล้วจึงขนาด/เลขวัสดุ */
+      ti=ti.map((it,i)=>[nm(it),i,it]).sort((a,b)=>b[0]-a[0]||a[1]-b[1]).map(x=>x[2]); }
+    else if(SPECERR) ni=`<div class="unote">เปิดรายการอุปกรณ์ไม่ได้: ${esc(SPECERR)}</div>`;
+    else { ni=`<div class="unote">กำลังเตรียมรายการอุปกรณ์…</div>`; specPrep().then(()=>{if(VIEW==="H")uRefresh();}).catch(e=>{SPECERR=e.message;if(VIEW==="H")uRefresh();}); }
+    if(IDX){ tp=long?pageHits(IDX,toks):[]; }
+    else if(IDXERR) np=`<div class="unote">ค้นในเนื้อหาไม่ได้: ${esc(IDXERR)}</div>`;
+    else { np=`<div class="unote">กำลังเตรียมข้อมูลค้นในเนื้อหา (ครั้งแรกในเครื่องนี้ประมาณ 4 MB)…</div>`; IDXQUIET=true; loadIndex().then(()=>{IDXQUIET=false;if(VIEW==="H")uRefresh();}).catch(e=>{IDXQUIET=false;IDXERR=e.message;if(VIEW==="H")uRefresh();}); }
+  }
+  UR={v,toks,tb,ti,tp};
+  const nb=tp?new Set(tp.map(h=>h[1].n)).size:0;
+  const F=[["all","ทั้งหมด",""],["b","ชื่อเล่ม",tb.length],["i","อุปกรณ์",ti?ti.length:"…"],["p","ในเนื้อหา",tp?tp.length+" หน้า":"…"]];
+  $u("ufil").innerHTML=F.map(([k,l,n])=>`<button type="button" data-f="${k}" aria-pressed="${k===UF}">${l}${n!==""?`<span class="n">${n}</span>`:""}</button>`).join("");
+  const lim=UF==="all"?{b:4,i:4,p:10}:{b:999,i:200,p:150};
+  let h="";
+  if(UF==="all"||UF==="b"){
+    h+=`<h3><span>ชื่อเล่ม</span>${UF==="all"&&tb.length>lim.b?`<button type="button" data-f="b">ดูทั้งหมด ${tb.length}</button>`:""}</h3>`;
+    h+=tb.length?tb.slice(0,lim.b).map(b=>`<button type="button" class="ur" data-b="${b.n}"><div class="t">${markIn(b.t,toks)}</div><div class="m">${esc(b.y)} · ${esc(b.c)} · ${esc(LIC[b.l]||"")}</div></button>`).join("")
+      :`<div class="unote">ไม่พบชื่อเล่ม${UF==="b"?"":" — ดูผลในเนื้อหาด้านล่าง"}</div>`;
+  }
+  if(UF==="all"||UF==="i"){
+    h+=`<h3><span>อุปกรณ์ / วัสดุเลขที่</span>${UF==="all"&&ti&&ti.length>lim.i?`<button type="button" data-f="i">ดูทั้งหมด ${ti.length}</button>`:""}</h3>`;
+    h+=ni||(ti.length?ti.slice(0,lim.i).map(it=>{const mats=it.rows.filter(r=>r[2]).map(r=>r[2]);const hitMat=mats.find(m=>toks.some(al=>al.some(a=>m.includes(a))));
+      return `<button type="button" class="ur" data-i="${SPEC.items.indexOf(it)}"><div class="t">${markIn(it.th||it.en||"(ไม่มีชื่อ)",toks)}</div>
+      <div class="m">${esc(hitMat||mats[0]||"")}${mats.length>1?` (+${mats.length-1} รุ่น)`:""} · ${esc(BKN(it).short)}${it.bp?" หน้า "+esc(it.bp):""}</div></button>`;}).join("")
+      :`<div class="unote">ไม่พบในรายการอุปกรณ์</div>`);
+  }
+  if(UF==="all"||UF==="p"){
+    h+=`<h3><span>ในเนื้อหา${tp?` · ${nb} เล่ม`:""}</span>${UF==="all"&&tp&&tp.length>lim.p?`<button type="button" data-f="p">ดูทั้งหมด ${tp.length} หน้า</button>`:""}</h3>`;
+    h+=np||(!long?`<div class="unote">พิมพ์อย่างน้อย 2 ตัวอักษรเพื่อค้นในเนื้อหา</div>`:tp.length?tp.slice(0,lim.p).map(([sc,x])=>{const b=bookOf(x.n);
+      return `<button type="button" class="ur" data-n="${x.n}" data-p="${x.p}" data-sc="${sc}" aria-current="${PVK===x.n+"-"+x.p}"><div class="a"><span class="t">${esc(b.t)}${b.y?` (${esc(b.y)})`:""}</span><span class="pgn">หน้า ${x.p} ›</span></div>
+      <div class="sn">${markIn(x.t,toks,1)}</div></button>`;}).join("")+(UF==="p"&&tp.length>150?`<div class="unote">แสดง 150 หน้าที่ตรงที่สุด — เพิ่มคำค้นอีกคำ (เว้นวรรค) เพื่อให้แคบลง</div>`:"")
+      :`<div class="unote">ไม่พบคำนี้ในเนื้อหา — ลองคำที่สั้นลง หรือสะกดแบบอื่น</div>`);
+  }
+  $u("ulist").innerHTML=h;
+  if(!$u("ux").classList.contains("pvon")&&innerWidth>=1000&&tp&&tp.length&&UF!=="b"&&UF!=="i"){const x=tp[0][1];pvShow(x.n,x.p,tp[0][0]);}
+}
+function saveQ(){const v=$u("uq").value.trim();if(!v)return;LSJ.set("pea_book_qhist",[v].concat(LSJ.get("pea_book_qhist",[]).filter(w=>w!==v)).slice(0,6));}
+/* ---------- ดูหน้าหนังสือข้างๆ (คอม/ไอแพดแนวนอน) ---------- */
+let PAGES=null, pvTok=0;
+function pagesCount(){ if(!PAGES) PAGES=fetch("../pea-books/pages.json",{cache:"no-cache"}).then(r=>r.json()).catch(()=>({})); return PAGES; }
+function wmName(){try{const a=JSON.parse(localStorage.getItem("pea_hub_auth")||"null");return (a&&a.name)||localStorage.getItem("pea_aoluek_username")||"";}catch(e){return "";}}
+async function pvShow(n,p,sc){
+  n=+n;p=+p; const tok=++pvTok, b=bookOf(n), pv=$u("pv"); PVK=n+"-"+p; $u("ux").classList.add("pvon");
+  document.querySelectorAll("#ulist .ur[data-n]").forEach(x=>x.setAttribute("aria-current",x.dataset.n+"-"+x.dataset.p===PVK));
+  const cnt=(await pagesCount())[n]||0; if(tok!==pvTok) return;
+  const d=new Date(), wt=esc(wmName()+" · "+d.toLocaleDateString("th-TH"));
+  pv.innerHTML=`<div class="ph"><div class="tt"><b>${esc(b.t)}${b.y?` (${esc(b.y)})`:""}</b><span>หน้า ${p}${cnt?" จาก "+cnt:""}${sc?` · คำที่ค้นในหน้านี้ ${sc} ที่`:""}</span></div>
+    <button type="button" data-pv="-1" aria-label="หน้าก่อน" ${p<=1?"disabled":""}>‹</button><button type="button" data-pv="1" aria-label="หน้าถัดไป" ${cnt&&p>=cnt?"disabled":""}>›</button>
+    <a class="go" href="reader.html?n=${n}&p=${p}">เปิดเต็มจอ</a><button type="button" data-pin="${n}">${PINS.includes(n)?"เลิกปักหมุด":"ปักหมุด"}</button></div>
+    <div class="box" id="pvbox"><div class="msg">กำลังโหลดหน้า ${p}…</div></div>`;
+  try{
+    const u=await PEASpec.page(n,p); if(tok!==pvTok) return;
+    $u("pvbox").innerHTML=`<div class="pg"><img src="${u}" alt="หน้า ${p}" draggable="false"><div class="wm">${Array(18).fill("<span>"+wt+"</span>").join("")}</div></div>`;
+    [p+1,p-1].filter(x=>x>=1&&(!cnt||x<=cnt)).forEach(x=>PEASpec.page(n,x).catch(()=>{}));
+  }catch(e){ if(tok===pvTok) $u("pvbox").innerHTML=`<div class="msg">โหลดหน้าไม่ได้: ${esc(e.message)}</div>`; }
+}
+$u("pv").addEventListener("contextmenu",e=>e.preventDefault());
+$u("pv").addEventListener("click",e=>{
+  const s=e.target.closest("[data-pv]"); if(s){const [n,p]=PVK.split("-").map(Number);pvShow(n,p+(+s.dataset.pv));return;}
+  const pb=e.target.closest("[data-pin]"); if(pb){togglePin(+pb.dataset.pin);pb.textContent=PINS.includes(+pb.dataset.pin)?"เลิกปักหมุด":"ปักหมุด";}
+});
+/* ---------- เหตุการณ์ ---------- */
+let utm;
+$u("uq").addEventListener("input",()=>{clearTimeout(utm);if(VIEW!=="H")setMode("H");utm=setTimeout(()=>{UF="all";uRefresh();},180);});
+$u("uq").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();saveQ();e.target.blur();}});
+$u("uqx").addEventListener("click",()=>{$u("uq").value="";$u("ux").classList.remove("pvon");PVK="";uRefresh();$u("uq").focus();});
+$u("ufil").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(b){UF=b.dataset.f;uSearch($u("uq").value.trim());}});
+$u("ulist").addEventListener("click",e=>{
+  const f=e.target.closest("h3 [data-f]"); if(f){UF=f.dataset.f;uSearch($u("uq").value.trim());window.scrollTo(0,0);return;}
+  const r=e.target.closest(".ur"); if(!r) return; saveQ();
+  if(r.dataset.b) openBook(r.dataset.b);
+  else if(r.dataset.i){ const it=SPEC.items[+r.dataset.i]; sBook="";$u("sq").value=$u("uq").value.trim(); setMode("S"); specRender(); specShow(it); }
+  else if(r.dataset.n){ if(innerWidth>=1000) pvShow(r.dataset.n,r.dataset.p,+r.dataset.sc); else location.href=`reader.html?n=${r.dataset.n}&p=${r.dataset.p}`; }
+});
+$u("qchips").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(b){$u("uq").value=b.dataset.q;UF="all";uRefresh();}});
+document.addEventListener("click",e=>{
+  const pb=e.target.closest(".pins button[data-b]"); if(pb){openBook(pb.dataset.b);return;}
+  const c=e.target.closest("#catlist [data-cat]"); if(c){cat=c.dataset.cat;setMode("T");render();return;}
+  if(e.target.id==="rclrb"){LSJ.set("pea_book_recent",[]);renderRecent();}
+});
+addEventListener("resize",()=>{if(innerWidth<1000)$u("ux").classList.remove("pvon");});
+</script>
+<a id="hubBack" href="../index.html" style="position:fixed;left:12px;bottom:12px;z-index:9999;background:#1f2937;color:#fff;padding:8px 14px;border-radius:20px;font:500 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3)">← ศูนย์รวมงาน</a>
 </body></html>

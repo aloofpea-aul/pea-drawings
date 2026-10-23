@@ -102,6 +102,7 @@ function sheds(g,n,r0,r1,pitch,y0,mat){for(var i=0;i<n;i++){g.add(at(cyl(r1,r1*.
 function bushing(g,x,y,z,h,mat){var b=G();sheds(b,Math.max(2,Math.round(h/45)),h*.11,h*.22,h/Math.max(2,Math.round(h/45)),h*.1,mat||M.porc);b.add(at(cyl(5,5,h*.25,M.cu,12),0,h+h*.08,0));g.add(at(b,x,y,z));return b;}
 function holesRow(g,n,L,y,z,r,axis){/* แสดงรูเจาะเป็นวงกลมเข้ม */for(var i=0;i<n;i++){var c=cylZ(r,1,M.pvc,16);var x=-L/2+L*(i+1)/(n+1);g.add(at(c,x,y,z));}}
 function f(n){return Math.round(n).toLocaleString("en-US");}
+function f2(n){return (+n).toLocaleString("en-US",{maximumFractionDigits:2});}
 
 /* ---------- ตัวสร้างแต่ละชนิด (คืน {g,lab,note}) ---------- */
 var B={
@@ -359,11 +360,51 @@ var B={
  lamparm:function(t,D){var L=D.len||2500,g=G();var pts=[[0,0,0],[0,600,0],[150,900,0],[L*.5,1100,0],[L,1150,0]];g.add(tube(pts,24,M.galv));g.add(at(box(120,200,90,M.galv),0,100,0));return {g:g,lab:"กิ่งโคมไฟถนน ยาว "+f(L)+" มม."};}
 };
 
+/* ---------- แบบจำลองละเอียดจากไฟล์ข้อมูล (spec3d-models.json) ----------
+   แต่ละรายการ: {lab, note, vars:{ชื่อ:"นิพจน์"}, parts:[ชิ้นส่วน]} หน่วย มม. แกน Y ขึ้น
+   ชิ้นส่วน: s=box|cyl|sphere|torus|ext|lathe|tube|hex|thread|helix|group พร้อม p=[x,y,z] rot=[องศา] sc m(วัสดุ) if rep */
+var BASE=(document.currentScript&&document.currentScript.src||location.href).replace(/[^\/]*$/,"");
+var MODELS=null,mP=null;
+function loadModels(){ if(MODELS) return Promise.resolve(MODELS); if(!mP) mP=fetch(BASE+"spec3d-models.json",{cache:"no-cache"}).then(function(r){return r.ok?r.json():{};}).catch(function(){return {};}).then(function(j){MODELS=j;return j;}); return mP; }
+function mkey(it){var m=(it.rows.filter(function(r){return r[2];})[0]||[])[2];return (it.k||3)+":"+(m||"")+":"+(it.th||"");}
+var FC={},MATH={PI:Math.PI,sin:Math.sin,cos:Math.cos,tan:Math.tan,sqrt:Math.sqrt,max:Math.max,min:Math.min,abs:Math.abs,round:Math.round,floor:Math.floor,ceil:Math.ceil,atan2:Math.atan2,hypot:Math.hypot,pow:Math.pow,cbrt:Math.cbrt};
+function ev(v,env){ if(typeof v!=="string") return v; var fn=FC[v]||(FC[v]=Function("env","with(env){return ("+v+");}")); return fn(env); }
+function evA(a,env){return (a||[]).map(function(x){return Array.isArray(x)?evA(x,env):ev(x,env);});}
+function tpl(s,env){ if(!s) return ""; return String(s).replace(/\$\{([^}]+)\}/g,function(_,e){var v=ev(e,env);return typeof v==="number"?f2(v):(v==null?"":v);}); }
+function mk(pt,env){ var mn=pt.m||"galv",o,m=M[mn]||(String(mn).charAt(0)==="="?M[ev(String(mn).slice(1),env)]:null)||M.galv,s=pt.s;
+  if(s==="group"){o=G();(pt.parts||[]).forEach(function(c){addPart(o,c,env);});}
+  else if(s==="box"){var z=evA(pt.size,env);o=box(z[0],z[1],z[2],m);}
+  else if(s==="cyl"){var r1=ev(pt.r1!=null?pt.r1:pt.r,env),r2=ev(pt.r2!=null?pt.r2:pt.r,env);o=new T.Mesh(new T.CylinderGeometry(r1,r2,ev(pt.h,env),ev(pt.seg,env)||28,1,!!pt.open,0,pt.arc?ev(pt.arc,env)*Math.PI/180:Math.PI*2),m);if(pt.open)m.side=T.DoubleSide;}
+  else if(s==="sphere"){o=new T.Mesh(new T.SphereGeometry(ev(pt.r,env),28,18),m);}
+  else if(s==="torus"){o=tor(ev(pt.R,env),ev(pt.r,env),m,(ev(pt.arc,env)||360)*Math.PI/180);}
+  else if(s==="hex"){o=hexN(ev(pt.d,env),ev(pt.h,env),m);}
+  else if(s==="ext"){o=ext(evA(pt.pts,env),ev(pt.depth,env),m,evA(pt.holes,env));}
+  else if(s==="lathe"){o=lathe(evA(pt.pts,env),m,ev(pt.seg,env)||40);}
+  else if(s==="tube"){o=tube(evA(pt.pts,env),ev(pt.r,env),m,!!pt.closed);}
+  else if(s==="thread"){o=G();threadX(o,ev(pt.d,env),ev(pt.L,env),0,m);}
+  else if(s==="helix"){var Lh=ev(pt.L,env),R=ev(pt.R,env),n=ev(pt.turns,env),q=[],N=Math.max(40,Math.round(n*24));for(var i=0;i<=N;i++){var u=i/N,a=u*n*Math.PI*2+(ev(pt.phase,env)||0)*Math.PI/180;q.push([Math.cos(a)*R,u*Lh,Math.sin(a)*R]);}o=tube(q,ev(pt.r,env),m);}
+  else return null;
+  if(pt.p){var P=evA(pt.p,env);o.position.set(P[0]||0,P[1]||0,P[2]||0);}
+  if(pt.rot){var Rr=evA(pt.rot,env);o.rotation.set((Rr[0]||0)*Math.PI/180,(Rr[1]||0)*Math.PI/180,(Rr[2]||0)*Math.PI/180);}
+  if(pt.sc){var S=evA(pt.sc,env);o.scale.set(S[0],S[1],S[2]);}
+  return o; }
+function addPart(g,pt,env){ if(pt["if"]!=null&&!ev(pt["if"],env)) return;
+  if(pt.rep){var n=ev(pt.rep,env)|0;for(var i=0;i<n;i++){var e2=Object.create(env);e2.i=i;e2.n=n;var o=mk(pt,e2);if(o)g.add(o);}return;}
+  var o1=mk(pt,env);if(o1)g.add(o1); }
+function dataModel(md,it,ri,D){ var row=(it.rows[ri||0]||[]),env=Object.create(MATH);Object.keys(D).forEach(function(k){env[k]=D[k];});
+  env.D=D;env.row=clean(row[1]||"");env.th=clean(it.th||"");env.en=clean(it.en||"");env.mat=row[2]||"";env.ri=ri||0;env.has=function(re){return new RegExp(re,"i").test(env.row+" "+env.th+" "+env.en);};
+  Object.keys(md.vars||{}).forEach(function(k){env[k]=ev(md.vars[k],env);});
+  var g=G();(md.parts||[]).forEach(function(pt){addPart(g,pt,env);});
+  return {g:g,lab:tpl(md.lab,env),note:tpl(md.note,env),k:"data"}; }
+
 /* ---------- สร้างโมเดลของรายการ+แถวที่เลือก ---------- */
 function model(it,ri){var k=type(it);if(!k||!B[k])return null;var row=(it.rows[ri||0]||[]);var txt=clean((row[1]||"")+" "+(it.th||"")+" "+(it.en||""));
   var D=dims((row[1]||"")+" "+((it.rows.length===1)?(it.th+" "+it.en):""));var D2=dims(txt);Object.keys(D2).forEach(function(x){if(D[x]==null)D[x]=D2[x];});
-  D.row=clean(row[1]||"");D.th=clean((it.th||"")+" "+(it.en||""));D.tho=clean(it.th||"");var r=B[k](txt,D);r.k=k;return r;}
-function center(g){var inner=G();inner.add(g);var bb=new T.Box3().setFromObject(inner),c=bb.getCenter(new T.Vector3()),s=bb.getSize(new T.Vector3());inner.position.sub(c);var root=G();root.add(inner);return {root:root,size:s};}
+  D.row=clean(row[1]||"");D.th=clean((it.th||"")+" "+(it.en||""));D.tho=clean(it.th||"");
+  var md=MODELS&&MODELS[mkey(it)];if(md){try{return dataModel(md,it,ri,D);}catch(e){if(window.console)console.warn("spec3d model",mkey(it),e);}}
+  var r=B[k](txt,D);r.k=k;return r;}
+function bbox(obj){obj.updateMatrixWorld(true);var bb=new T.Box3(),v=new T.Vector3();obj.traverse(function(o){if(o.isMesh&&o.geometry&&o.geometry.attributes.position){var P=o.geometry.attributes.position;for(var i=0;i<P.count;i++){v.fromBufferAttribute(P,i).applyMatrix4(o.matrixWorld);bb.expandByPoint(v);}}});return bb;}
+function center(g){var inner=G();inner.add(g);var bb=bbox(inner),c=bb.getCenter(new T.Vector3()),s=bb.getSize(new T.Vector3());inner.position.sub(c);var root=G();root.add(inner);return {root:root,size:s};}
 
 /* ---------- ตัวแสดง 3D (ลากหมุน ซูม) ---------- */
 var V=null;
@@ -380,14 +421,14 @@ function viewer(){ if(V) return V; var R=new T.WebGLRenderer({antialias:true,alp
 function loop(){V.raf=requestAnimationFrame(loop);if(!V.host||!V.host.isConnected){stop();return;}var w=V.host.clientWidth,h=V.host.clientHeight;if(w&&h&&(w!==V.w||h!==V.h)){V.w=w;V.h=h;V.R.setSize(w,h,false);V.cam.aspect=w/h;V.cam.updateProjectionMatrix();}
   if(V.auto)V.ry+=.004;V.root.rotation.set(V.rx,V.ry,0);V.cam.position.set(0,0,V.size*2.1*V.dist);V.cam.lookAt(0,0,0);V.R.render(V.sc,V.cam);}
 function stop(){if(V){cancelAnimationFrame(V.raf);V.raf=0;}}
-function mount(el,it,ri){return three().then(function(t3){T=t3;mats();var r=model(it,ri);if(!r)throw new Error("ยังไม่มีแบบจำลองของรายการนี้");viewer();stop();
+function mount(el,it,ri){return Promise.all([three(),loadModels()]).then(function(a){var t3=a[0];T=t3;mats();var r=model(it,ri);if(!r)throw new Error("ยังไม่มีแบบจำลองของรายการนี้");viewer();stop();
   if(V.root)V.sc.remove(V.root);var c=center(r.g);V.root=c.root;V.size=Math.max(c.size.x,c.size.y,c.size.z);V.sc.add(V.root);V.rx=.38;V.ry=-.6;V.dist=1;V.auto=true;V.w=0;
   var cv=el.querySelector("canvas");if(cv!==V.R.domElement){el.querySelectorAll("canvas").forEach(function(x){x.remove();});el.insertBefore(V.R.domElement,el.firstChild);}
   V.R.domElement.style.width="100%";V.R.domElement.style.height="100%";V.R.domElement.style.display="block";V.host=el;loop();return r;});}
 
 /* ---------- 2D: ภาพฉาย 3 ด้าน (เส้นขอบ + ขนาดรวม) ---------- */
 var R2=null;
-function draw2d(it,ri,W,H){return three().then(function(t3){T=t3;mats();var r=model(it,ri);if(!r)throw new Error("ยังไม่มีแบบจำลองของรายการนี้");
+function draw2d(it,ri,W,H){return Promise.all([three(),loadModels()]).then(function(a){var t3=a[0];T=t3;mats();var r=model(it,ri);if(!r)throw new Error("ยังไม่มีแบบจำลองของรายการนี้");
   W=W||420;H=H||300;if(!R2){R2=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R2.setPixelRatio(1);}R2.setSize(W,H,false);R2.setClearColor(0xffffff,1);
   var out={lab:r.lab,note:r.note,views:[]};
   ["front","side","top"].forEach(function(dir){var rr=model(it,ri),c=center(rr.g),sz=c.size,sc=new T.Scene();
@@ -405,5 +446,6 @@ function draw2d(it,ri,W,H){return three().then(function(t3){T=t3;mats();var r=mo
     ms.forEach(function(o){o.geometry.dispose&&0;});});
   return out;});}
 
-window.SPEC3D={type:type,mount:mount,draw2d:draw2d,stop:stop,dims:dims,_rules:RULES};
+window.SPEC3D={type:type,mount:mount,draw2d:draw2d,stop:stop,dims:dims,key:mkey,_rules:RULES,
+  _setModels:function(m){MODELS=m;mP=Promise.resolve(m);}};
 })();

@@ -99,6 +99,28 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 .lb button{position:fixed;top:10px;right:12px;height:44px;padding:0 16px;border-radius:22px;border:0;background:#fff;font:inherit;font-weight:600;cursor:pointer}
 @media (max-width:860px){.sx{grid-template-columns:1fr}.sd{position:fixed;inset:0;max-height:none;border-radius:0;z-index:10000;display:none}.sd.open{display:block}.sd .grid2{grid-template-columns:1fr}.sd .x{display:block;position:sticky;top:0;margin:-4px 0 8px auto;height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--line);background:#fff;font:inherit;cursor:pointer}}
 .ocr{font-size:11px;color:var(--c);margin-left:6px}
+/* ภาพ 2D/3D ในรายละเอียดอุปกรณ์ */
+.sd .grid2.w3{grid-template-columns:minmax(280px,1.15fr) minmax(0,1fr)}
+@container (max-width:660px){.sd .grid2.w3{grid-template-columns:1fr}}
+.vtab{display:flex;gap:4px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:8px}
+.vtab button{flex:1;height:36px;border:0;border-radius:8px;background:none;font:inherit;font-size:14px;color:var(--ink);cursor:pointer}
+.vtab button[aria-selected="true"]{background:var(--dim);color:#fff;font-weight:600}
+.v3d{position:relative;height:320px;border:1px solid #e3e7ec;border-radius:10px;background:radial-gradient(circle at 50% 35%,#fff,#eef1f5);overflow:hidden;cursor:grab}
+.v3d .tg{position:absolute;top:8px;right:8px;font-size:11.5px;color:#5a6573;background:#fff;border:1px solid #d5dbe3;border-radius:8px;padding:1px 8px;pointer-events:none}
+.v3d .lb3{position:absolute;left:10px;right:10px;bottom:8px;font-size:12.5px;color:#18212b;pointer-events:none}
+.v3d .lb3 span{color:#5a6573}
+.v3d .ms{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#5a6573;font-size:13px;padding:20px;text-align:center}
+.v2d{display:grid;grid-template-columns:1fr 1fr;gap:10px}.v2d>div,.v2d figure:first-of-type{grid-column:1/-1}
+.v2d figure{margin:0}.v2d figcaption{font-size:12px;color:var(--muted);margin-bottom:3px}
+.v2d .vw{position:relative;border:1px solid #e3e7ec;border-radius:8px;overflow:hidden;background:#fff}
+.v2d .vw img{display:block;width:100%;height:auto}
+.v2d .vw svg{position:absolute;inset:0;width:100%;height:100%}
+.v2d .dm{position:absolute;font-size:11px;color:#245f93;background:#fff;padding:0 3px;line-height:1.3;white-space:nowrap}
+.cap3{font-size:12px;color:var(--c);background:var(--c-bg);border-radius:8px;padding:6px 10px;margin-top:8px;line-height:1.5}
+.v2d[hidden],.v3d[hidden],.sd .pg[hidden]{display:none}
+.sd tr.pick{cursor:pointer}.sd tr.pick:hover td{background:var(--soft)}
+.sd tr.sel td{background:var(--dim-bg)}.sd tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--dim)}
+@media (max-width:860px){.v3d{height:280px}}
 /* ---------- หน้าใหม่: ช่องค้นเดียว ---------- */
 .hubm{display:none;font-size:13px;text-decoration:none;margin-bottom:2px}
 .hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}
@@ -228,6 +250,7 @@ dialog::backdrop{background:rgba(10,15,20,.5)}
 </main>
 <dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
 <script src="books-spec.js?v=20261021b"></script>
+<script src="spec3d.js?v=20261023a" charset="utf-8"></script>
 <script>
 const SER={"A0100": "รายละเอียดทั่วไป (แรงต่ำ)", "A0200": "การติดตั้งอุปกรณ์สำหรับพาดสาย (แรงต่ำ)", "A0300": "ระบบจำหน่ายแรงต่ำเฉพาะแห่ง (แรงต่ำ)", "A0400": "อุปกรณ์ป้องกันในระบบจำหน่ายแรงต่ำ (แรงต่ำ)", "A0500": "การติดตั้งมิเตอร์ (แรงต่ำ)", "A0600": "อุปกรณ์ด้านแรงต่ำของหม้อแปลง (แรงต่ำ)", "A0700": "การติดตั้งคาปาซิเตอร์ (แรงต่ำ)", "A0800": "การติดตั้งไฟถนน (แรงต่ำ)", "A0900": "การติดตั้งระบบไฟฟ้าพิเศษ (แรงต่ำ)", "A3100": "รายละเอียดทั่วไป (22–33 kV)", "A3200": "การประกอบคอน (22–33 kV)", "A3300": "ระบบจำหน่าย 1 เฟส 19 kV (22–33 kV)", "A3400": "อุปกรณ์ป้องกันและสวิตช์ตัดตอน (22–33 kV)", "A3500": "พีที และ ซีที สำหรับมิเตอร์แรงสูง (22–33 kV)", "A3600": "การติดตั้งคาปาซิเตอร์ (22–33 kV)", "A3700": "การติดตั้งหม้อแปลง (22–33 kV)", "A3800": "ผลิตภัณฑ์คอนกรีต (22–33 kV)", "A3900": "การติดตั้งเคเบิลอากาศ (22–33 kV)", "A5100": "รายละเอียดทั่วไป (115 kV)", "A5200": "วงจรเดี่ยว สายไฟฟ้าเดี่ยว (115 kV)", "A5250": "วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5300": "วงจรคู่ สายไฟฟ้าเดี่ยว (115 kV)", "A5350": "วงจรคู่ สายไฟฟ้าคู่ (115 kV)", "A5400": "แบบเฉพาะ สายเปลือย (115 kV)", "A5425": "แบบเฉพาะ วงจรเดี่ยว สายไฟฟ้าคู่ (115 kV)", "A5600": "การประกอบลูกถ้วยแขวน (115 kV)", "A5625": "การต่อสายล่อฟ้า (115 kV)", "A5635": "การประกอบสายยึดโยง (115 kV)", "A5650": "รากฐาน (115 kV)", "A5660": "สมอบกคอนกรีต (115 kV)", "A5700": "เสาโครงสร้างเหล็ก (115 kV)", "A5800": "การยึดโยง (115 kV)", "A5900": "เสาเหล็กแปดเหลี่ยม (115 kV)"};
 const LIC={R:"สงวนลิขสิทธิ์ กฟภ. ห้ามเผยแพร่",C:"เอกสารควบคุม ใช้ภายในองค์กร",P:"เผยแพร่ได้"};
@@ -328,19 +351,46 @@ function specRender(){
     return `<button type="button" class="si" data-i="${SPEC.items.indexOf(it)}"><span class="tb" style="${TK(it)?`background-image:url(data:image/jpeg;base64,${TK(it)})`:""}"></span>
       <span><div class="t">${esc(it.th||it.en||"(ไม่มีชื่อในตาราง)")}</div>
       <div class="m">${it.rows.length>1?it.rows.length+" ขนาด/รุ่น":esc(it.rows[0]?it.rows[0][1]:"")}${it.rows.some(r=>r[2])?" · "+esc(it.rows.filter(r=>r[2]).slice(0,2).map(r=>r[2]).join(", "))+(it.rows.length>2?" …":""):""}</div>
-      <div class="k">${Object.keys(SPEC.books||{}).length>1?esc(BKN(it).lbl||"")+" · ":""}${it.bp?"หน้า "+esc(it.bp):"PDF หน้า "+it.p}${n?` · เปิดแบบได้ ${n} แบบ`:""}</div></span></button>`;}).join("")||`<div class="fstat">ไม่พบอุปกรณ์ที่ตรงกับคำค้น</div>`;
+      <div class="k">${Object.keys(SPEC.books||{}).length>1?esc(BKN(it).lbl||"")+" · ":""}${it.bp?"หน้า "+esc(it.bp):"PDF หน้า "+it.p}${n?` · เปิดแบบได้ ${n} แบบ`:""}${window.SPEC3D&&SPEC3D.type(it)?" · ภาพ 2D/3D":""}</div></span></button>`;}).join("")||`<div class="fstat">ไม่พบอุปกรณ์ที่ตรงกับคำค้น</div>`;
   markCur();
   if(!sCur||!sV.includes(sCur)){ if(sV.length&&innerWidth>860) specShow(sV[0]); }
+}
+/* ---------- ภาพ 2D / 3D ---------- */
+let RI=0, VT="3", v2tok=0;
+function setVT(it,v){ VT=v; const box=document.getElementById("sdet");
+  box.querySelectorAll(".vtab [data-vt]").forEach(b=>b.setAttribute("aria-selected",b.dataset.vt===v));
+  const v3=document.getElementById("v3d"),v2=document.getElementById("v2d"),pg=document.getElementById("spg");
+  v3.hidden=v!=="3"; v2.hidden=v!=="2"; pg.hidden=v!=="p";
+  if(v==="3"){ SPEC3D.mount(v3,it,RI).then(r=>{ v3.querySelectorAll(".ms,.tg,.lb3").forEach(x=>x.remove());
+      v3.insertAdjacentHTML("beforeend",`<div class="tg">ลากเพื่อหมุน · ล้อเมาส์/สองนิ้วเพื่อซูม</div><div class="lb3"><b>${esc(r.lab)}</b>${r.note?` <span>· ${esc(r.note)}</span>`:""}</div>`); })
+      .catch(e=>{v3.innerHTML=`<div class="ms">${esc(e.message)}</div>`;}); }
+  else SPEC3D.stop();
+  if(v==="2"){ const tok=++v2tok; v2.innerHTML=`<div class="fstat">กำลังสร้างภาพ 2D…</div>`;
+    SPEC3D.draw2d(it,RI,480,320).then(o=>{ if(tok!==v2tok) return; const TH={front:"ด้านหน้า",side:"ด้านข้าง",top:"ด้านบน"}, fmt=n=>n.toLocaleString("en-US");
+      v2.innerHTML=`<div style="font-size:13px"><b>${esc(o.lab)}</b>${o.note?` <span class="en">· ${esc(o.note)}</span>`:""} <span class="en">· ขนาดรวมโดยประมาณ (มม.)</span></div>`+o.views.map(x=>{
+        const W=x.W,H=x.H,x0=x.bx,x1=x.bx+x.bw,y0=x.by,y1=x.by+x.bh,yb=Math.min(H-12,y1+14),xr=Math.min(W-10,x1+14);
+        return `<figure><figcaption>${TH[x.dir]}</figcaption><div class="vw"><img src="${x.img}" alt="ภาพ${TH[x.dir]}" draggable="false">
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><g stroke="#245f93" stroke-width="1" vector-effect="non-scaling-stroke">
+        <line x1="${x0}" y1="${yb}" x2="${x1}" y2="${yb}"/><line x1="${x0}" y1="${yb-5}" x2="${x0}" y2="${yb+5}"/><line x1="${x1}" y1="${yb-5}" x2="${x1}" y2="${yb+5}"/>
+        <line x1="${xr}" y1="${y0}" x2="${xr}" y2="${y1}"/><line x1="${xr-5}" y1="${y0}" x2="${xr+5}" y2="${y0}"/><line x1="${xr-5}" y1="${y1}" x2="${xr+5}" y2="${y1}"/></g></svg>
+        <span class="dm" style="left:${(x0+x1)/2/W*100}%;top:${(yb+3)/H*100}%;transform:translateX(-50%)">${fmt(x.w)}</span>
+        <span class="dm" style="left:${(xr+6)/W*100}%;top:${(y0+y1)/2/H*100}%;transform:translateY(-50%)">${fmt(x.h)}</span></div></figure>`;}).join("");
+    }).catch(e=>{ if(tok===v2tok) v2.innerHTML=`<div class="fstat">${esc(e.message)}</div>`; }); }
 }
 function markCur(){document.querySelectorAll("#slist .si").forEach(b=>b.setAttribute("aria-current",SPEC.items[b.dataset.i]===sCur));}
 function specShow(it){
   sCur=it; markCur(); const raw=document.getElementById("sq").value.replace(/\D/g,""), mq=sHL||(raw.length>=4?raw:"");
   const lnk=[...it.d.map(x=>({l:x[0],f:x[1],k:1})),...(it.b||[]).map(x=>({l:x[0],f:x[1],k:2}))];
   const box=document.getElementById("sdet");
-  box.innerHTML=`<button type="button" class="x">ปิด ✕</button><div class="grid2"><div class="pg"><img id="spimg" alt="หน้า ${esc(it.bp||it.p)} ${esc(BKN(it).short)}"><div class="cap" id="spcap">กำลังโหลดหน้าคู่มือ… · กดรูปเพื่อขยาย</div></div>
+  const has3=!!(window.SPEC3D&&SPEC3D.type(it)); RI=0;
+  box.innerHTML=`<button type="button" class="x">ปิด ✕</button><div class="grid2${has3?" w3":""}"><div>
+  ${has3?`<div class="vtab" role="tablist"><button type="button" role="tab" data-vt="3" aria-selected="true">ภาพ 3D</button><button type="button" role="tab" data-vt="2" aria-selected="false">ภาพ 2D</button><button type="button" role="tab" data-vt="p" aria-selected="false">หน้าคู่มือ</button></div>
+  <div class="v3d" id="v3d"><div class="ms">กำลังสร้างภาพ 3D…</div></div><div class="v2d" id="v2d" hidden></div>`:""}
+  <div class="pg" id="spg"${has3?" hidden":""}><img id="spimg" alt="หน้า ${esc(it.bp||it.p)} ${esc(BKN(it).short)}"><div class="cap" id="spcap">กำลังโหลดหน้าคู่มือ… · กดรูปเพื่อขยาย</div></div>
+  ${has3?`<div class="cap3">ภาพประกอบโดยประมาณ สร้างจากชื่อและขนาดในรายการ (มม.) · ใช้งานจริงยึดตามหน้าคู่มือและแบบมาตรฐาน${it.rows.length>1?" · กดแถวขนาดในตารางเพื่อดูภาพขนาดนั้น":""}</div>`:""}</div>
   <div><div class="src">${esc(BKN(it).short)} · หน้า ${esc(it.bp||"-")} (PDF ${it.p})</div><h3>${esc(it.th||"(ไม่มีชื่อในตาราง)")}</h3>${it.en?`<div class="en">${esc(it.en)}</div>`:""}
   ${it.c?`<div class="en" style="margin-top:4px">หมวด: ${esc(it.c)}${it.rows[0]&&it.rows[0][0]?" · ลำดับที่ "+esc(it.rows[0][0]):""}</div>`:""}
-  <table>${it.rows.map(r=>`<tr><td>${it.k==2?"<span class=en>สเปกเลขที่</span> ":""}${esc(r[1])}</td><td class="mt${mq&&r[2].includes(mq)?" on":""}">${esc(r[2])}</td></tr>`).join("")}</table>
+  <table>${it.rows.map((r,ri)=>`<tr${has3?` class="pick${ri===0?" sel":""}" data-ri="${ri}"`:""}><td>${it.k==2?"<span class=en>สเปกเลขที่</span> ":""}${esc(r[1])}</td><td class="mt${mq&&r[2].includes(mq)?" on":""}">${esc(r[2])}</td></tr>`).join("")}</table>
   ${it.s?`<div><span class="en">การจัดเก็บ</span> ${esc(it.s)}</div>`:""}
   ${it.u.length?`<div class="lab">การใช้งาน</div><div style="font-size:14px;line-height:1.7">${it.u.map(u=>"• "+esc(u)).join("<br>")}</div>`:""}
   ${it.k==2&&!lnk.length?"":`<div class="lab">เปิดแบบในคลังที่ใช้ชิ้นนี้</div><div class="btns">${lnk.filter(x=>x.f).map(x=>`<a href="d/${esc(x.f)}">${esc(x.l)} →</a>`).join("")}
@@ -349,6 +399,9 @@ function specShow(it){
   <div class="lab"><a href="reader.html?n=${it.k||3}&p=${it.p}">อ่านคู่มือเล่มนี้ต่อจากหน้านี้</a></div></div></div>`;
   box.classList.add("open"); box.scrollTop=0;
   box.querySelector(".x").onclick=()=>box.classList.remove("open");
+  if(has3){ VT="3"; box.querySelector(".vtab").onclick=e=>{const b=e.target.closest("[data-vt]");if(b)setVT(it,b.dataset.vt);};
+    box.querySelector("table").onclick=e=>{const tr=e.target.closest("tr[data-ri]");if(!tr)return;RI=+tr.dataset.ri;box.querySelectorAll("tr[data-ri]").forEach(x=>x.classList.toggle("sel",x===tr));setVT(it,VT);};
+    setVT(it,"3"); }
   if(!PEASpec.page){document.getElementById("spcap").textContent="หน้านี้ยังเป็นรุ่นเก่า กด Ctrl+F5 เพื่อโหลดใหม่";return;}
   PEASpec.page(it.k||3,it.p).then(u=>{if(sCur!==it)return;const im=document.getElementById("spimg");im.src=u;document.getElementById("spcap").textContent="หน้า "+(it.bp||it.p)+" จากคู่มือ · กดรูปเพื่อขยายเต็มจอ";
     im.onclick=()=>{const lb=document.getElementById("lb");lb.querySelector("img").src=u;lb.style.display="block";};}).catch(e=>{document.getElementById("spcap").textContent="โหลดหน้าคู่มือไม่ได้: "+e.message;});

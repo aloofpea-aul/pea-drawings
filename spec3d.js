@@ -1,11 +1,11 @@
 /* spec3d.js — ภาพ 3D และ 2D (ภาพฉาย 3 ด้าน) ของอุปกรณ์ในเมนู "อุปกรณ์" สร้างจากชื่อและขนาดในรายการ
    เป็นภาพประกอบโดยประมาณ ไม่ใช่แบบมาตรฐาน — ขนาดหน่วย มม.
    SPEC3D.type(item) -> ชนิด หรือ null · SPEC3D.mount(el,item,row) · SPEC3D.draw2d(el,item,row)
-   ตอนนี้รองรับเล่ม 3 (คู่มืออุปกรณ์ไฟฟ้า 2565 ระบบจำหน่ายแรงสูง/แรงต่ำ) */
+   รองรับเล่ม 3 (คู่มืออุปกรณ์ 2565 ระบบจำหน่าย) และเล่ม 26 (คู่มืออุปกรณ์สายส่ง 115 kV) */
 (function(){
 "use strict";
 var THREE_URL="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-var BOOKS={3:1};
+var BOOKS={3:1,26:1};
 var tP=null;
 function three(){ if(window.THREE) return Promise.resolve(window.THREE);
   if(!tP) tP=new Promise(function(ok,no){var s=document.createElement("script");s.src=THREE_URL;s.onload=function(){ok(window.THREE);};s.onerror=function(){tP=null;no(new Error("โหลดตัวแสดงภาพ 3D ไม่ได้ (ตรวจอินเทอร์เน็ต)"));};document.head.appendChild(s);});
@@ -13,6 +13,17 @@ function three(){ if(window.THREE) return Promise.resolve(window.THREE);
 
 /* ---------- จัดชนิดจากชื่อรายการ (เรียงจากเฉพาะเจาะจงไปทั่วไป) ---------- */
 var RULES=[
+ /* เล่ม 26 สายส่ง 115 kV — รายการเฉพาะ วางก่อนกฎทั่วไป */
+ [/เชื่อมดวยความรอน|EXOTHERMIC/,"exo"],[/ผงเคมี/,"bag"],[/สายดินแบบแผ่นเหล็ก/,"flatstrip"],[/คอนเนคเตอร์สำหรับแผ่นเหล็กแบน/,"flatconn"],
+ [/เคลือบทองแดง/,"curod"],[/เสาเหล็กชนิด 8 เหลี่ยม/,"octpole"],[/เสาโครงเหล็ก/,"tower"],[/เสาเข็ม/,"pile"],
+ [/เหล็กประกับคอนสายแบบท้าวแขน/,"angle"],[/ท่อเหล็ก/,"steelpipe"],[/ห่วงโอแวล/,"eyeoval"],[/ทิมเบิ้ลอายนัท/,"thimblenut"],[/กายกริ๊พ/,"deadend"],
+ [/สายทองแดงเปลือย/,"barecu"],[/สายอะลูมิเนียมเจือ/,"aaac"],[/แคล้มป์สลัก 3 ตัว/,"clamp3"],[/แผ่นเหล็กแยกสาย/,"yokeplate"],
+ [/ที่แขวนลูกถ้วยทางโค้ง/,"cornerbracket"],[/อายเล็ท/,"eyelet"],[/ลูกถ้วยแบบโพสท์/,"hpost"],[/ข้อต่อแขวน|ข้อต่อแบบ/,"fitting"],
+ [/เหล็กห่วงสำหรับยึดโยง/,"shackle"],[/แคล้มป์แขวนสำหรับสาย/,"suspclamp"],[/แคล้มป์เข้าปลายสาย แบบบีบ/,"compdeadend"],
+ [/อาร์เมอร์กริพ/,"armorgrip"],[/ปรีฟอร์มแยกสาย/,"helispacer"],[/ลูกบอลแสดงแนวสาย/,"marker"],[/ดัมเบล|สต๊อกบริดจ์/,"stockbridge"],
+ [/คอมเปาด์/,"compound"],[/แอร์เบรกสวิตช์|โหลดเบรกสวิตช์/,"abswitch"],[/เซอร์กิตสวิตช์เชอร์/,"cswitcher"],[/ชุดรองรับกล่องต่อสาย/,"jbsupport"],[/กล่องต่อสาย OPGW/,"jointbox"],
+[/ชุดรองรับการม้วนสาย/,"coilbracket"],[/^สาย OPGW/,"opgw"],
+ [/^แผ่นเหล็ก(?!ประกับเสาตอม่อ)/,"steelplate"],
  [/กราวด์วายร์แคล้มป์/,"gwclamp"],[/กิ่งโคม/,"lamparm"],[/แผ่นเหล็กประกับเสาตอม่อ/,"stubplate"],[/เสาตอม่อ/,"stub"],[/เสาคอนกรีต/,"pole"],
  [/คอน คอร|คาน คอร/,"concarm"],[/เหล็กคอนเคเบิลอากาศ/,"cablebracket"],[/คอนสื่อสาร/,"commarm"],
  [/เหล็กประกับคอนแบบท้าวแขน/,"angle"],[/เหล็กประกับ|BRACE, FLAT/,"flatbar"],[/เหล็กฉากรับคอนสาย/,"vbrace"],
@@ -44,11 +55,11 @@ function type(it){ if(!it||!BOOKS[it.k||3]) return null; var n=nameOf(it); for(v
 /* ---------- อ่านขนาดจากข้อความ ---------- */
 function clean(t){return String(t||"").replace(/(\d),(\d{3})/g,"$1$2").replace(/×|X(?=\s*\d)/g,"x").replace(/\s+/g," ");}
 function dims(t){ t=clean(t); var r={},m;
-  if(m=t.match(/M\s?(\d+)\s*x\s*(\d+)/i)){r.d=+m[1];r.L=+m[2];} else if(m=t.match(/M\s?(\d+)/)) r.d=+m[1];
+  if(m=t.match(/M\s?(\d+)\s*x\s*(\d+)/i)){r.d=+m[1];r.L=+m[2];} else if(m=t.match(/M\s?(\d+)\s*,\s*(\d+)\s*(?:มม|mm)/i)){r.d=+m[1];r.L=+m[2];} else if(m=t.match(/M\s?(\d+)/)) r.d=+m[1];
   if(m=t.match(/T\s*=\s*(\d+)/)) r.T=+m[1];
   if(m=t.match(/(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)\s*(ซม|cm)?/i)){var k=m[4]?10:1;r.a=+m[1]*k;r.b=+m[2]*k;r.c=+m[3]*k;}
   else if(m=t.match(/(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)\s*(มม|mm)/i)){r.a=+m[1];r.b=+m[2];}
-  if(m=t.match(/ยาว\s*\(?L?\)?\s*(\d+(?:\.\d+)?)\s*(มม|mm|ม\.|m\b)/i)) r.len=+m[1]*(/มม|mm/i.test(m[2])?1:1000);
+  if(m=t.match(/(?:ยาว|ความยาว)\s*\(?L?\)?\s*(\d+(?:\.\d+)?)\s*(มม|mm|เมตร|ม\.|m\b)/i)) r.len=+m[1]*(/มม|mm/i.test(m[2])?1:1000);
   else if(m=t.match(/(\d+(?:\.\d+)?)\s*(?:mm|มม\.?)\s*LONG/i)) r.len=+m[1]; else if(m=t.match(/(\d+(?:\.\d+)?)\s*m LONG/i)) r.len=+m[1]*1000;
   if(m=t.match(/L\s*[≥=]\s*(\d+)/)) r.Ls=+m[1];
   if(m=t.match(/ขนาดเสา\s*(\d+(?:\.\d+)?)\s*ม/)) r.pole=+m[1];
@@ -56,6 +67,7 @@ function dims(t){ t=clean(t); var r={},m;
   else if(m=t.match(/(\d)\s*x\s*(\d+(?:\.\d+)?)\s*ตร/)){r.n=+m[1];r.mm2=+m[2];}
   else if(m=t.match(/(\d+(?:\.\d+)?)(?:\/\d+)?\s*ตร\.?\s*มม/)) r.mm2=+m[1];
   if(m=t.match(/(\d+)\s*kVA/i)) r.kva=+m[1];
+  if(m=t.match(/ช่วงกว้าง\s*(\d+)/)) r.span=+m[1]; if(m=t.match(/ดรอพ\s*(\d+)/)) r.drop=+m[1];
   if(m=t.match(/[øØ]\s*(\d+(?:\.\d+)?)/)) r.dia=+m[1];
   if(m=t.match(/(\d+(?:\.\d+)?)\s*kV\b/)) r.kv=+m[1];
   if(m=t.match(/(\d+(?:\.\d+)?)\s*(?:แอมป์|A\b)/)) r.amp=+m[1];
@@ -68,7 +80,7 @@ function mats(){ if(M.steel) return M; var S=function(c,m,r){return new T.MeshSt
   M.wood=S(0xb98a55,0,.8);M.pvc=S(0x2a2d31,0,.55);M.grey=S(0x9aa1a8,.1,.6);M.lgrey=S(0xc9ced3,.05,.6);M.porc=S(0x8a4b2c,.05,.25);M.wporc=S(0xe9e6df,.02,.25);
   M.white=S(0xeef0f2,0,.4);M.conc=S(0xb3aea4,0,.95);M.red=S(0xc0392b,0,.5);M.yellow=S(0xe0b42a,0,.5);M.blue=S(0x3a6ea5,0,.5);M.green=S(0x4f8a5b,0,.6);
   M.poly=S(0x7d8a96,0,.5);M.glass=new T.MeshStandardMaterial({color:0x9fc3d9,metalness:0,roughness:.1,transparent:true,opacity:.55});
-  M.tank=S(0x9da5ad,.2,.55);M.hdpe=S(0x3c4248,0,.6);return M; }
+  M.tank=S(0x9da5ad,.2,.55);M.glassI=new T.MeshStandardMaterial({color:0x6fa58f,metalness:0,roughness:.08,transparent:true,opacity:.8});M.graph=S(0x3b3f44,.1,.7);M.orange=S(0xe0782a,0,.5);M.hdpe=S(0x3c4248,0,.6);return M; }
 function G(){return new T.Group();}
 function at(o,x,y,z){o.position.set(x||0,y||0,z||0);return o;}
 function cyl(r1,r2,h,mat,seg){return new T.Mesh(new T.CylinderGeometry(r1,r2,h,seg||24),mat);}
@@ -109,9 +121,9 @@ var B={
  commarm:function(t,D){var r=B.channel(t,{a:D.a||100,b:D.b||50,c:D.c&&D.c<30?D.c:5,len:D.len||1000});r.g.traverse(function(o){if(o.isMesh)o.material=M.blue;});r.lab="คอนสื่อสาร (เหล็กเคลือบฉนวน) ยาว "+f(D.len||1000)+" มม.";return r;},
  flatbar:function(t,D){var w=D.a||30,th=D.b||6,L=D.c||760,g=G();g.add(box(L,w,th,M.galv));[-L/2+30,L/2-30].forEach(function(x){g.add(at(cylZ(9,th+2,M.pvc,16),x,0,0));});
    return {g:g,lab:"เหล็กประกับ "+w+"×"+th+"×"+f(L)+" มม."};},
- vbrace:function(t,D){var g=G(),span=1800,drop=450,a=D.a||50;var L=Math.hypot(span/2,drop);
+ vbrace:function(t,D){var g=G(),span=D.span||1800,drop=D.drop||450,a=D.a||50;var L=Math.hypot(span/2,drop);
    [-1,1].forEach(function(s){var r=B.channel(t,{a:a,c:6,len:L},true).g;r.rotation.z=s*Math.atan2(drop,span/2);g.add(at(r,s*span/4,-drop/2,0));});
-   return {g:g,lab:"เหล็กฉากรับคอนสาย "+a+"×"+a+" มม.",note:"ช่วงกว้าง 1,800 ดรอพ 450 มม."};},
+   return {g:g,lab:"เหล็กฉากรับคอนสาย "+a+"×"+a+" มม.",note:"ช่วงกว้าง "+f(span)+" ดรอพ "+drop+" มม."};},
  cablebracket:function(t,D){var g=G();g.add(at(box(60,500,60,M.galv),0,0,0));g.add(at(box(700,60,60,M.galv),350,200,0));var br=box(560,30,40,M.galv);br.rotation.z=.55;g.add(at(br,240,-30,0));
    var cl=tor(30,8,M.galv,Math.PI);cl.rotation.z=Math.PI;g.add(at(cl,640,170,0));return {g:g,lab:"เหล็กคอนเคเบิลอากาศ",note:clean(t).match(/ทางโค้ง|ทางตรง/)?(clean(t).match(/ทางโค้ง|ทางตรง/)[0]):""};},
  bolt:function(t,D){var d=D.d||16,L=D.L||200,Tt=Math.min(D.T||L,L),g=G();var h=hexN(d,d*.65,M.galv);h.rotation.z=Math.PI/2;g.add(at(h,-d*.33,0,0));
@@ -122,7 +134,7 @@ var B={
    g.add(at(cylX(d/2,L-Tt,M.galv,20),(L-Tt)/2,0,0));threadX(g,d,Tt,L-Tt);nutX(g,d,L-d*1.2);if(da)nutX(g,d,L*.45);
    return {g:g,lab:(da?"สลักเกลียวห่วงกลม (ตลอด) ":"สลักห่วงกลม ")+"M"+d+" × "+f(L)+" มม."};},
  eyeda:function(t,D){return B.eyebolt(t,D,true);},
- eye45:function(t,D){var r=B.eyebolt(t,D);r.g.children[0].rotation.y=Math.PI/4;r.lab="สลักห่วงเดี่ยว 45° M"+(D.d||16)+" × "+f(D.L||250)+" มม.";return r;},
+ eye45:function(t,D){var r=B.eyebolt(t,D),a=/45/.test(D.th||t);if(a)r.g.children[0].rotation.y=Math.PI/4;r.lab="สลักห่วงเดี่ยว"+(a?" 45°":"")+" M"+(D.d||16)+" × "+f(D.L||250)+" มม.";return r;},
  stubbolt:function(t,D){var d=D.d||24,L=D.L||800,g=G();threadX(g,d,150,L-150);g.add(at(cylX(d/2,L-150,M.galv,20),(L-150)/2,0,0));
    var hk=tor(60,d/2,M.galv,Math.PI);hk.rotation.z=Math.PI/2;g.add(at(hk,0,60,0));nutX(g,d,L-60);return {g:g,lab:"สตับโบลท์ M"+d+" × "+f(L)+" มม.",note:"ปลายงอสำหรับฝังคอนกรีต"};},
  eyenut:function(t,D){var d=D.d||16,g=G();var e=tor(d*1.4,d*.42,M.galv);g.add(at(e,0,d*2.1,0));var n=cyl(d*1.1,d*1.1,d*.9,M.galv,20);g.add(n);g.add(at(cyl(d*.5,d*.5,d*.95,M.pvc,16),0,0,0));
@@ -160,7 +172,10 @@ var B={
  linepost:function(t,D){var kv=D.kv||22,n=kv>=33?11:8,g=G(),comp=/COMPOSITE|คอมโพสิต/.test(D.row||"");sheds(g,n,32,comp?62:85,34,90,comp?M.poly:M.porc);
    g.add(at(cyl(40,40,80,M.galv,20),0,40,0));g.add(at(cyl(30,36,40,M.galv,20),0,90+n*34,0));var gr=box(70,24,40,M.galv);g.add(at(gr,0,120+n*34,0));
    return {g:g,lab:(comp?"ลูกถ้วยคอมโพสิต ":"ลูกถ้วยไลน์โพสท์ ")+kv+" kV",note:"แบบตั้ง (ไลน์โพสท์/พินโพสท์)"};},
- disc:function(t,D){var g=G(),n=(D.kv||22)>=33?3:2,comp=/COMPOSITE|คอมโพสิต/.test(D.row||"");
+ disc:function(t,D){var g=G(),n=(D.kv||22)>=33?3:2,comp=/COMPOSITE|คอมโพสิต/.test(D.row||"")||/คอมโพสิต 115/.test(D.th||"");
+   if(comp&&/115/.test(D.th||"")){sheds(g,22,14,50,46,60,M.poly);g.add(at(cyl(12,12,60,M.galv),0,20,0));g.add(at(cyl(12,12,60,M.galv),0,60+21*46+40,0));return {g:g,lab:"ลูกถ้วยแขวนคอมโพสิต 115 kV",note:"ยาวประมาณ 1,100–1,200 มม."};}
+   if(/52-3/.test(t)){var gl=/แก้ว/.test(D.th||"");var p1=lathe([[0,0],[20,0],[24,-25],[125,-70],[127,-76],[78,-74],[50,-82],[28,-78],[12,-90],[0,-90]],gl?M.glassI:M.porc,36);g.add(p1);g.add(at(cyl(28,32,32,M.galv),0,-4,0));g.add(at(cyl(14,14,40,M.galv),0,-100,0));
+     return {g:g,lab:"ลูกถ้วยแขวน"+(gl?"แก้วเหนียว":"ปอร์ซเลน")+" แบบ 52-3",note:"แสดง 1 ลูก (ระบบ 115 kV ต่อเป็นพวงหลายลูก)"};}
    if(comp){sheds(g,6,14,48,40,40,M.poly);g.add(at(cyl(12,12,40,M.galv),0,10,0));g.add(at(cyl(12,12,40,M.galv),0,300,0));return {g:g,lab:"ลูกถ้วยแขวนคอมโพสิต "+(D.kv||22)+" kV"};}
    for(var i=0;i<n;i++){var p=lathe([[0,0],[20,0],[24,-25],[125,-70],[127,-76],[78,-74],[50,-82],[28,-78],[12,-90],[0,-90]],M.porc,36);g.add(at(p,0,-i*146,0));g.add(at(cyl(28,32,32,M.galv),0,-i*146-4,0));}
    return {g:g,lab:"ลูกถ้วยแขวน "+(D.kv||22)+" kV",note:"แสดง "+n+" ลูกต่อชุด"};},
@@ -190,7 +205,7 @@ var B={
  deadend:function(t,D){var g=G(),L=700,r=(D.mm2?Math.sqrt(D.mm2/Math.PI)+3:8),col=/แดง/.test(t)?M.red:(/เหลือง/.test(t)?M.yellow:(/เขียว/.test(t)?M.green:(/น้ำเงิน|ฟ้า/.test(t)?M.blue:M.alu)));
    [1,-1].forEach(function(s){var pts=[];for(var i=0;i<=90;i++){var u=i/90,a=u*Math.PI*2*5;pts.push([u*L,s*(r+14)*(1-u*.85)+Math.cos(a)*3,Math.sin(a)*(r+3)]);}g.add(tube(pts,3,M.alu));});
    var loop=tor(r+14,3.5,M.alu,Math.PI);loop.rotation.z=Math.PI/2;g.add(at(loop,0,0,0));g.add(at(box(40,6,6,col),L*.6,r+6,0));g.add(at(cylX(r,L*.9,M.pvc,16),L*.55,0,0));
-   return {g:g,lab:"ปรีฟอร์มเข้าปลายสาย",note:(D.mm2?"สาย "+D.mm2+" ตร.มม. · ":"")+((clean(t).match(/รหัสสี\s*(สี\S+)/)||[0,""])[1])};},
+   return {g:g,lab:"ปรีฟอร์มเข้าปลายสาย",note:[D.mm2?"สาย "+D.mm2+" ตร.มม.":"",(clean(t).match(/รหัสสี\s*(สี\S+)/)||[0,""])[1]].filter(Boolean).join(" · ")};},
  hotline:function(t,D){var g=G();g.add(box(60,20,30,M.cu));var e=tor(14,4,M.galv);g.add(at(e,0,40,0));g.add(at(cyl(6,6,70,M.galv),0,0,0));var j=box(40,14,30,M.cu);g.add(at(j,0,-25,0));return {g:g,lab:"ฮอทไลน์แคล้มป์"};},
  bail:function(t,D){var g=G();var b=tor(40,5,M.alu,Math.PI);b.rotation.z=Math.PI;g.add(b);g.add(at(box(110,20,30,M.alu),0,10,0));[-30,30].forEach(function(x){g.add(at(cyl(6,6,40,M.galv),x,22,0));});return {g:g,lab:"เบล (สเตอร์รัพ) แคล้มป์"};},
  pg:function(t,D){var n=/3 ตัว|TRIPLE/.test(t)?3:2,g=G(),L=n*30+20;[-9,9].forEach(function(y){g.add(at(box(L,14,46,M.alu),0,y,0));});
@@ -280,13 +295,74 @@ var B={
    for(var i=0;i<+n[1];i++){g.add(at(cylX(13,L-40,M.white,16),0,0,(i-(n[1]-1)/2)*45));}return {g:g,lab:"โคมฟลูออเรสเซนต์ "+n[1]+"×"+n[2]+" W"};},
  ledlight:function(t,D){var g=G();var s=ext([[0,-120],[380,-150],[460,-110],[460,110],[380,150],[0,120]],50,M.lgrey,[]);s.rotation.x=-Math.PI/2;g.add(s);g.add(at(box(300,4,180,M.glass),260,-2,0));g.add(at(cylX(25,160,M.galv,16),-80,25,0));
    return {g:g,lab:"โคมไฟถนน LED"};},
+ octpole:function(t,D){var H=D.len||20000,g=G();var p=cyl(160,330,H,M.galv,8);g.add(at(p,0,H/2,0));g.add(at(cyl(420,420,30,M.galv,8),0,15,0));return {g:g,lab:"เสาเหล็ก 8 เหลี่ยม ยาว "+f(H/1000)+" ม.",note:"ฐานแผ่นเหล็ก"};},
+ tower:function(t,D){var g=G(),H=30000,b0=6000,b1=1600;var leg=function(x,z){var p=[[x*b0/2,0,z*b0/2],[x*b1/2,H*.8,z*b1/2],[x*b1/2,H,z*b1/2]];g.add(tube(p,60,M.galv));};[[1,1],[1,-1],[-1,1],[-1,-1]].forEach(function(c){leg(c[0],c[1]);});
+   for(var k=0;k<10;k++){var y0=k*H*.08,y1=(k+1)*H*.08,w0=b0-(b0-b1)*k/10,w1=b0-(b0-b1)*(k+1)/10;[[1,0],[-1,0],[0,1],[0,-1]].forEach(function(s){var a=s[0]?[s[0]*w0/2,y0,-w0/2]:[-w0/2,y0,s[1]*w0/2],b=s[0]?[s[0]*w1/2,y1,w1/2]:[w1/2,y1,s[1]*w1/2];g.add(tube([a,b],30,M.galv));});}
+   [H*.82,H*.9,H*.97].forEach(function(y,i){g.add(at(box(i===2?3000:5200,180,180,M.galv),0,y,0));});return {g:g,lab:"เสาโครงเหล็ก 115 kV",note:"รูปทรงตัวแทน · ดูขนาดจริงในแบบเลขที่ที่ระบุ"};},
+ pile:function(t,D){var a=D.a||.44,c=D.c||8.5;if(a<5){a*=1000;c*=1000;}var g=G();var m=box(a,c,a,M.conc);g.add(at(m,0,c/2,0));var tip=new T.Mesh(new T.ConeGeometry(a*.7,a,4),M.conc);tip.rotation.set(Math.PI,Math.PI/4,0);g.add(at(tip,0,-a/2,0));
+   return {g:g,lab:"เสาเข็ม คอร. "+f(a)+"×"+f(a)+" ยาว "+f(c)+" มม."};},
+ steelplate:function(t,D){var v=[D.a,D.b,D.c].filter(function(x){return x;}).sort(function(x,y){return x-y;}),th=v[0]||6,w=v[1]||100,L=v[2]||450,g=G();g.add(box(L,w,th,M.galv));
+   var n=L>600?4:2;for(var i=0;i<n;i++){g.add(at(cylZ(9,th+2,M.pvc,16),-L/2+L*(i+.5)/n,0,0));}return {g:g,lab:v.length?"แผ่นเหล็ก "+th+"×"+w+"×"+f(L)+" มม.":(D.tho||"แผ่นเหล็ก"),note:v.length?"":"ขนาดโดยประมาณ"};},
+ steelpipe:function(t,D){var nd=(clean(t).match(/ขนาดระบุ\s*(\d+)/)||[0,20])[1],L=D.len||100,od=({15:21.3,20:26.9,25:33.7,32:42.4,40:48.3,50:60.3})[nd]||nd*1.35,g=G();
+   var s=new T.Shape();s.absarc(0,0,od/2,0,Math.PI*2);var p=new T.Path();p.absarc(0,0,od/2-2.6,0,Math.PI*2,true);s.holes.push(p);var m=new T.Mesh(new T.ExtrudeGeometry(s,{depth:L,bevelEnabled:false,curveSegments:28}),M.galv);m.rotation.y=Math.PI/2;g.add(at(m,-L/2,0,0));
+   return {g:g,lab:"ท่อเหล็ก ขนาดระบุ "+nd+" มม. ยาว "+f(L)+" มม."};},
+ eyeoval:function(t,D){var r=B.eyebolt(t,D);r.g.children[0].scale.set(1.5,1,1);r.lab="สลักเกลียวห่วงโอแวล M"+(D.d||16)+" × "+f(D.L||150)+" มม.";return r;},
+ thimblenut:function(t,D){var r=B.eyenut(t,D),g=r.g;var pts=[];for(var i=0;i<=40;i++){var u=i/40*Math.PI*2;pts.push([Math.sin(u)*14,(D.d||16)*2.1+Math.cos(u)*20,0]);}g.add(tube(pts,3,M.galv,true));r.lab="ทิมเบิ้ลอายนัท M"+(D.d||16);return r;},
+ barecu:function(t,D){return B.cablepiece(D,[[0,M.cu]],"สายทองแดงเปลือย "+(D.mm2||"")+" ตร.มม.","");},
+ aaac:function(t,D){return B.cablepiece(D,[[0,M.alu]],"สายอะลูมิเนียมเจือ (AAAC) "+(D.mm2||"")+" ตร.มม.","");},
+ clamp3:function(t,D){var g=G();[-1,1].forEach(function(s){g.add(at(box(200,14,50,M.galv),0,s*10,0));});[-1,1].forEach(function(z){g.add(at(cylX(6,320,z<0?M.galv:M.dark,12),0,0,z*14));});
+   for(var i=0;i<3;i++){var x=-70+i*70;g.add(at(cyl(7,7,60,M.galv),x,0,0));g.add(at(hexN(14,10,M.galv),x,26,0));}return {g:g,lab:"แคล้มป์สลัก 3 ตัว",note:/OPGW/.test(t)?"สำหรับสาย OPGW":(D.mm2?"ลวดเหล็ก "+D.mm2+" ตร.มม.":"")};},
+ yokeplate:function(t,D){var g=G();g.add(ext([[-220,0],[220,0],[120,160],[-120,160]],16,M.galv,[[-170,30,12],[170,30,12],[0,120,14],[0,40,12]]));return {g:g,lab:"แผ่นเหล็กแยกสาย"};},
+ cornerbracket:function(t,D){var g=G();g.add(ext([[0,0],[300,0],[300,30],[60,220],[0,220]],16,M.galv,[[40,180,12],[260,15,12]]));g.add(at(box(16,220,120,M.galv),0,110,60));return {g:g,lab:"ที่แขวนลูกถ้วยทางโค้ง"};},
+ eyelet:function(t,D){var g=G();g.add(ext([[-40,0],[40,0],[40,60],[0,100],[-40,60]],20,M.galv,[[0,60,16],[0,20,11]]));return {g:g,lab:"อายเล็ทสำหรับสลักเกลียว M20"};},
+ hpost:function(t,D){var g=G(),L=1300;var s=G();sheds(s,24,30,62,48,80,M.poly);s.rotation.z=-Math.PI/2;g.add(s);g.add(at(box(40,240,240,M.galv),0,0,0));g.add(at(box(80,40,60,M.galv),L+40,0,0));
+   return {g:g,lab:"ลูกถ้วยแบบโพสท์ 115 kV ติดตั้งแนวนอน",note:/ไม่รับแรงดึง/.test(D.row||"")?"ชนิดไม่รับแรงดึง":"ชนิดรับแรงดึง"};},
+ fitting:function(t,D){var n=clean(D.th||t).toUpperCase(),g=G(),parts=((n.match(/Y-CLEVIS-BALL|BALL-HOOK|SOCKET-EYE|SOCKET-CLEVIS|CLEVIS-EYE|BALL-CLEVIS|BALL-EYE/)||["CLEVIS-EYE"])[0]).split("-");
+   var end=function(k,x,flip){if(k==="BALL"){g.add(at(new T.Mesh(new T.SphereGeometry(16,20,14),M.galv),x,0,0));g.add(at(cylX(8,30,M.galv),x-flip*20,0,0));}
+     else if(k==="EYE"){var e=tor(22,7,M.galv);g.add(at(e,x,0,0));}else if(k==="HOOK"){var h=tor(26,8,M.galv,Math.PI*1.4);g.add(at(h,x,0,0));}
+     else if(k==="SOCKET"){g.add(at(box(50,46,46,M.galv),x,0,0));g.add(at(cylZ(14,48,M.dark,16),x,0,0));}
+     else {/* CLEVIS / Y */[-1,1].forEach(function(s){g.add(at(box(50,10,40,M.galv),x,s*16,0));});g.add(at(cylZ(8,60,M.galv),x+flip*10,0,0));}};
+   var a=parts[0]==="Y"?"CLEVIS":parts[0],b=parts[parts.length-1];g.add(cylX(10,80,M.galv,16));end(a,-60,-1);end(b,60,1);
+   return {g:g,lab:(D.tho||"ข้อต่อ").replace(/,\s*ANSI.*/,"")+" ("+parts.join("-")+")",note:"ใช้ต่อพวงลูกถ้วยแขวน"};},
+ shackle:function(t,D){var g=G();var u=tor(36,9,M.galv,Math.PI);g.add(u);[-36,36].forEach(function(x){g.add(at(cyl(9,9,60,M.galv,14),x,-30,0));});g.add(at(cylX(10,100,M.galv),0,-62,0));return {g:g,lab:"เหล็กห่วงสำหรับยึดโยง (แชคเคิล)"};},
+ suspclamp:function(t,D){var g=G();var b=new T.Mesh(new T.CylinderGeometry(26,26,260,20,1,false,0,Math.PI),M.alu);b.rotation.z=Math.PI/2;b.rotation.x=Math.PI;g.add(b);g.add(at(box(50,90,14,M.alu),0,60,0));
+   [-60,60].forEach(function(x){var u=tor(22,5,M.galv,Math.PI);u.rotation.z=Math.PI;u.rotation.y=Math.PI/2;g.add(at(u,x,4,0));});g.add(at(cylZ(8,40,M.galv),0,95,0));return {g:g,lab:"แคล้มป์แขวนสายอะลูมิเนียม",note:D.mm2?D.mm2+" ตร.มม.":""};},
+ compdeadend:function(t,D){var g=G(),two=/คู่|DOUBLE/.test(D.th||"");g.add(at(cylX(22,420,M.alu,24),210,0,0));g.add(at(cylX(13,160,M.galv,16),-60,0,0));var e=tor(26,9,M.galv);g.add(at(e,-160,0,0));
+   (two?[-1,1]:[1]).forEach(function(s){g.add(at(box(90,8,60,M.alu),300,s*30,0));});return {g:g,lab:"แคล้มป์เข้าปลายสายแบบบีบ หัวต่อ"+(two?"คู่":"เดี่ยว"),note:D.mm2?D.mm2+" ตร.มม.":""};},
+ armorgrip:function(t,D){var r=B.helixrod(t,{Ls:1400,mm2:/OPGW/.test(t)?150:(D.mm2||400)}),g=r.g;g.add(at(new T.Mesh(new T.SphereGeometry(70,24,16),M.hdpe),700,0,0));g.add(at(box(60,140,30,M.alu),700,100,0));g.add(at(cylZ(10,60,M.galv),700,160,0));
+   r.lab="ชุดปรีฟอร์มอาร์เมอร์กริพ"+(/OPGW/.test(t)?" (OPGW)":"");return r;},
+ helispacer:function(t,D){var g=G(),r=Math.sqrt((D.mm2||400)/Math.PI)+2;[-1,1].forEach(function(s){g.add(at(cylX(r,700,M.alu,16),350,s*90,0));});var pts=[];for(var i=0;i<=120;i++){var u=i/120,a=u*Math.PI*8;pts.push([u*600+50,Math.cos(a)*(90+r+3)*Math.sign(Math.cos(a/8+.01)),Math.sin(a)*(r+3)]);}g.add(tube(pts,4,M.alu));
+   return {g:g,lab:"ปรีฟอร์มแยกสาย "+(D.mm2||"")+" ตร.มม."};},
+ marker:function(t,D){var d=(clean(t).match(/ศูนย์กลาง\s*(\d+)/)||[0,600])[1]*1,g=G();var h1=new T.Mesh(new T.SphereGeometry(d/2,32,20,0,Math.PI*2,0,Math.PI/2),M.white),h2=new T.Mesh(new T.SphereGeometry(d/2,32,20,0,Math.PI*2,Math.PI/2,Math.PI/2),M.orange);
+   g.add(h1,h2);g.add(at(cylX(14,d*1.4,M.alu,16),0,0,0));return {g:g,lab:"ลูกบอลแสดงแนวสาย ø"+f(d)+" มม."};},
+ stockbridge:function(t,D){var g=G();g.add(cylX(5,500,M.galv,12));[-1,1].forEach(function(s){var w=new T.Mesh(new T.CylinderGeometry(30,40,140,20),M.galv);w.rotation.z=Math.PI/2;g.add(at(w,s*230,0,0));});
+   g.add(at(box(50,70,30,M.alu),0,40,0));var c=tor(16,6,M.alu,Math.PI);g.add(at(c,0,80,0));return {g:g,lab:"ไวเบรชั่นแดมเปอร์ แบบสต๊อกบริดจ์/ดัมเบล"};},
+ compound:function(t,D){var g=G();g.add(lathe([[0,0],[30,0],[30,140],[24,160],[10,170],[6,200],[0,200]],M.white,28));return {g:g,lab:"คอมเปาด์ช่วยสัมผัสทางไฟฟ้า",note:"หลอดบรรจุ"};},
+ abswitch:function(t,D){var g=G(),lb=/โหลดเบรก/.test(D.th||"");[-2000,0,2000].forEach(function(z){g.add(at(box(2400,120,200,M.galv),0,0,z));[-900,0,900].forEach(function(x,i){var s=G();sheds(s,14,45,85,70,60,M.porc);if(i===1)s.rotation.y=.3;g.add(at(s,x,60,z));});
+     var bl=box(1700,30,60,M.cu);g.add(at(bl,-450,60+14*70+60,z));if(lb){g.add(at(cyl(60,60,260,M.dark,16),900,60+14*70+150,z));}});
+   g.add(at(cyl(30,30,1500,M.galv,12),0,-750,-2400));return {g:g,lab:(lb?"โหลดเบรกสวิตช์":"แอร์เบรกสวิตช์")+" 3 ขา 115 kV",note:"เปิดแนวนอน พร้อมก้านโยก"};},
+ cswitcher:function(t,D){var g=G();[-2000,0,2000].forEach(function(x){g.add(at(cyl(150,150,1800,M.galv,16),x,900,0));var s=G();sheds(s,20,90,160,75,0,M.porc);g.add(at(s,x,1800,0));g.add(at(cyl(220,220,600,M.tank,24),x,1800+20*75+300,0));});
+   g.add(at(box(800,1200,600,M.lgrey),0,600,900));return {g:g,lab:"เซอร์กิตสวิตช์เชอร์ 115 kV",note:"รูปทรงตัวแทน · พร้อมตู้กลไก"};},
+ jointbox:function(t,D){var g=G();g.add(lathe([[0,0],[90,0],[100,30],[100,420],[80,460],[0,470]],M.hdpe,32));[-40,40].forEach(function(x){g.add(at(cyl(7,7,200,M.dark,12),x,-100,0));});return {g:g,lab:"กล่องต่อสาย OPGW",note:(clean(t).match(/แบบ\s*\d\s*ทาง/)||[""])[0]};},
+ jbsupport:function(t,D){var g=G();g.add(at(box(40,600,10,M.galv),0,0,0));[-200,200].forEach(function(y){var b=tor(110,8,M.galv,Math.PI);b.rotation.y=Math.PI/2;g.add(at(b,0,y,0));});return {g:g,lab:"ชุดรองรับกล่องต่อสาย OPGW"};},
+ coilbracket:function(t,D){var g=G();var r=tor(450,12,M.galv);g.add(r);for(var i=0;i<6;i++){var a=i/6*Math.PI*2;g.add(at(box(140,30,30,M.galv),Math.cos(a)*450,Math.sin(a)*450,30));}return {g:g,lab:"ชุดรองรับการม้วนสาย OPGW"};},
+ opgw:function(t,D){var g=G(),L=400;g.add(at(cylX(3,L+80,M.orange,12),L/2,0,0));g.add(at(cylX(4.5,L+40,M.galv,16),L/2+10,0,0));for(var k=0;k<8;k++){var a=k/8*Math.PI*2;g.add(at(cylX(2.4,L,k%2?M.alu:M.galv,10),L/2+20,Math.cos(a)*6.8,Math.sin(a)*6.8));}
+   return {g:g,lab:"สาย OPGW ø ≤ 14 มม.",note:"ท่อใยแก้ว + ลวดเหล็กและอะลูมิเนียม"};},
+ curod:function(t,D){var d=D.dia||16,L=D.len||3000,g=G();g.add(at(cyl(d/2,d/2,L,M.cu,18),0,L/2,0));var tip=cyl(d/2,.5,d*2,M.cu,18);tip.rotation.x=Math.PI;g.add(at(tip,0,-d,0));return {g:g,lab:"หลักดินเหล็กเคลือบทองแดง ø"+d+" ยาว "+f(L/1000)+" ม."};},
+ flatstrip:function(t,D){var w=D.a||30,th=D.b||3.5,g=G();var pts=[];for(var i=0;i<=120;i++){var u=i/120*Math.PI*6;pts.push([Math.cos(u)*(250+i*.4),i*.3,Math.sin(u)*(250+i*.4)]);}
+   var crv=new T.CatmullRomCurve3(pts.map(function(p){return new T.Vector3(p[0],p[1],p[2]);}));var sh=new T.Shape([new T.Vector2(-th/2,-w/2),new T.Vector2(th/2,-w/2),new T.Vector2(th/2,w/2),new T.Vector2(-th/2,w/2)]);
+   g.add(new T.Mesh(new T.ExtrudeGeometry(sh,{steps:240,extrudePath:crv}),M.galv));return {g:g,lab:"สายดินแผ่นเหล็ก "+w+"×"+th+" มม. ยาว 10 ม.",note:"แสดงเป็นขด"};},
+ flatconn:function(t,D){var g=G();g.add(box(60,40,50,M.cu));g.add(at(box(140,4,30,M.galv),-60,0,0));g.add(at(cylX(6,120,M.cu,14),70,10,0));g.add(at(hexN(14,10,M.galv),0,26,0));return {g:g,lab:"คอนเนคเตอร์สำหรับแผ่นเหล็กแบน 30 มม."};},
+ bag:function(t,D){var g=G();var b=box(300,450,120,M.lgrey);g.add(at(b,0,225,0));g.add(at(box(200,120,2,M.blue),0,280,61));return {g:g,lab:"ผงเคมีลดค่าความต้านทานดิน",note:"บรรจุถุง"};},
+ exo:function(t,D){var g=G();g.add(at(box(120,160,100,M.graph),0,80,0));g.add(at(cyl(30,40,60,M.graph,20),0,190,0));g.add(at(box(40,40,140,M.galv),0,20,0));g.add(at(cylX(8,260,M.cu,14),0,20,0));
+   return {g:g,lab:"จุดต่อสายดินแบบเชื่อมด้วยความร้อน",note:"แม่พิมพ์กราไฟต์ + ผงเชื่อม (แสดงโดยประมาณ)"};},
  lamparm:function(t,D){var L=D.len||2500,g=G();var pts=[[0,0,0],[0,600,0],[150,900,0],[L*.5,1100,0],[L,1150,0]];g.add(tube(pts,24,M.galv));g.add(at(box(120,200,90,M.galv),0,100,0));return {g:g,lab:"กิ่งโคมไฟถนน ยาว "+f(L)+" มม."};}
 };
 
 /* ---------- สร้างโมเดลของรายการ+แถวที่เลือก ---------- */
 function model(it,ri){var k=type(it);if(!k||!B[k])return null;var row=(it.rows[ri||0]||[]);var txt=clean((row[1]||"")+" "+(it.th||"")+" "+(it.en||""));
   var D=dims((row[1]||"")+" "+((it.rows.length===1)?(it.th+" "+it.en):""));var D2=dims(txt);Object.keys(D2).forEach(function(x){if(D[x]==null)D[x]=D2[x];});
-  D.row=clean(row[1]||"");var r=B[k](txt,D);r.k=k;return r;}
+  D.row=clean(row[1]||"");D.th=clean((it.th||"")+" "+(it.en||""));D.tho=clean(it.th||"");var r=B[k](txt,D);r.k=k;return r;}
 function center(g){var inner=G();inner.add(g);var bb=new T.Box3().setFromObject(inner),c=bb.getCenter(new T.Vector3()),s=bb.getSize(new T.Vector3());inner.position.sub(c);var root=G();root.add(inner);return {root:root,size:s};}
 
 /* ---------- ตัวแสดง 3D (ลากหมุน ซูม) ---------- */

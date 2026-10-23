@@ -93,7 +93,7 @@ function ext(pts,depth,mat,holes){var s=new T.Shape();pts.forEach(function(p,i){
   (holes||[]).forEach(function(h){var p=new T.Path();p.absarc(h[0],h[1],h[2],0,Math.PI*2,true);s.holes.push(p);});
   return new T.Mesh(new T.ExtrudeGeometry(s,{depth:depth,bevelEnabled:false,curveSegments:24}),mat);}
 function lathe(pts,mat,seg){return new T.Mesh(new T.LatheGeometry(pts.map(function(p){return new T.Vector2(p[0],p[1]);}),seg||40),mat);}
-function tube(pts,r,mat,closed){return new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(function(p){return new T.Vector3(p[0],p[1],p[2]);}),!!closed),Math.max(24,pts.length*6),r,10,!!closed),mat);}
+function tube(pts,r,mat,closed){return new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(function(p){return new T.Vector3(p[0],p[1],p[2]);}),!!closed),Math.min(360,Math.max(24,pts.length*2)),r,8,!!closed),mat);}
 /* แท่งเกลียวตามแกน X เริ่มที่ x0 ยาว L */
 function threadX(g,d,L,x0,mat){g.add(at(cylX(d/2*.92,L,mat||M.galv,20),x0+L/2,0,0));var step=Math.max(2.5,d*.25),n=0;
   for(var x=x0+step/2;x<x0+L&&n<160;x+=step,n++){var r=tor(d/2*.93,Math.max(.35,d*.04),mat||M.galv);r.rotation.y=Math.PI/2;g.add(at(r,x,0,0));}}
@@ -374,7 +374,7 @@ function tpl(s,env){ if(!s) return ""; return String(s).replace(/\$\{([^}]+)\}/g
 function mk(pt,env){ var mn=pt.m||"galv",o,m=M[mn]||(String(mn).charAt(0)==="="?M[ev(String(mn).slice(1),env)]:null)||M.galv,s=pt.s;
   if(s==="group"){o=G();(pt.parts||[]).forEach(function(c){addPart(o,c,env);});}
   else if(s==="box"){var z=evA(pt.size,env);o=box(z[0],z[1],z[2],m);}
-  else if(s==="cyl"){var r1=ev(pt.r1!=null?pt.r1:pt.r,env),r2=ev(pt.r2!=null?pt.r2:pt.r,env);o=new T.Mesh(new T.CylinderGeometry(r1,r2,ev(pt.h,env),ev(pt.seg,env)||28,1,!!pt.open,0,pt.arc?ev(pt.arc,env)*Math.PI/180:Math.PI*2),m);if(pt.open)m.side=T.DoubleSide;}
+  else if(s==="cyl"){var r1=ev(pt.r1!=null?pt.r1:pt.r,env),r2=ev(pt.r2!=null?pt.r2:pt.r,env);o=new T.Mesh(new T.CylinderGeometry(r1,r2,ev(pt.h,env),ev(pt.seg,env)||28,1,!!pt.open,0,pt.arc?ev(pt.arc,env)*Math.PI/180:Math.PI*2),pt.open?(function(){var c=m.clone();c.side=T.DoubleSide;return c;})():m);}
   else if(s==="sphere"){o=new T.Mesh(new T.SphereGeometry(ev(pt.r,env),28,18),m);}
   else if(s==="torus"){o=tor(ev(pt.R,env),ev(pt.r,env),m,(ev(pt.arc,env)||360)*Math.PI/180);}
   else if(s==="hex"){o=hexN(ev(pt.d,env),ev(pt.h,env),m);}

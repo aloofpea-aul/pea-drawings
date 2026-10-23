@@ -96,7 +96,7 @@ function lathe(pts,mat,seg){return new T.Mesh(new T.LatheGeometry(pts.map(functi
 function tube(pts,r,mat,closed){return new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(function(p){return new T.Vector3(p[0],p[1],p[2]);}),!!closed),Math.max(24,pts.length*6),r,10,!!closed),mat);}
 /* แท่งเกลียวตามแกน X เริ่มที่ x0 ยาว L */
 function threadX(g,d,L,x0,mat){g.add(at(cylX(d/2*.92,L,mat||M.galv,20),x0+L/2,0,0));var step=Math.max(2.5,d*.25),n=0;
-  for(var x=x0+step/2;x<x0+L&&n<70;x+=step,n++){var r=tor(d/2*.93,Math.max(.35,d*.04),mat||M.galv);r.rotation.y=Math.PI/2;g.add(at(r,x,0,0));}}
+  for(var x=x0+step/2;x<x0+L&&n<160;x+=step,n++){var r=tor(d/2*.93,Math.max(.35,d*.04),mat||M.galv);r.rotation.y=Math.PI/2;g.add(at(r,x,0,0));}}
 function nutX(g,d,x,mat){var n=hexN(d,d*.8,mat||M.galv);n.rotation.z=Math.PI/2;g.add(at(n,x,0,0));}
 function sheds(g,n,r0,r1,pitch,y0,mat){for(var i=0;i<n;i++){g.add(at(cyl(r1,r1*.92,pitch*.18,mat,28),0,y0+i*pitch,0));}g.add(at(cyl(r0,r0,n*pitch,mat,24),0,y0+(n-1)*pitch/2,0));}
 function bushing(g,x,y,z,h,mat){var b=G();sheds(b,Math.max(2,Math.round(h/45)),h*.11,h*.22,h/Math.max(2,Math.round(h/45)),h*.1,mat||M.porc);b.add(at(cyl(5,5,h*.25,M.cu,12),0,h+h*.08,0));g.add(at(b,x,y,z));return b;}
@@ -388,8 +388,9 @@ function mk(pt,env){ var mn=pt.m||"galv",o,m=M[mn]||(String(mn).charAt(0)==="="?
   if(pt.rot){var Rr=evA(pt.rot,env);o.rotation.set((Rr[0]||0)*Math.PI/180,(Rr[1]||0)*Math.PI/180,(Rr[2]||0)*Math.PI/180);}
   if(pt.sc){var S=evA(pt.sc,env);o.scale.set(S[0],S[1],S[2]);}
   return o; }
-function addPart(g,pt,env){ if(pt["if"]!=null&&!ev(pt["if"],env)) return;
-  if(pt.rep){var n=ev(pt.rep,env)|0;for(var i=0;i<n;i++){var e2=Object.create(env);e2.i=i;e2.n=n;var o=mk(pt,e2);if(o)g.add(o);}return;}
+function addPart(g,pt,env){
+  if(pt.rep){var n=ev(pt.rep,env)|0;for(var i=0;i<n;i++){var e2=Object.create(env);e2.i=i;e2.n=n;if(pt["if"]!=null&&!ev(pt["if"],e2))continue;var o=mk(pt,e2);if(o)g.add(o);}return;}
+  if(pt["if"]!=null&&!ev(pt["if"],env)) return;
   var o1=mk(pt,env);if(o1)g.add(o1); }
 function dataModel(md,it,ri,D){ var row=(it.rows[ri||0]||[]),env=Object.create(MATH);Object.keys(D).forEach(function(k){env[k]=D[k];});
   env.D=D;env.row=clean(row[1]||"");env.th=clean(it.th||"");env.en=clean(it.en||"");env.mat=row[2]||"";env.ri=ri||0;env.has=function(re){return new RegExp(re,"i").test(env.row+" "+env.th+" "+env.en);};
